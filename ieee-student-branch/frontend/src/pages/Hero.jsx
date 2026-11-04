@@ -1,4 +1,7 @@
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Award, Zap, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import "./Hero.css";
+import rnsitSbLogo from "../assets/rnsit-sb-logo-white.png";
 
 function Hero() {
   return (
@@ -6,126 +9,152 @@ function Hero() {
       id="home"
       className="relative min-h-screen w-full overflow-hidden bg-[#071A2B] pt-24"
     >
-      {/* Background glow */}
-      <div className="pointer-events-none absolute left-1/2 top-20 h-96 w-96 -translate-x-1/2 rounded-full bg-[#00629B]/20 blur-3xl" />
+      {/* =========================================
+          ATMOSPHERIC ANIMATIONS & 3D CYBER GRID
+      ========================================== */}
+      <div className="hero-atmosphere">
+        <div className="hero-glow-blob hero-glow-blob--blue" />
+        <div className="hero-glow-blob hero-glow-blob--cyan" />
+        <div className="hero-orb hero-orb--primary" />
+        <div className="hero-orb hero-orb--secondary" />
+        <div className="hero-grid" />
+      </div>
 
       {/* Main Hero Container */}
-      <div className="relative mx-auto grid w-full max-w-7xl min-h-[calc(100vh-96px)] items-center gap-12 px-6 py-20 sm:px-8 lg:grid-cols-2 lg:px-12">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl min-h-[calc(100vh-96px)] items-center gap-12 px-6 py-16 sm:px-8 lg:grid-cols-2 lg:px-12">
 
         {/* =========================
             LEFT SIDE — HERO CONTENT
         ========================== */}
         <div className="relative z-10">
 
-          {/* Small Label */}
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#00629B]/40 bg-[#00629B]/10 px-4 py-2 text-sm text-blue-300">
-            <Sparkles size={16} />
-            <span>IEEE Student Branch</span>
+          {/* Small Frosted Glass Label */}
+          <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-cyan-400/30 bg-[#00629B]/15 px-4 py-2 text-sm text-cyan-200 backdrop-blur-md shadow-[0_0_20px_rgba(41,169,224,0.15)]">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#29A9E0] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#29A9E0]" />
+            </span>
+            <Sparkles size={16} className="text-[#29A9E0]" />
+            <span className="font-medium tracking-wide">IEEE Student Branch</span>
           </div>
 
           {/* Main Heading */}
-          <h1 className="max-w-3xl text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">
+          <h1 className="max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
             Innovate.
             <br />
-
-            <span className="text-[#29A9E0]">
+            <span className="bg-gradient-to-r from-[#29A9E0] via-cyan-200 to-[#29A9E0] bg-clip-text text-transparent">
               Connect.
             </span>
-
             <br />
-
             Create.
           </h1>
 
           {/* Description */}
-          <p className="mt-6 max-w-xl text-base leading-7 text-slate-400 sm:text-lg sm:leading-8">
-            A community of students passionate about technology,
-            research, innovation and creating solutions for the future.
+          <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+            A vibrant community of students passionate about technology,
+            cutting-edge research, hands-on engineering and building solutions for a better tomorrow.
           </p>
 
           {/* Buttons */}
-          <div className="mt-8 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap items-center gap-4">
 
             {/* Explore Events */}
-            <a
-              href="#events"
-              className="group flex items-center gap-2 rounded-full bg-[#00629B] px-6 py-3.5 font-semibold text-white transition duration-300 hover:bg-[#0077B8] hover:shadow-lg hover:shadow-[#00629B]/30"
+            <Link
+              to="/events"
+              className="group relative flex items-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-[#00629B] to-[#0077B8] px-7 py-3.5 font-semibold text-white shadow-lg shadow-[#00629B]/30 transition-all duration-300 hover:shadow-xl hover:shadow-[#29A9E0]/30 hover:scale-[1.02] active:scale-[0.98]"
             >
-              Explore Events
-
+              <span>Explore Events</span>
               <ArrowRight
                 size={18}
                 className="transition-transform duration-300 group-hover:translate-x-1"
               />
-            </a>
+            </Link>
 
             {/* Discover IEEE */}
-            <a
-              href="#about"
-              className="rounded-full border border-slate-700 px-6 py-3.5 font-semibold text-white transition duration-300 hover:border-slate-500 hover:bg-white/5"
+            <Link
+              to="/about"
+              className="group flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.05] px-7 py-3.5 font-semibold text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-400/40 hover:bg-white/[0.1] hover:shadow-[0_0_20px_rgba(41,169,224,0.2)]"
             >
-              Discover IEEE
-            </a>
+              <span>Discover IEEE</span>
+              <ChevronRight
+                size={16}
+                className="text-cyan-400 transition-transform duration-300 group-hover:translate-x-0.5"
+              />
+            </Link>
 
+          </div>
+
+          {/* Micro Glass Badges */}
+          <div className="mt-12 flex flex-wrap gap-3 pt-4 border-t border-white/[0.08]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs text-slate-300 backdrop-blur-sm">
+              <Zap size={14} className="text-[#29A9E0]" />
+              <span>Technical Workshops</span>
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs text-slate-300 backdrop-blur-sm">
+              <Award size={14} className="text-[#29A9E0]" />
+              <span>Project Mentorship</span>
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs text-slate-300 backdrop-blur-sm">
+              <Sparkles size={14} className="text-[#29A9E0]" />
+              <span>Global Community</span>
+            </div>
           </div>
         </div>
 
 
         {/* =========================
-            RIGHT SIDE — VISUAL
+            RIGHT SIDE — GLASS SHOWCASE
         ========================== */}
-        <div className="relative hidden h-[500px] lg:block">
+        <div className="relative hidden lg:block">
+          {/* Ambient Glow behind card */}
+          <div className="pointer-events-none absolute -inset-4 rounded-full bg-gradient-to-tr from-[#00629B]/30 to-[#29A9E0]/25 blur-3xl" />
 
-          <div className="relative mx-auto h-full w-full max-w-lg">
+          <div className="relative flex h-[520px] items-center justify-center">
 
-            {/* Large outer circle */}
-            <div className="absolute left-1/2 top-1/2 h-[480px] w-[480px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00629B]/30" />
-
-            {/* Medium circle */}
-            <div className="absolute left-1/2 top-1/2 h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00629B]/20" />
-
-            {/* Small circle */}
-            <div className="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00629B]/20" />
-
-
-            {/* Center Circle */}
-            <div className="absolute left-1/2 top-1/2 flex h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-br from-[#00629B] to-[#063A5B] shadow-2xl shadow-[#00629B]/30">
-
-              <div className="text-center">
-
-                {/* IEEE */}
-                <div className="text-5xl font-black tracking-tight text-white">
-                  IEEE
-                </div>
-
-                {/* College */}
-                <div className="mt-2 text-sm font-medium tracking-[0.35em] text-blue-200">
-                  RNSIT
-                </div>
-
+            {/* Floating Glass Pill - Top Left */}
+            <div className="glass-card absolute -left-6 top-8 z-20 flex items-center gap-3 rounded-2xl border border-white/15 bg-[#0A2236]/80 px-4 py-3 shadow-xl backdrop-blur-xl animate-float-slow">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#00629B]/25 text-[#29A9E0]">
+                <Zap size={20} />
               </div>
-
+              <div>
+                <p className="text-xs text-slate-400">Student Community</p>
+                <p className="text-sm font-bold text-white">250+ Members</p>
+              </div>
             </div>
 
+            {/* Central Glass Showcase Box */}
+            <div className="glass-card-interactive relative z-10 w-full max-w-lg rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.08] to-white/[0.02] p-8 shadow-2xl backdrop-blur-2xl">
+              <div className="relative flex items-center justify-center rounded-2xl bg-[#071A2B]/70 p-6 border border-white/10 shadow-inner">
+                <img
+                  src={rnsitSbLogo}
+                  alt="IEEE RNSIT Student Branch"
+                  className="h-auto w-full max-h-72 object-contain drop-shadow-[0_10px_25px_rgba(0,98,155,0.4)]"
+                />
+              </div>
 
-            {/* =========================
-                DECORATIVE ELEMENTS
-            ========================== */}
+              <div className="mt-6 flex items-center justify-between text-xs text-slate-400 border-t border-white/10 pt-4">
+                <span className="flex items-center gap-1.5 text-slate-300 font-medium">
+                  <span className="h-2 w-2 rounded-full bg-[#29A9E0]" />
+                  RNSIT Student Branch
+                </span>
+                <span className="rounded-full bg-[#00629B]/25 border border-[#29A9E0]/30 px-3 py-1 text-cyan-300 font-semibold">
+                  Bangalore Section
+                </span>
+              </div>
+            </div>
 
-            {/* Top Right Dot */}
-            <div className="absolute right-8 top-16 h-5 w-5 rounded-full bg-[#29A9E0] shadow-lg shadow-[#29A9E0]/50" />
-
-            {/* Bottom Left Dot */}
-            <div className="absolute bottom-20 left-8 h-4 w-4 rounded-full bg-white/70" />
-
-            {/* Small Blue Dot */}
-            <div className="absolute bottom-32 right-16 h-3 w-3 rounded-full bg-[#00629B]" />
-
-            {/* Small Ring */}
-            <div className="absolute left-14 top-28 h-6 w-6 rounded-full border border-[#29A9E0]/50" />
+            {/* Floating Glass Pill - Bottom Right */}
+            <div className="glass-card absolute -right-4 bottom-10 z-20 flex items-center gap-3 rounded-2xl border border-white/15 bg-[#0A2236]/80 px-4 py-3 shadow-xl backdrop-blur-xl animate-float-reverse">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#29A9E0]/20 text-[#29A9E0]">
+                <Award size={20} />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">Annual Activities</p>
+                <p className="text-sm font-bold text-white">30+ Events & Talks</p>
+              </div>
+            </div>
 
           </div>
-
         </div>
 
       </div>

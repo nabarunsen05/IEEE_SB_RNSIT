@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
+import ieeeBangaloreLogo from "../assets/ieee-bangalore-section.png";
 
 const navLinks = [
   { name: "Home", to: "/" },
@@ -20,78 +21,72 @@ function Navbar() {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-[#071A2B]/90 backdrop-blur-lg">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/[0.08] bg-[#071A2B]/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.35)] transition-all duration-300">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
 
-        {/* Logo */}
+        {/* Logo with subtle glow on hover */}
         <Link
           to="/"
-          className="flex items-center gap-3"
+          className="group flex items-center gap-3 transition-transform duration-300 hover:scale-[1.02]"
           onClick={() => setMenuOpen(false)}
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#00629B] font-bold text-white">
-            IEEE
-          </div>
-
-          <div className="leading-tight">
-            <p className="font-bold text-white">IEEE SB</p>
-            <p className="text-xs text-slate-400">RNSIT</p>
-          </div>
+          <img
+            src={ieeeBangaloreLogo}
+            alt="IEEE Bangalore Section"
+            className="h-10 w-auto filter drop-shadow-[0_2px_10px_rgba(41,169,224,0.25)] transition-all duration-300 group-hover:drop-shadow-[0_4px_16px_rgba(41,169,224,0.45)]"
+          />
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => {
-            const active = isActive(link.to);
+        <div className="hidden items-center gap-7 md:flex">
+          <div className="flex items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.03] p-1.5 backdrop-blur-md">
+            {navLinks.map((link) => {
+              const active = isActive(link.to);
 
-            return (
-              <Link
-                key={link.name}
-                to={link.to}
-                className={`relative py-2 text-sm font-medium transition ${
-                  active
-                    ? "text-[#29A9E0]"
-                    : "text-slate-300 hover:text-white"
-                }`}
-              >
-                {link.name}
+              return (
+                <Link
+                  key={link.name}
+                  to={link.to}
+                  className={`relative rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
+                    active
+                      ? "bg-[#00629B]/30 text-[#29A9E0] shadow-[0_0_15px_rgba(41,169,224,0.2)] border border-[#29A9E0]/30"
+                      : "text-slate-300 hover:text-white hover:bg-white/[0.05]"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+          </div>
 
-                {/* Active underline */}
-                {active && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-[#29A9E0]" />
-                )}
-              </Link>
-            );
-          })}
-
-          {/* Join Us */}
+          {/* Join Us Glass Button */}
           <Link
             to="/join"
-            className={`rounded-full px-5 py-2.5 text-sm font-semibold text-white transition ${
+            className={`group relative flex items-center gap-1.5 overflow-hidden rounded-full px-5 py-2 text-sm font-semibold text-white shadow-md transition-all duration-300 ${
               isActive("/join")
-                ? "bg-[#0077B8]"
-                : "bg-[#00629B] hover:bg-[#0077B8]"
+                ? "bg-gradient-to-r from-[#0077B8] to-[#00629B] shadow-[0_0_20px_rgba(41,169,224,0.4)] border border-[#29A9E0]/50"
+                : "bg-gradient-to-r from-[#00629B] to-[#0077B8] hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105 active:scale-95"
             }`}
           >
-            Join Us
+            <Sparkles size={14} className="text-cyan-300 transition-transform duration-300 group-hover:rotate-12" />
+            <span>Join Us</span>
           </Link>
         </div>
 
         {/* Mobile Menu Button */}
         <button
-          className="text-white md:hidden"
+          className="rounded-lg p-2 text-white transition hover:bg-white/10 md:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
-          {menuOpen ? <X size={26} /> : <Menu size={26} />}
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </nav>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation Dropdown */}
       {menuOpen && (
-        <div className="border-t border-white/10 bg-[#071A2B] px-6 py-5 md:hidden">
+        <div className="border-t border-white/10 bg-[#071A2B]/95 px-6 py-5 backdrop-blur-2xl md:hidden shadow-2xl">
           <div className="flex flex-col gap-2">
-
             {navLinks.map((link) => {
               const active = isActive(link.to);
 
@@ -100,9 +95,9 @@ function Navbar() {
                   key={link.name}
                   to={link.to}
                   onClick={() => setMenuOpen(false)}
-                  className={`rounded-lg px-4 py-3 text-sm font-medium transition ${
+                  className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
                     active
-                      ? "bg-[#00629B]/20 text-[#29A9E0]"
+                      ? "border border-[#29A9E0]/30 bg-[#00629B]/25 text-[#29A9E0]"
                       : "text-slate-300 hover:bg-white/5 hover:text-white"
                   }`}
                 >
@@ -115,9 +110,10 @@ function Navbar() {
             <Link
               to="/join"
               onClick={() => setMenuOpen(false)}
-              className="mt-2 rounded-lg bg-[#00629B] px-5 py-3 text-center font-semibold text-white transition hover:bg-[#0077B8]"
+              className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00629B] to-[#0077B8] px-5 py-3 text-center font-semibold text-white shadow-lg shadow-[#00629B]/30 transition hover:shadow-cyan-500/20"
             >
-              Join Us
+              <Sparkles size={16} />
+              <span>Join Us</span>
             </Link>
           </div>
         </div>
