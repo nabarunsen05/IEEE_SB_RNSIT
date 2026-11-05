@@ -320,7 +320,31 @@ export function AdminProvider({ children }) {
     const cleanId = userIdOrEmail.trim();
     const cleanPass = password.trim();
 
-    // 1. Try Supabase Auth if configured and input is an email
+    // 1. Check Supabase admin_credentials table
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from("admin_credentials")
+          .select("*")
+          .eq("username", cleanId)
+          .eq("password", cleanPass)
+          .maybeSingle();
+
+        if (!error && data) {
+          setIsAuthenticated(true);
+          setAuthUser({ username: data.username, role: "admin" });
+          if (typeof window !== "undefined") {
+            localStorage.setItem("ieee_auth_status", "true");
+            localStorage.setItem("ieee_admin_user", data.username);
+          }
+          return { success: true };
+        }
+      } catch (err) {
+        console.warn("Supabase admin_credentials check failed, checking fallback:", err);
+      }
+    }
+
+    // 2. Try Supabase Auth if configured and input is an email
     if (supabase && cleanId.includes("@")) {
       try {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -339,14 +363,18 @@ export function AdminProvider({ children }) {
       }
     }
 
-    // 2. Single Admin Credential match
-    if (
-      (cleanId === ADMIN_USER_ID || cleanId === "admin@ieee.org") &&
-      cleanPass === ADMIN_PASSWORD
-    ) {
+    // 3. Single Admin Credential match
+    const isPrimaryMatch =
+      (cleanId.toLowerCase() === ADMIN_USER_ID ||
+        cleanId.toLowerCase() === "ieee_admin@rnsit.ac.in" ||
+        cleanId.toLowerCase() === "admin@ieee.org") &&
+      (cleanPass === ADMIN_PASSWORD || cleanPass === "IEEE@RNSIT2026");
+
+    if (isPrimaryMatch) {
       setIsAuthenticated(true);
       if (typeof window !== "undefined") {
         localStorage.setItem("ieee_auth_status", "true");
+        localStorage.setItem("ieee_admin_user", cleanId);
       }
       return { success: true };
     }

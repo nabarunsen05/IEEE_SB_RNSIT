@@ -27,7 +27,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -38,8 +38,8 @@ export default function Login() {
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      const res = login(userId, password);
+    try {
+      const res = await login(userId, password);
       setIsSubmitting(false);
 
       if (res.success) {
@@ -47,7 +47,10 @@ export default function Login() {
       } else {
         setError(res.message || "Invalid credentials.");
       }
-    }, 400);
+    } catch {
+      setIsSubmitting(false);
+      setError("An unexpected error occurred during sign in.");
+    }
   };
 
   const handleUseDemoCredentials = () => {

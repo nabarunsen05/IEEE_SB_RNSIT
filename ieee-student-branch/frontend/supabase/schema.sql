@@ -3,7 +3,15 @@
 -- Run this in your Supabase Project: SQL Editor -> New query
 -- ========================================================
 
--- 1. Create Events Table
+-- 1. Create Single Admin Credentials Table
+CREATE TABLE IF NOT EXISTS public.admin_credentials (
+  id TEXT PRIMARY KEY DEFAULT 'primary_admin',
+  username TEXT NOT NULL UNIQUE DEFAULT 'admin',
+  password TEXT NOT NULL DEFAULT 'admin123',
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 2. Create Events Table
 CREATE TABLE IF NOT EXISTS public.events (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   title TEXT NOT NULL,
@@ -17,7 +25,7 @@ CREATE TABLE IF NOT EXISTS public.events (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 2. Create Executive Committee Table
+-- 3. Create Executive Committee Table
 CREATE TABLE IF NOT EXISTS public.executive_committee (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT NOT NULL,
@@ -28,7 +36,7 @@ CREATE TABLE IF NOT EXISTS public.executive_committee (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 3. Create Technical Domains Table
+-- 4. Create Technical Domains Table
 CREATE TABLE IF NOT EXISTS public.domains (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   title TEXT NOT NULL,
@@ -39,7 +47,7 @@ CREATE TABLE IF NOT EXISTS public.domains (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
--- 4. Create Registrations / Student Memberships Table
+-- 5. Create Registrations / Student Memberships Table
 CREATE TABLE IF NOT EXISTS public.registrations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
@@ -53,22 +61,26 @@ CREATE TABLE IF NOT EXISTS public.registrations (
 );
 
 -- Enable Row Level Security (RLS)
+ALTER TABLE public.admin_credentials ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.executive_committee ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.domains ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.registrations ENABLE ROW LEVEL SECURITY;
 
 -- Drop existing policies if any
+DROP POLICY IF EXISTS "Allow read admin_credentials for login" ON public.admin_credentials;
 DROP POLICY IF EXISTS "Public can view events" ON public.events;
 DROP POLICY IF EXISTS "Public can view executive committee" ON public.executive_committee;
 DROP POLICY IF EXISTS "Public can view domains" ON public.domains;
 DROP POLICY IF EXISTS "Anyone can submit registration" ON public.registrations;
+DROP POLICY IF EXISTS "Admins can manage admin_credentials" ON public.admin_credentials;
 DROP POLICY IF EXISTS "Admins can manage events" ON public.events;
 DROP POLICY IF EXISTS "Admins can manage executive committee" ON public.executive_committee;
 DROP POLICY IF EXISTS "Admins can manage domains" ON public.domains;
 DROP POLICY IF EXISTS "Admins can view and manage registrations" ON public.registrations;
 
--- Read policies for public
+-- Read policies for authentication and public display
+CREATE POLICY "Allow read admin_credentials for login" ON public.admin_credentials FOR SELECT USING (true);
 CREATE POLICY "Public can view events" ON public.events FOR SELECT USING (true);
 CREATE POLICY "Public can view executive committee" ON public.executive_committee FOR SELECT USING (true);
 CREATE POLICY "Public can view domains" ON public.domains FOR SELECT USING (true);
@@ -76,7 +88,8 @@ CREATE POLICY "Public can view domains" ON public.domains FOR SELECT USING (true
 -- Anyone can submit membership registration
 CREATE POLICY "Anyone can submit registration" ON public.registrations FOR INSERT WITH CHECK (true);
 
--- Full access for authenticated admins & service/anon role for development
+-- Full write access
+CREATE POLICY "Admins can manage admin_credentials" ON public.admin_credentials FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Admins can manage events" ON public.events FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Admins can manage executive committee" ON public.executive_committee FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Admins can manage domains" ON public.domains FOR ALL USING (true) WITH CHECK (true);
@@ -85,6 +98,13 @@ CREATE POLICY "Admins can view and manage registrations" ON public.registrations
 -- ========================================================
 -- Seed Initial Data
 -- ========================================================
+
+-- Initial Single Admin Credentials
+INSERT INTO public.admin_credentials (id, username, password)
+VALUES 
+  ('primary_admin', 'admin', 'admin123'),
+  ('ieee_admin', 'ieee_admin@rnsit.ac.in', 'IEEE@RNSIT2026')
+ON CONFLICT (id) DO NOTHING;
 
 -- Initial Events
 INSERT INTO public.events (id, title, description, date, month, year, time, venue, category)
@@ -114,4 +134,3 @@ VALUES
   ('domain-5', 'Cloud Computing & DevOps', 'Cloud', 'Master distributed cloud platforms, containerization pipelines, Kubernetes and CI/CD automation.', 'Cloud', '05'),
   ('domain-6', 'Research & Innovation', 'Research', 'Turn novel concepts into IEEE conference papers, verified prototypes and high-impact patents.', 'FlaskConical', '06')
 ON CONFLICT (id) DO NOTHING;
-
