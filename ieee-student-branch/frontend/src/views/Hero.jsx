@@ -1,7 +1,5 @@
 import { ArrowRight, Sparkles, Award, Zap, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import "./Hero.css";
-import rnsitSbLogo from "../assets/rnsit-sb-logo-white.png";
+import Link from "next/link";
 
 function Hero() {
   return (
@@ -60,7 +58,7 @@ function Hero() {
 
             {/* Explore Events */}
             <Link
-              to="/events"
+              href="/events"
               className="group relative flex items-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-[#00629B] to-[#0077B8] px-7 py-3.5 font-semibold text-white shadow-lg shadow-[#00629B]/30 transition-all duration-300 hover:shadow-xl hover:shadow-[#29A9E0]/30 hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>Explore Events</span>
@@ -72,7 +70,7 @@ function Hero() {
 
             {/* Discover IEEE */}
             <Link
-              to="/about"
+              href="/about"
               className="group flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.05] px-7 py-3.5 font-semibold text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-400/40 hover:bg-white/[0.1] hover:shadow-[0_0_20px_rgba(41,169,224,0.2)]"
             >
               <span>Discover IEEE</span>
@@ -126,7 +124,7 @@ function Hero() {
             <div className="glass-card-interactive relative z-10 w-full max-w-lg rounded-3xl border border-white/15 bg-gradient-to-b from-white/[0.08] to-white/[0.02] p-8 shadow-2xl backdrop-blur-2xl">
               <div className="relative flex items-center justify-center rounded-2xl bg-[#071A2B]/70 p-6 border border-white/10 shadow-inner">
                 <img
-                  src={rnsitSbLogo}
+                  src="/assets/rnsit-sb-logo-white.png"
                   alt="IEEE RNSIT Student Branch"
                   className="h-auto w-full max-h-72 object-contain drop-shadow-[0_10px_25px_rgba(0,98,155,0.4)]"
                 />

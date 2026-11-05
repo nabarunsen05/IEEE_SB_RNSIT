@@ -1,7 +1,12 @@
+"use client";
+
 import { useState } from "react";
-import { Sparkles, CheckCircle2, Globe, Award, BookOpen, Send } from "lucide-react";
+import { Sparkles, CheckCircle2, Globe, Award, BookOpen, Send, Phone, Database } from "lucide-react";
+import { useAdmin } from "../context/AdminContext";
 
 function Join() {
+  const { addRegistration, domains, isUsingSupabase } = useAdmin();
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -9,10 +14,14 @@ function Join() {
     branch: "",
     year: "1st Year",
     domain: "Artificial Intelligence",
+    phone: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    await addRegistration(formData);
+    setSubmitting(false);
     setSubmitted(true);
   };
 
@@ -42,6 +51,13 @@ function Join() {
             Step into the world&apos;s largest technical professional organization. Gain access to IEEE Xplore,
             distinguished lecture series, flagship student hackathons, and global peer networks.
           </p>
+
+          {isUsingSupabase && (
+            <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-emerald-400">
+              <Database size={13} />
+              <span>Realtime Cloud Database Active</span>
+            </div>
+          )}
         </div>
 
 
@@ -57,48 +73,42 @@ function Join() {
               Why Join IEEE RNSIT?
             </h2>
 
-            <div className="glass-card-interactive group rounded-3xl border border-white/10 bg-white/[0.035] p-6 backdrop-blur-xl transition-all duration-300 hover:border-[#29A9E0]/40 hover:bg-white/[0.06]">
+            <div className="glass-card rounded-2xl p-6">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-[#00629B]/20 text-[#29A9E0] transition-colors group-hover:bg-[#00629B] group-hover:text-white">
-                  <Globe size={22} />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#00629B]/30 text-[#29A9E0]">
+                  <Globe size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#29A9E0] transition-colors">
-                    Global Recognition & Network
-                  </h3>
-                  <p className="mt-1.5 text-sm leading-6 text-slate-300">
-                    Connect with over 400,000+ technology leaders and researchers across 160 countries in Region 10 and worldwide.
+                  <h3 className="font-semibold text-white">Global IEEE Professional Network</h3>
+                  <p className="mt-1.5 text-sm text-slate-300 leading-relaxed">
+                    Connect directly with over 420,000+ members worldwide, access IEEE Sections, and collaborate across international chapters.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="glass-card-interactive group rounded-3xl border border-white/10 bg-white/[0.035] p-6 backdrop-blur-xl transition-all duration-300 hover:border-[#29A9E0]/40 hover:bg-white/[0.06]">
+            <div className="glass-card rounded-2xl p-6">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-[#00629B]/20 text-[#29A9E0] transition-colors group-hover:bg-[#00629B] group-hover:text-white">
-                  <BookOpen size={22} />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#00629B]/30 text-[#29A9E0]">
+                  <BookOpen size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#29A9E0] transition-colors">
-                    Research & Technical Societies
-                  </h3>
-                  <p className="mt-1.5 text-sm leading-6 text-slate-300">
-                    Direct access to specialized chapters including Computer Society, Robotics & Automation, and WIE with conference subsidies.
+                  <h3 className="font-semibold text-white">Research & Publication Grants</h3>
+                  <p className="mt-1.5 text-sm text-slate-300 leading-relaxed">
+                    Gain exclusive access to IEEE Xplore Digital Library papers, discounts on conference registrations, and guidance for writing research papers.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="glass-card-interactive group rounded-3xl border border-white/10 bg-white/[0.035] p-6 backdrop-blur-xl transition-all duration-300 hover:border-[#29A9E0]/40 hover:bg-white/[0.06]">
+            <div className="glass-card rounded-2xl p-6">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-[#00629B]/20 text-[#29A9E0] transition-colors group-hover:bg-[#00629B] group-hover:text-white">
-                  <Award size={22} />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#00629B]/30 text-[#29A9E0]">
+                  <Award size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#29A9E0] transition-colors">
-                    Leadership & Hackathons
-                  </h3>
-                  <p className="mt-1.5 text-sm leading-6 text-slate-300">
+                  <h3 className="font-semibold text-white">Leadership & Executive Experience</h3>
+                  <p className="mt-1.5 text-sm text-slate-300 leading-relaxed">
                     Lead teams in flagship tech fests, organize international events, and build verifiable credentials for higher studies and careers.
                   </p>
                 </div>
@@ -107,26 +117,33 @@ function Join() {
           </div>
 
 
-          {/* Right Column — Frosted Glass Registration Form */}
-          <div className="glass-panel relative rounded-3xl border border-white/15 bg-gradient-to-b from-[#0A2236]/90 to-[#071A2B]/90 p-8 backdrop-blur-2xl shadow-2xl sm:p-10">
-            {/* Subtle top glare */}
-            <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#29A9E0]/50 to-transparent" />
-
+          {/* Right Column — Membership Registration Glass Form */}
+          <div className="glass-panel rounded-3xl p-8 sm:p-10">
             {submitted ? (
-              <div className="py-12 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-cyan-400/30 bg-[#00629B]/20 text-[#29A9E0] shadow-[0_0_30px_rgba(41,169,224,0.3)] animate-pulse-glow">
-                  <CheckCircle2 size={36} />
+              <div className="py-12 text-center animate-pulse-glow">
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#00629B]/30 text-[#29A9E0] border border-[#29A9E0]/40 shadow-[0_0_30px_rgba(41,169,224,0.3)]">
+                  <CheckCircle2 size={40} />
                 </div>
                 <h3 className="mt-6 text-2xl font-bold text-white">Application Received!</h3>
                 <p className="mt-3 text-slate-300 leading-relaxed">
-                  Thank you, <strong className="text-cyan-300">{formData.name || "Student"}</strong>. Our executive council will reach out to you via <strong className="text-cyan-300">{formData.email || "your email"}</strong> with next steps and orientation details.
+                  Thank you, <strong className="text-cyan-300">{formData.name || "Student"}</strong>. Your membership registration has been stored. Our executive council will reach out to you via <strong className="text-cyan-300">{formData.email || "your email"}</strong> with next steps.
                 </p>
                 <button
                   type="button"
-                  onClick={() => setSubmitted(false)}
+                  onClick={() => {
+                    setSubmitted(false);
+                    setFormData({
+                      name: "",
+                      email: "",
+                      branch: "",
+                      year: "1st Year",
+                      domain: "Artificial Intelligence",
+                      phone: "",
+                    });
+                  }}
                   className="mt-8 rounded-full border border-white/20 bg-white/5 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 hover:border-[#29A9E0]/50"
                 >
-                  Submit Another Response
+                  Submit Another Application
                 </button>
               </div>
             ) : (
@@ -134,13 +151,13 @@ function Join() {
                 <div>
                   <h3 className="text-2xl font-bold text-white">Membership Application</h3>
                   <p className="mt-1 text-sm text-slate-300">
-                    Fill in your details below to begin your IEEE registration.
+                    Fill in your details below to register as a student member.
                   </p>
                 </div>
 
                 <div>
                   <label htmlFor="join-name" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                    Full Name
+                    Full Name *
                   </label>
                   <input
                     id="join-name"
@@ -155,7 +172,7 @@ function Join() {
 
                 <div>
                   <label htmlFor="join-email" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                    College / Personal Email
+                    College / Personal Email *
                   </label>
                   <input
                     id="join-email"
@@ -171,7 +188,7 @@ function Join() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="join-branch" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                      Department / Branch
+                      Department / Branch *
                     </label>
                     <input
                       id="join-branch"
@@ -202,31 +219,71 @@ function Join() {
                   </div>
                 </div>
 
-                <div>
-                  <label htmlFor="join-domain" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                    Primary Domain of Interest
-                  </label>
-                  <select
-                    id="join-domain"
-                    value={formData.domain}
-                    onChange={(e) => setFormData({ ...formData, domain: e.target.value })}
-                    className="glass-input mt-2 w-full rounded-xl px-4 py-3 text-sm text-white [&>option]:bg-[#071A2B] [&>option]:text-white"
-                  >
-                    <option>Artificial Intelligence & Data Science</option>
-                    <option>Web & Mobile App Development</option>
-                    <option>Robotics, IoT & Embedded Systems</option>
-                    <option>Cybersecurity & Ethical Hacking</option>
-                    <option>Cloud Computing & DevOps</option>
-                    <option>Research & Paper Publications</option>
-                  </select>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="join-domain" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                      Domain of Interest
+                    </label>
+                    <select
+                      id="join-domain"
+                      value={formData.domain}
+                      onChange={(e) => setFormData({ ...formData, domain: e.target.value })}
+                      className="glass-input mt-2 w-full rounded-xl px-4 py-3 text-sm text-white [&>option]:bg-[#071A2B] [&>option]:text-white"
+                    >
+                      {domains.length > 0 ? (
+                        domains.map((dom) => (
+                          <option key={dom.id || dom.title} value={dom.title}>
+                            {dom.title}
+                          </option>
+                        ))
+                      ) : (
+                        <>
+                          <option>Artificial Intelligence & Data Science</option>
+                          <option>Web & Mobile App Development</option>
+                          <option>Robotics, IoT & Embedded Systems</option>
+                          <option>Cybersecurity & Ethical Hacking</option>
+                          <option>Cloud Computing & DevOps</option>
+                        </>
+                      )}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="join-phone" className="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+                      Phone Number (Optional)
+                    </label>
+                    <div className="relative mt-2">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                        <Phone size={15} />
+                      </div>
+                      <input
+                        id="join-phone"
+                        type="tel"
+                        placeholder="+91 9876543210"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="glass-input w-full rounded-xl py-3 pl-10 pr-4 text-sm placeholder-slate-500"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="group relative mt-2 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#00629B] to-[#0077B8] px-6 py-3.5 font-semibold text-white shadow-lg shadow-[#00629B]/40 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_25px_rgba(41,169,224,0.45)] active:scale-[0.99]"
+                  disabled={submitting}
+                  className="group relative mt-2 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#00629B] to-[#0077B8] px-6 py-3.5 font-semibold text-white shadow-lg shadow-[#00629B]/40 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_25px_rgba(41,169,224,0.45)] active:scale-[0.99] disabled:opacity-60"
                 >
-                  <Send size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
-                  <span>Submit Membership Request</span>
+                  {submitting ? (
+                    <span className="flex items-center gap-2">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      <span>Registering...</span>
+                    </span>
+                  ) : (
+                    <>
+                      <Send size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+                      <span>Submit Membership Request</span>
+                    </>
+                  )}
                 </button>
 
                 <p className="text-center text-xs text-slate-400 pt-2">

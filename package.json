@@ -1,0 +1,11 @@
+{
+  "name": "ieee-sb-rnsit-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm --prefix ieee-student-branch/frontend run dev",
+    "build": "npm --prefix ieee-student-branch/frontend run build",
+    "start": "npm --prefix ieee-student-branch/frontend run start",
+    "lint": "npm --prefix ieee-student-branch/frontend run lint"
+  }
+}

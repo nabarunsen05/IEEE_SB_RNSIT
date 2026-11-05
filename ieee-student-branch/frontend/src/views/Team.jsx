@@ -1,43 +1,14 @@
+"use client";
+
 import {
   ArrowRight,
   ExternalLink,
   Mail,
   UserRound,
   Sparkles,
+  Users,
 } from "lucide-react";
-
-const executiveCommittee = [
-  {
-    name: "Suhan Ganesh",
-    role: "Student Chair",
-    description:
-      "Leads the IEEE Student Branch and coordinates strategic growth, campus initiatives and chapter activities.",
-  },
-  {
-    name: "Poorvika Nagraj",
-    role: "Student Vice Chair",
-    description:
-      "Oversees technical societies, industry partnerships and core branch operations.",
-  },
-  {
-    name: "Nikhil Nayak",
-    role: "Webmaster",
-    description:
-      "Architects digital platforms, manages the branch web ecosystem and online resources.",
-  },
-  {
-    name: "Bhadrinath G R",
-    role: "Treasurer",
-    description:
-      "Directs budget allocations, financial audits and sponsorship logistics for all major events.",
-  },
-  {
-    name: "prathika P",
-    role: "Secretary",
-    description:
-      "Coordinates executive proceedings, official IEEE communication and regulatory documentation.",
-  },
-];
+import { useAdmin } from "../context/AdminContext";
 
 const operationsTeam = [
   {
@@ -72,6 +43,8 @@ function ProfilePlaceholder() {
 }
 
 function Team() {
+  const { executiveCommittee } = useAdmin();
+
   return (
     <section
       id="team"
@@ -115,66 +88,97 @@ function Team() {
             <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/15" />
 
             <h3 className="text-xs font-bold tracking-[0.2em] text-[#29A9E0]">
-              EXECUTIVE COMMITTEE
+              EXECUTIVE COMMITTEE ({executiveCommittee.length})
             </h3>
 
             <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/15" />
           </div>
 
+          {executiveCommittee.length === 0 ? (
+            <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-12 text-center backdrop-blur-xl">
+              <Users className="mx-auto text-cyan-300" size={48} />
+              <h3 className="mt-4 text-xl font-bold text-white">No Executive Committee Members Listed</h3>
+              <p className="mt-2 text-sm text-slate-300">
+                The administrator will update the new executive committee shortly.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+              {executiveCommittee.map((member) => (
+                <article
+                  key={member.id || member.role}
+                  className="glass-card-interactive group rounded-3xl border border-white/10 bg-white/[0.035] p-6 text-center backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-[#29A9E0]/40 hover:shadow-[0_20px_45px_-15px_rgba(0,98,155,0.35),0_0_25px_rgba(41,169,224,0.18)]"
+                >
 
-            {executiveCommittee.map((member) => (
-              <article
-                key={member.role}
-                className="glass-card-interactive group rounded-3xl border border-white/10 bg-white/[0.035] p-6 text-center backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-[#29A9E0]/40 hover:shadow-[0_20px_45px_-15px_rgba(0,98,155,0.35),0_0_25px_rgba(41,169,224,0.18)]"
-              >
+                  {/* Profile */}
+                  <div className="flex justify-center">
+                    <ProfilePlaceholder />
+                  </div>
 
-                {/* Profile */}
-                <div className="flex justify-center">
-                  <ProfilePlaceholder />
-                </div>
+                  {/* Name */}
+                  <h4 className="mt-6 text-lg font-bold text-white transition-colors duration-200 group-hover:text-[#29A9E0]">
+                    {member.name}
+                  </h4>
 
-                {/* Name */}
-                <h4 className="mt-6 text-lg font-bold text-white transition-colors duration-200 group-hover:text-[#29A9E0]">
-                  {member.name}
-                </h4>
+                  {/* Role */}
+                  <p className="mt-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#29A9E0]">
+                    {member.role}
+                  </p>
 
-                {/* Role */}
-                <p className="mt-1.5 text-xs font-bold uppercase tracking-[0.14em] text-[#29A9E0]">
-                  {member.role}
-                </p>
+                  {/* Description */}
+                  <p className="mt-3 text-sm leading-6 text-slate-300 min-h-[72px]">
+                    {member.description}
+                  </p>
 
-                {/* Description */}
-                <p className="mt-3 text-sm leading-6 text-slate-300 min-h-[72px]">
-                  {member.description}
-                </p>
+                  {/* Social Buttons */}
+                  <div className="mt-5 flex justify-center gap-2 border-t border-white/10 pt-4">
 
-                {/* Social Buttons */}
-                <div className="mt-5 flex justify-center gap-2 border-t border-white/10 pt-4">
+                    {member.linkedin ? (
+                      <a
+                        href={member.linkedin}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`${member.name} LinkedIn`}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-200 hover:border-[#29A9E0] hover:bg-[#00629B] hover:text-white hover:scale-105"
+                      >
+                        <ExternalLink size={14} />
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        aria-label={`${member.name} LinkedIn`}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-200 hover:border-[#29A9E0] hover:bg-[#00629B] hover:text-white hover:scale-105"
+                      >
+                        <ExternalLink size={14} />
+                      </button>
+                    )}
 
-                  <button
-                    type="button"
-                    aria-label={`${member.name} LinkedIn`}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-200 hover:border-[#29A9E0] hover:bg-[#00629B] hover:text-white hover:scale-105"
-                  >
-                    <ExternalLink size={14} />
-                  </button>
+                    {member.email ? (
+                      <a
+                        href={`mailto:${member.email}`}
+                        aria-label={`${member.name} email`}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-200 hover:border-[#29A9E0] hover:bg-[#00629B] hover:text-white hover:scale-105"
+                      >
+                        <Mail size={14} />
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        aria-label={`${member.name} email`}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-200 hover:border-[#29A9E0] hover:bg-[#00629B] hover:text-white hover:scale-105"
+                      >
+                        <Mail size={14} />
+                      </button>
+                    )}
 
-                  <button
-                    type="button"
-                    aria-label={`${member.name} email`}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-200 hover:border-[#29A9E0] hover:bg-[#00629B] hover:text-white hover:scale-105"
-                  >
-                    <Mail size={14} />
-                  </button>
+                  </div>
 
-                </div>
+                </article>
+              ))}
 
-              </article>
-            ))}
-
-          </div>
+            </div>
+          )}
 
         </div>
 

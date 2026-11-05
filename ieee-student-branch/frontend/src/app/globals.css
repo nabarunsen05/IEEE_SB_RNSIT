@@ -1,0 +1,346 @@
+@import "tailwindcss";
+
+/* Global box sizing */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #071A2B;
+  color: #f8fafc;
+  overflow-x: hidden;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: #00629b;
+  color: white;
+}
+
+/* =========================================
+   GLASSMORPHISM & ANIMATION SYSTEM
+   Preserving brand colors:
+   - Primary navy: #071A2B
+   - IEEE Blue: #00629B / #0077B8
+   - Cyan Accent: #29A9E0
+========================================= */
+
+/* Frosted Glass Container / Panel */
+.glass-panel {
+  background: rgba(10, 34, 54, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Frosted Glass Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.065);
+  border-color: rgba(41, 169, 224, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -15px rgba(0, 98, 155, 0.3), 0 0 25px rgba(41, 169, 224, 0.15), inset 0 1px 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* Interactive Card with Shimmer Reflection */
+.glass-card-interactive {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-interactive::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.06) 46%,
+    rgba(41, 169, 224, 0.15) 50%,
+    transparent 58%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.8s ease-in-out;
+  pointer-events: none;
+}
+
+.glass-card-interactive:hover {
+  background: rgba(255, 255, 255, 0.065);
+  border-color: rgba(41, 169, 224, 0.4);
+  transform: translateY(-5px);
+  box-shadow: 0 22px 45px -15px rgba(0, 98, 155, 0.35), 0 0 30px rgba(41, 169, 224, 0.18), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.glass-card-interactive:hover::after {
+  transform: translateX(120%);
+}
+
+/* Frosted Glass Pill / Badge */
+.glass-pill {
+  background: rgba(0, 98, 155, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(41, 169, 224, 0.25);
+  box-shadow: 0 2px 10px rgba(0, 98, 155, 0.2);
+}
+
+/* Glass Form Inputs */
+.glass-input {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.25s ease;
+}
+
+.glass-input:focus {
+  outline: none;
+  border-color: #29A9E0;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 15px rgba(41, 169, 224, 0.25);
+}
+
+/* Keyframe Animations */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1deg);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(-1.5deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* =========================================
+   HERO ATMOSPHERE & BACKGROUNDS
+========================================= */
+.hero-atmosphere {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: auto -20% -25%;
+  height: 75%;
+  background-image:
+    linear-gradient(rgba(41, 169, 224, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(41, 169, 224, 0.09) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(700px) rotateX(60deg);
+  transform-origin: center bottom;
+  opacity: 0.45;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
+  animation: hero-grid-drift 24s linear infinite;
+}
+
+.hero-glow-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.35;
+  animation: hero-glow-pulse 8s ease-in-out infinite alternate;
+}
+
+.hero-glow-blob--blue {
+  top: 15%;
+  left: 10%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, #00629B 0%, rgba(7, 26, 43, 0) 70%);
+}
+
+.hero-glow-blob--cyan {
+  top: 30%;
+  right: 15%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, #29A9E0 0%, rgba(7, 26, 43, 0) 70%);
+  animation-delay: -3s;
+}
+
+.hero-orb {
+  position: absolute;
+  border: 1px solid rgba(41, 169, 224, 0.25);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(41, 169, 224, 0.35), transparent 45%),
+    radial-gradient(circle at 70% 75%, rgba(0, 98, 155, 0.4), rgba(7, 26, 43, 0.1) 75%);
+  box-shadow:
+    inset -15px -18px 30px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(41, 169, 224, 0.2);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.hero-orb--primary {
+  top: 12%;
+  right: 10%;
+  width: clamp(160px, 22vw, 300px);
+  aspect-ratio: 1;
+  animation: hero-orb-float 12s ease-in-out infinite;
+}
+
+.hero-orb--primary::before {
+  position: absolute;
+  inset: -10%;
+  border: 1px dashed rgba(41, 169, 224, 0.3);
+  border-radius: 50%;
+  content: "";
+  transform: rotateX(68deg) rotateZ(-20deg);
+  animation: hero-ring-spin 20s linear infinite;
+}
+
+.hero-orb--secondary {
+  left: 5%;
+  bottom: 18%;
+  width: clamp(50px, 8vw, 90px);
+  aspect-ratio: 1;
+  border-color: rgba(41, 169, 224, 0.3);
+  background: radial-gradient(circle at 35% 30%, rgba(41, 169, 224, 0.45), rgba(0, 98, 155, 0.2) 70%);
+  box-shadow: 0 0 40px rgba(0, 98, 155, 0.3);
+  animation: hero-orb-float 8s ease-in-out -3s infinite reverse;
+}
+
+@keyframes hero-grid-drift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 0 60px, 0 60px;
+  }
+}
+
+@keyframes hero-orb-float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-12px, -20px, 0) rotate(5deg);
+  }
+}
+
+@keyframes hero-ring-spin {
+  from {
+    transform: rotateX(68deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(68deg) rotateZ(360deg);
+  }
+}
+
+@keyframes hero-glow-pulse {
+  0% {
+    opacity: 0.25;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0.45;
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-orb--primary {
+    top: 8%;
+    right: -10%;
+    opacity: 0.5;
+  }
+
+  .hero-orb--secondary {
+    left: -5%;
+    bottom: 12%;
+    opacity: 0.5;
+  }
+
+  .hero-grid {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-grid,
+  .hero-orb,
+  .hero-glow-blob {
+    animation: none;
+    will-change: auto;
+  }
+}
+
