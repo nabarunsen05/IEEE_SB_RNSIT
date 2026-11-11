@@ -25,17 +25,6 @@ function Hero() {
             LEFT SIDE — HERO CONTENT
         ========================== */}
         <div className="relative z-10">
-
-          {/* Small Frosted Glass Label */}
-          <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-cyan-400/30 bg-[#00629B]/15 px-4 py-2 text-sm text-cyan-200 backdrop-blur-md shadow-[0_0_20px_rgba(41,169,224,0.15)]">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#29A9E0] opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#29A9E0]" />
-            </span>
-            <Sparkles size={16} className="text-[#29A9E0]" />
-            <span className="font-medium tracking-wide">IEEE Student Branch</span>
-          </div>
-
           {/* Main Heading */}
           <h1 className="max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
             Innovate.

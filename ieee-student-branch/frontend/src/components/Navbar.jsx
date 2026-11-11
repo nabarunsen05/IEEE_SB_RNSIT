@@ -3,14 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, Sparkles, Shield } from "lucide-react";
-import { useAdmin } from "../context/AdminContext";
+import { Menu, X, Sparkles } from "lucide-react";
 
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
   { name: "Events", href: "/events" },
-  { name: "Projects", href: "/projects" },
   { name: "Domains", href: "/domains" },
   { name: "Team", href: "/team" },
 ];
@@ -18,7 +16,6 @@ const navLinks = [
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { isAuthenticated } = useAdmin();
 
   const isActive = (path) => {
     return pathname === path;
@@ -61,22 +58,6 @@ function Navbar() {
                 </Link>
               );
             })}
-
-            {/* Admin Link in Pill */}
-            <Link
-              href={isAuthenticated ? "/admin" : "/login"}
-              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                isActive("/admin") || isActive("/login")
-                  ? "bg-[#29A9E0]/25 text-[#29A9E0] border border-[#29A9E0]/40 shadow-[0_0_15px_rgba(41,169,224,0.25)]"
-                  : isAuthenticated
-                  ? "text-cyan-300 hover:bg-white/[0.05]"
-                  : "text-slate-400 hover:text-white hover:bg-white/[0.05]"
-              }`}
-              title={isAuthenticated ? "Admin Dashboard" : "Admin Login"}
-            >
-              <Shield size={13} className={isAuthenticated ? "text-[#29A9E0]" : "text-slate-400"} />
-              <span>{isAuthenticated ? "Dashboard" : "Admin"}</span>
-            </Link>
           </div>
 
           {/* Join Us Glass Button */}
@@ -125,20 +106,6 @@ function Navbar() {
                 </Link>
               );
             })}
-
-            {/* Mobile Admin Link */}
-            <Link
-              href={isAuthenticated ? "/admin" : "/login"}
-              onClick={() => setMenuOpen(false)}
-              className={`flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition ${
-                isActive("/admin") || isActive("/login")
-                  ? "border border-[#29A9E0]/30 bg-[#00629B]/25 text-[#29A9E0]"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white"
-              }`}
-            >
-              <Shield size={16} className="text-[#29A9E0]" />
-              <span>{isAuthenticated ? "Admin Dashboard" : "Admin Login"}</span>
-            </Link>
 
             {/* Mobile Join Us */}
             <Link

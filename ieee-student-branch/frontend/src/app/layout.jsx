@@ -1,5 +1,6 @@
 import "./globals.css";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { Providers } from "./providers";
 
 export const metadata = {
@@ -12,14 +13,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-[#071A2B] text-slate-100 antialiased selection:bg-[#00629B] selection:text-white">
+    <html lang="en" data-scroll-behavior="smooth">
+      <body className="min-h-screen bg-[#071A2B] text-slate-100 antialiased selection:bg-[#00629B] selection:text-white flex flex-col justify-between">
         <Providers>
           <Navbar />
-          <main>{children}</main>
+          <main className="flex-1">{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>
   );
 }
-

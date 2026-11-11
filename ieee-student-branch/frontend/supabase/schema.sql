@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS public.executive_committee (
   description TEXT NOT NULL,
   email TEXT,
   linkedin TEXT,
+  image TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 

@@ -20,19 +20,19 @@ const initialEvents = [
     month: "OCT",
     year: "2026",
     time: "10:00 AM",
-    venue: "RNSIT Campus",
+    venue: "RNSIT Main Auditorium",
     category: "WORKSHOP",
   },
   {
     id: "event-2",
-    title: "IEEE Innovation Hackathon",
+    title: "IEEE RNSIT Innovation Hackathon",
     description:
       "Build innovative software and hardware prototypes to solve real-world problems and pitch to seasoned industry judges.",
     date: "22",
     month: "OCT",
     year: "2026",
     time: "9:00 AM",
-    venue: "Innovation Lab",
+    venue: "RNSIT Incubation Center",
     category: "HACKATHON",
   },
   {
@@ -44,7 +44,7 @@ const initialEvents = [
     month: "OCT",
     year: "2026",
     time: "2:00 PM",
-    venue: "Seminar Hall",
+    venue: "RNSIT CSE Seminar Hall",
     category: "TECH TALK",
   },
 ];

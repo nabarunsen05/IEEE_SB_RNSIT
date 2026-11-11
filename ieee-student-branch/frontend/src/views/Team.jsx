@@ -42,6 +42,22 @@ function ProfilePlaceholder() {
   );
 }
 
+function MemberAvatar({ image, name }) {
+  if (image) {
+    return (
+      <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-2 border-[#29A9E0]/50 p-1 shadow-xl transition-all duration-300 group-hover:border-[#29A9E0] group-hover:scale-105 group-hover:shadow-[0_0_25px_rgba(41,169,224,0.45)]">
+        <img
+          src={image}
+          alt={name}
+          className="h-full w-full rounded-full object-cover"
+        />
+        <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-[#071A2B] bg-[#29A9E0]" />
+      </div>
+    );
+  }
+  return <ProfilePlaceholder />;
+}
+
 function Team() {
   const { executiveCommittee } = useAdmin();
 
@@ -113,7 +129,7 @@ function Team() {
 
                   {/* Profile */}
                   <div className="flex justify-center">
-                    <ProfilePlaceholder />
+                    <MemberAvatar image={member.image} name={member.name} />
                   </div>
 
                   {/* Name */}

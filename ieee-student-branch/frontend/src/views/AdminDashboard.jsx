@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import {
   CalendarDays,
@@ -37,6 +37,8 @@ import {
   RefreshCw,
   UserPlus,
   Phone,
+  Camera,
+  Upload,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
@@ -135,7 +137,65 @@ export default function AdminDashboard() {
     description: "",
     email: "",
     linkedin: "",
+    image: "",
   });
+
+  const fileInputRef = useRef(null);
+
+  const handleImageFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      showNotification("Please select a valid image file (PNG, JPG, WEBP).", "error");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        // Resize to max 400x400 to keep base64 payload ultra lightweight (~25-35KB)
+        const maxDim = 400;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          }
+        } else {
+          if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.85);
+
+        setMemberForm((prev) => ({
+          ...prev,
+          image: compressedBase64,
+        }));
+        showNotification("Profile photo attached!");
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = () => {
+    setMemberForm((prev) => ({ ...prev, image: "" }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   // Domain Form State
   const [domainForm, setDomainForm] = useState({
@@ -202,7 +262,11 @@ export default function AdminDashboard() {
       description: "",
       email: "",
       linkedin: "",
+      image: "",
     });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   // Handle Domain Submit
@@ -759,6 +823,74 @@ export default function AdminDashboard() {
                 </p>
 
                 <form onSubmit={handleMemberSubmit} className="mt-6 space-y-4">
+                  {/* Profile Picture Uploader */}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                      Profile Picture (Optional)
+                    </label>
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      className="hidden"
+                      onChange={handleImageFileChange}
+                    />
+
+                    {memberForm.image ? (
+                      <div className="flex items-center gap-4 rounded-2xl border border-[#29A9E0]/30 bg-[#00629B]/10 p-3">
+                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-[#29A9E0] shadow-md shadow-[#29A9E0]/20">
+                          <img
+                            src={memberForm.image}
+                            alt="Preview"
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-emerald-400 flex items-center gap-1.5">
+                            <CheckCircle size={13} /> Photo attached
+                          </p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Optimized for website display</p>
+                          <div className="mt-2 flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="text-xs font-semibold text-[#29A9E0] hover:underline"
+                            >
+                              Change
+                            </button>
+                            <span className="text-slate-600">•</span>
+                            <button
+                              type="button"
+                              onClick={handleRemoveImage}
+                              className="text-xs font-semibold text-rose-400 hover:underline"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        className="group flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed border-white/20 bg-white/[0.02] p-3.5 transition hover:border-[#29A9E0]/60 hover:bg-[#00629B]/10"
+                      >
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-400 transition group-hover:border-[#29A9E0]/50 group-hover:text-[#29A9E0]">
+                          <Camera size={22} />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-white group-hover:text-[#29A9E0] transition-colors">
+                            <Upload size={13} />
+                            <span>Click to upload profile photo</span>
+                          </div>
+                          <p className="mt-0.5 text-[11px] text-slate-400">
+                            JPG, PNG, or WEBP (auto-compressed)
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
                       Full Name *
@@ -884,9 +1016,17 @@ export default function AdminDashboard() {
                         {/* Member Header */}
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 bg-gradient-to-br from-[#00629B] to-[#071A2B] text-cyan-200">
-                              <UserRound size={20} />
-                            </div>
+                            {member.image ? (
+                              <img
+                                src={member.image}
+                                alt={member.name}
+                                className="h-11 w-11 shrink-0 rounded-full object-cover border border-[#29A9E0]/50 shadow-sm"
+                              />
+                            ) : (
+                              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 bg-gradient-to-br from-[#00629B] to-[#071A2B] text-cyan-200">
+                                <UserRound size={20} />
+                              </div>
+                            )}
                             <div>
                               <h4 className="font-bold text-white group-hover:text-[#29A9E0] transition-colors">
                                 {member.name}
