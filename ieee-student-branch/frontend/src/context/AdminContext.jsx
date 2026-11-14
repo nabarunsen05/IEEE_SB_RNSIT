@@ -57,6 +57,7 @@ const initialExecom = [
     role: "Student Chair",
     description:
       "Leads the IEEE Student Branch and coordinates strategic growth, campus initiatives and chapter activities.",
+    image: "/assets/team/suhan-ganesh.jpeg",
     email: "suhan@ieee.org",
     linkedin: "https://linkedin.com",
   },
@@ -66,6 +67,7 @@ const initialExecom = [
     role: "Student Vice Chair",
     description:
       "Oversees technical societies, industry partnerships and core branch operations.",
+    image: "/assets/team/poorvika-nagraj.png",
     email: "poorvika@ieee.org",
     linkedin: "https://linkedin.com",
   },
@@ -75,6 +77,7 @@ const initialExecom = [
     role: "Webmaster",
     description:
       "Architects digital platforms, manages the branch web ecosystem and online resources.",
+    image: "/assets/team/nikhil-nayak.png",
     email: "nikhil@ieee.org",
     linkedin: "https://linkedin.com",
   },
@@ -84,6 +87,7 @@ const initialExecom = [
     role: "Treasurer",
     description:
       "Directs budget allocations, financial audits and sponsorship logistics for all major events.",
+    image: "/assets/team/bhadrinath-g-r.jpeg",
     email: "bhadrinath@ieee.org",
     linkedin: "https://linkedin.com",
   },

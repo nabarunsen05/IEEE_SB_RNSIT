@@ -184,11 +184,11 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/domains"
+                  href="/societies"
                   className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
                 >
                   <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
-                  <span>Technical Domains</span>
+                  <span>IEEE Societies</span>
                 </Link>
               </li>
               <li>
@@ -214,66 +214,66 @@ export default function Footer() {
 
 
           {/* =========================================
-              COLUMN 3: TECHNICAL TRACKS & DOMAINS
+              COLUMN 3:               IEEE SOCIETIES
           ========================================== */}
           <div className="space-y-4">
             <h4 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />
-              Technical Domains
+              IEEE Societies
             </h4>
 
             <ul className="space-y-3 text-sm">
               <li>
                 <Link
-                  href="/domains/artificial-intelligence"
+                  href="/societies"
                   className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
                 >
-                  <span>Artificial Intelligence & ML</span>
+                  <span>View all IEEE Societies</span>
                   <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/domains/web-app-development"
+                  href="/societies"
                   className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
                 >
-                  <span>Web & Mobile Development</span>
+                  <span>Society Chapters at RNSIT</span>
                   <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/domains/robotics-iot"
+                  href="/societies"
                   className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
                 >
-                  <span>Robotics & Embedded IoT</span>
+                  <span>Department-wise chapters</span>
                   <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/domains/cybersecurity-networks"
+                  href="/societies"
                   className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
                 >
-                  <span>Cybersecurity & Networks</span>
+                  <span>Faculty advisors</span>
                   <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/domains/cloud-computing-devops"
+                  href="/societies"
                   className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
                 >
-                  <span>Cloud Computing & DevOps</span>
+                  <span>Explore the societies</span>
                   <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/domains/research-innovation"
+                  href="/societies"
                   className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
                 >
-                  <span>Research & Publications</span>
+                  <span>Join IEEE SB RNSIT</span>
                   <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               </li>

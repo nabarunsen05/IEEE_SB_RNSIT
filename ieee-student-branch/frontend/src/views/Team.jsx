@@ -129,7 +129,21 @@ function Team() {
 
                   {/* Profile */}
                   <div className="flex justify-center">
-                    <MemberAvatar image={member.image} name={member.name} />
+                    <MemberAvatar
+                      image={
+                        member.image ||
+                        member.name === "Bhadrinath G R"
+                          ? "/assets/team/bhadrinath-g-r.jpeg"
+                          : member.name === "Suhan Ganesh"
+                            ? "/assets/team/suhan-ganesh.jpeg"
+                            : member.name === "Nikhil Nayak"
+                              ? "/assets/team/nikhil-nayak.png"
+                              : member.name === "Poorvika Nagraj"
+                                ? "/assets/team/poorvika-nagraj.png"
+                            : undefined
+                      }
+                      name={member.name}
+                    />
                   </div>
 
                   {/* Name */}

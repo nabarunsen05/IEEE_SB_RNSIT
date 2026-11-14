@@ -425,12 +425,12 @@ export default function AdminDashboard() {
               </Link>
 
               <Link
-                href="/domains"
+                href="/societies"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2 text-xs font-medium text-slate-700 transition hover:bg-[#F1F5F9] hover:text-[#00629B]"
               >
-                <span>Live Domains</span>
+                <span>Live Societies</span>
                 <ExternalLink size={13} />
               </Link>
 
