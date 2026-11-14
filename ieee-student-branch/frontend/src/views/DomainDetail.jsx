@@ -35,6 +35,27 @@ const DOMAIN_ICONS = {
   Layers,
 };
 
+const DOMAIN_IMAGES = [
+  { match: ["artificial intelligence", "machine learning", "ai & ml"], src: "/assets/domains/artificial-intelligence.webp", alt: "AI brain and microchip illustration" },
+  { match: ["web", "app development", "mobile development"], src: "/assets/domains/web-app-development.webp", alt: "Web and mobile development illustration" },
+  { match: ["robotics", "iot", "embedded"], src: "/assets/domains/robotics-iot.webp", alt: "Robotics and Internet of Things illustration" },
+  { match: ["cybersecurity", "security", "networks"], src: "/assets/domains/cybersecurity.webp", alt: "Cybersecurity illustration" },
+  { match: ["cloud", "devops"], src: "/assets/domains/cloud-devops.webp", alt: "Cloud computing and DevOps illustration" },
+  { match: ["research", "publication", "innovation"], src: "/assets/domains/research-innovation.webp", alt: "Research and innovation illustration" },
+];
+
+function getDomainImage(domain) {
+  const searchable = [domain?.title, domain?.shortTitle, domain?.slug, domain?.abbreviation]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return DOMAIN_IMAGES.find((item) =>
+    item.match.some((keyword) => searchable.includes(keyword))
+  );
+}
+
+
 export default function DomainDetail({ slug }) {
   const { domains } = useAdmin();
   const domain = getDomainDetail(slug, domains);
@@ -89,11 +110,21 @@ export default function DomainDetail({ slug }) {
             <span>All technical domains</span>
           </Link>
 
-          {/* Chapter Logo Box & Abbreviation Pill */}
+          {/* Domain illustration & Abbreviation Pill */}
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <span className="flex h-14 w-28 items-center justify-center rounded-2xl bg-white/10 p-2 border border-[#DCE5EC] backdrop-blur-md shadow-md text-[#00629B]">
-              <Icon size={32} strokeWidth={1.75} />
-            </span>
+            <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-[#DCE5EC] bg-[#071B3D] shadow-md sm:h-24 sm:w-24">
+              {getDomainImage(domain) ? (
+                <img
+                  src={getDomainImage(domain).src}
+                  alt={getDomainImage(domain).alt}
+                  className="h-full w-full scale-110 object-cover object-center"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-[#29A9E0]">
+                  <Icon size={38} strokeWidth={1.75} />
+                </div>
+              )}
+            </div>
             <span className="rounded-full border border-[#00629B]/20 bg-[#E6F4FB] px-3.5 py-1 text-xs font-bold tracking-wider text-[#00629B] backdrop-blur-md uppercase">
               {domain.abbreviation || "IEEE Track"}
             </span>

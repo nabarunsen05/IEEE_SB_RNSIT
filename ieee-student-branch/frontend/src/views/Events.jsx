@@ -225,7 +225,7 @@ function Events() {
                         </span>
                       </div>
 
-                      <div className="text-xs font-medium tracking-wider text-[#526477]">
+                      <div className="text-xs font-semibold tracking-wider text-white drop-shadow-sm">
                         YEAR {event.year}
                       </div>
                     </div>
@@ -236,7 +236,7 @@ function Events() {
                   {/* Event Content */}
                   <div className="p-6">
 
-                    <h3 className="text-xl font-bold leading-snug text-white transition-colors duration-200 group-hover:text-[#00629B]">
+                    <h3 className="text-xl font-bold leading-snug text-[#10243A] transition-colors duration-200 group-hover:text-[#00629B]">
                       {event.title}
                     </h3>
 

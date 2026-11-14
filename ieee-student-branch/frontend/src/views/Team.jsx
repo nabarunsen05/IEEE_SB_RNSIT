@@ -133,7 +133,7 @@ function Team() {
                   </div>
 
                   {/* Name */}
-                  <h4 className="mt-6 text-lg font-bold text-white transition-colors duration-200 group-hover:text-[#00629B]">
+                  <h4 className="mt-6 text-lg font-bold text-[#10243A] transition-colors duration-200 group-hover:text-[#00629B]">
                     {member.name}
                   </h4>
 

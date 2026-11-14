@@ -27,6 +27,26 @@ import {
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
+const DOMAIN_IMAGES = [
+  { match: ["artificial intelligence", "machine learning", "ai & ml"], src: "/assets/domains/artificial-intelligence.webp", alt: "Circuit brain and AI chip" },
+  { match: ["web", "app development", "mobile development"], src: "/assets/domains/web-app-development.webp", alt: "Laptop and smartphone with code" },
+  { match: ["robotics", "iot", "embedded"], src: "/assets/domains/robotics-iot.webp", alt: "Robot and connected IoT devices" },
+  { match: ["cybersecurity", "security", "networks"], src: "/assets/domains/cybersecurity.webp", alt: "Cybersecurity shield and padlock" },
+  { match: ["cloud", "devops"], src: "/assets/domains/cloud-devops.webp", alt: "Cloud servers and DevOps infinity loop" },
+  { match: ["research", "publication", "innovation"], src: "/assets/domains/research-innovation.webp", alt: "Microscope and research analytics" },
+];
+
+function getDomainImage(domain) {
+  const searchable = [domain.title, domain.shortTitle, domain.slug]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return DOMAIN_IMAGES.find((item) =>
+    item.match.some((keyword) => searchable.includes(keyword))
+  );
+}
+
 const DOMAIN_ICONS = {
   BrainCircuit,
   Cpu,
@@ -134,9 +154,20 @@ function Domains() {
                     </div>
 
 
-                    {/* Icon with glowing backdrop */}
-                    <div className="mt-7 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#DCE5EC] bg-[#00629B]/20 text-[#00629B] transition-all duration-300 group-hover:scale-110 group-hover:border-[#00629B]/30 group-hover:bg-[#00629B] group-hover:text-white group-hover:shadow-[0_0_20px_rgba(41,169,224,0.4)]">
-                      <Icon size={28} />
+                    {/* Domain-specific illustrated image */}
+                    <div className="mt-7 h-28 w-28 overflow-hidden rounded-2xl border border-[#DCE5EC] bg-[#071B3D] shadow-[0_8px_22px_rgba(16,36,58,0.14)] transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-[1.04] group-hover:shadow-[0_14px_28px_rgba(0,98,155,0.22)] sm:h-32 sm:w-32">
+                      {getDomainImage(domain) ? (
+                        <img
+                          src={getDomainImage(domain).src}
+                          alt={getDomainImage(domain).alt}
+                          loading="lazy"
+                          className="h-full w-full scale-110 object-cover object-center transition-transform duration-500 group-hover:scale-[1.16]"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-[#29A9E0]">
+                          <Icon size={42} strokeWidth={1.8} />
+                        </div>
+                      )}
                     </div>
 
 

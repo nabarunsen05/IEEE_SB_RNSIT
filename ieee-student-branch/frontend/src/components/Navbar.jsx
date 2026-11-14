@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X, Sparkles } from "lucide-react";
 
 const navLinks = [
@@ -17,6 +17,11 @@ const navLinks = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  // Close the mobile menu after route navigation.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-xl">
@@ -82,9 +87,10 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setMenuOpen((open) => !open)}
-          className="rounded-lg p-2 text-slate-800 transition hover:bg-slate-100 md:hidden"
+          className="relative z-[60] inline-flex min-h-11 min-w-11 touch-manipulation items-center justify-center rounded-lg p-2 text-slate-800 transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00629B] md:hidden"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -92,7 +98,7 @@ export default function Navbar() {
 
       {/* Mobile Navigation Dropdown */}
       {menuOpen && (
-        <div className="border-t border-slate-200 bg-white px-6 py-5 shadow-xl md:hidden">
+        <div id="mobile-navigation" className="absolute left-0 right-0 top-full z-[55] max-h-[calc(100dvh-82px)] overflow-y-auto border-t border-slate-200 bg-white px-6 py-5 shadow-xl md:hidden">
           <div className="flex flex-col gap-2">
             {navLinks.map((link) => {
               const active = pathname === link.href;
