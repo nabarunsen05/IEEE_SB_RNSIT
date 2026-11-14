@@ -58,7 +58,7 @@ function Events() {
   return (
     <section
       id="events"
-      className="relative min-h-screen overflow-hidden bg-[#071A2B] pt-28 pb-24 sm:pt-32 sm:pb-28"
+      className="relative min-h-screen overflow-hidden bg-[#F4F7FA] pt-28 pb-24 sm:pt-32 sm:pb-28"
     >
       {/* Background glowing decorations */}
       <div className="pointer-events-none absolute -left-40 top-20 h-96 w-96 rounded-full bg-[#00629B]/15 blur-3xl animate-pulse-glow" />
@@ -72,17 +72,17 @@ function Events() {
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
 
           <div>
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#29A9E0]/30 bg-[#00629B]/15 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#29A9E0] backdrop-blur-md">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00629B]/15 bg-[#E6F4FB] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <Sparkles size={14} />
               <span>RNSIT Campus Events & Activities</span>
             </div>
 
-            <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl">
+            <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl">
               Learn. Connect.
-              <span className="bg-gradient-to-r from-[#29A9E0] to-cyan-300 bg-clip-text text-transparent"> Experience at RNSIT.</span>
+              <span className="text-[#00629B]"> Experience at RNSIT.</span>
             </h2>
 
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-[#526477]">
               Explore hands-on technical workshops, inter-collegiate hackathons, distinguished expert lectures, and
               annual flagship symposiums organized by the IEEE Student Branch at R.N.S. Institute of Technology, Bengaluru.
             </p>
@@ -92,7 +92,7 @@ function Events() {
           <button
             type="button"
             onClick={handleViewAll}
-            className="group inline-flex shrink-0 items-center gap-2.5 rounded-full border border-[#29A9E0]/30 bg-[#00629B]/20 px-6 py-3 font-semibold text-[#29A9E0] backdrop-blur-md transition-all duration-300 hover:border-[#29A9E0]/60 hover:bg-[#00629B] hover:text-white hover:shadow-[0_0_20px_rgba(41,169,224,0.3)]"
+            className="group inline-flex shrink-0 items-center gap-2.5 rounded-full border border-[#10243A]/15 bg-white px-6 py-3 font-semibold text-[#10243A] shadow-sm transition-all duration-300 hover:border-[#00629B]/30 hover:bg-[#E6F4FB] hover:text-[#00629B]"
           >
             <span>View all events ({events.length})</span>
             <ArrowRight
@@ -107,12 +107,12 @@ function Events() {
         {/* =========================================
             INTERACTIVE FILTER & SEARCH BAR
         ========================================== */}
-        <div className="mt-12 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-4 rounded-2xl border border-[#DCE5EC] bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
 
           {/* Category Filter Pills */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="mr-1 hidden items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-400 sm:inline-flex">
-              <Filter size={14} className="text-[#29A9E0]" />
+            <span className="mr-1 hidden items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#647588] sm:inline-flex">
+              <Filter size={14} className="text-[#00629B]" />
               <span>Filter:</span>
             </span>
 
@@ -131,13 +131,13 @@ function Events() {
                   onClick={() => setSelectedCategory(cat)}
                   className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
                     isSelected
-                      ? "bg-[#29A9E0] text-[#071A2B] shadow-md shadow-cyan-500/20"
-                      : "border border-white/10 bg-white/[0.04] text-slate-300 hover:border-white/20 hover:text-white"
+                      ? "bg-[#00629B] text-white shadow-md shadow-[#00629B]/20"
+                      : "border border-white/20 bg-white/[0.04] text-[#526477] hover:border-white/20 hover:text-[#10243A]"
                   }`}
                 >
                   <span>{cat}</span>
                   <span className={`ml-1.5 rounded-full px-1.5 py-0.2 text-[10px] ${
-                    isSelected ? "bg-black/20 text-[#071A2B]" : "bg-white/10 text-slate-400"
+                    isSelected ? "bg-white/20 text-white" : "bg-[#E6F4FB] text-[#526477]"
                   }`}>
                     {count}
                   </span>
@@ -148,19 +148,19 @@ function Events() {
 
           {/* Search Input */}
           <div className="relative w-full sm:w-64">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#647588]" />
             <input
               type="text"
               placeholder="Search events..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/[0.04] pl-9 pr-8 py-2 text-xs text-white placeholder-slate-400 focus:border-[#29A9E0] focus:outline-none"
+              className="w-full rounded-xl border border-[#DCE5EC] bg-white pl-9 pr-8 py-2 text-xs text-[#10243A] placeholder-[#8190A0] focus:border-[#00629B] focus:outline-none focus:ring-2 focus:ring-[#00629B]/10"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#647588] hover:text-[#10243A]"
               >
                 <X size={14} />
               </button>
@@ -175,10 +175,10 @@ function Events() {
         ========================== */}
         <div id="events-grid">
           {filteredEvents.length === 0 ? (
-            <div className="mt-12 rounded-3xl border border-white/10 bg-white/[0.035] p-12 text-center backdrop-blur-xl">
-              <Layers className="mx-auto text-cyan-300" size={44} />
-              <h3 className="mt-4 text-xl font-bold text-white">No Matching Events Found</h3>
-              <p className="mt-2 text-sm text-slate-300">
+            <div className="mt-12 rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
+              <Layers className="mx-auto text-[#00629B]" size={44} />
+              <h3 className="mt-4 text-xl font-bold text-[#10243A]">No Matching Events Found</h3>
+              <p className="mt-2 text-sm text-[#526477]">
                 {searchQuery || selectedCategory !== "ALL"
                   ? "No events match the selected filter or search keyword."
                   : "Check back soon for new workshops, technical competitions, and hackathons."}
@@ -187,7 +187,7 @@ function Events() {
                 <button
                   type="button"
                   onClick={handleViewAll}
-                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] to-[#0077B8] px-5 py-2.5 text-xs font-semibold text-white shadow-md hover:scale-105 transition"
+                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#00629B] px-5 py-2.5 text-xs font-semibold text-white shadow-md hover:scale-105 transition"
                 >
                   <span>Reset Filters & View All</span>
                 </button>
@@ -198,26 +198,26 @@ function Events() {
               {filteredEvents.map((event) => (
                 <article
                   key={event.id}
-                  className="glass-card-interactive group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035] backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-[#29A9E0]/40 hover:shadow-[0_25px_50px_-15px_rgba(0,0,0,0.6),0_0_30px_rgba(41,169,224,0.18)]"
+                  className="group overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_8px_24px_rgba(16,36,58,0.06)] transition-all duration-300 hover:-translate-y-2 hover:border-[#00629B]/25 hover:shadow-[0_20px_40px_rgba(16,36,58,0.12)]"
                 >
 
                   {/* Event Visual Header */}
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-[#00629B]/80 via-[#0A2E4E]/90 to-[#071A2B] p-6">
+                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-[#00629B] via-[#0877AE] to-[#10243A] p-6">
 
                     {/* Decorative rotating background circles */}
-                    <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full border border-white/15 animate-float-slow" />
-                    <div className="absolute -bottom-16 -left-8 h-44 w-44 rounded-full border border-white/10 animate-float-reverse" />
+                    <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full border border-white/25 animate-float-slow" />
+                    <div className="absolute -bottom-16 -left-8 h-44 w-44 rounded-full border border-white/20 animate-float-reverse" />
 
                     {/* Category Pill */}
-                    <div className="relative z-10 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-xs font-semibold tracking-wider text-white backdrop-blur-md shadow-sm">
+                    <div className="relative z-10 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/15 px-3.5 py-1 text-xs font-semibold tracking-wider text-white backdrop-blur-md shadow-sm">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />
                       <span>{event.category}</span>
                     </div>
 
                     {/* Date Display */}
                     <div className="absolute bottom-5 left-6 z-10 flex items-center gap-3">
-                      <div className="flex h-14 w-14 flex-col items-center justify-center rounded-2xl border border-white/20 bg-[#071A2B]/85 text-white backdrop-blur-md shadow-lg group-hover:border-[#29A9E0]/60 transition-colors">
-                        <span className="text-xl font-bold leading-none text-white">
+                      <div className="flex h-14 w-14 flex-col items-center justify-center rounded-2xl border border-[#DCE5EC] bg-white text-[#10243A] shadow-md transition-colors group-hover:border-[#00629B]/40">
+                        <span className="text-xl font-bold leading-none text-[#10243A]">
                           {event.date}
                         </span>
                         <span className="mt-1 text-[11px] font-bold tracking-wide text-[#29A9E0]">
@@ -225,7 +225,7 @@ function Events() {
                         </span>
                       </div>
 
-                      <div className="text-xs font-medium tracking-wider text-slate-300">
+                      <div className="text-xs font-medium tracking-wider text-[#526477]">
                         YEAR {event.year}
                       </div>
                     </div>
@@ -236,38 +236,38 @@ function Events() {
                   {/* Event Content */}
                   <div className="p-6">
 
-                    <h3 className="text-xl font-bold leading-snug text-white transition-colors duration-200 group-hover:text-[#29A9E0]">
+                    <h3 className="text-xl font-bold leading-snug text-white transition-colors duration-200 group-hover:text-[#00629B]">
                       {event.title}
                     </h3>
 
-                    <p className="mt-3 text-sm leading-6 text-slate-300">
+                    <p className="mt-3 text-sm leading-6 text-[#526477]">
                       {event.description}
                     </p>
 
 
                     {/* Event details */}
-                    <div className="mt-5 space-y-2.5 border-t border-white/10 pt-5">
+                    <div className="mt-5 space-y-2.5 border-t border-[#DCE5EC] pt-5">
 
-                      <div className="flex items-center gap-3 text-sm text-slate-300">
+                      <div className="flex items-center gap-3 text-sm text-[#526477]">
                         <CalendarDays
                           size={16}
-                          className="text-[#29A9E0] shrink-0"
+                          className="text-[#00629B] shrink-0"
                         />
                         <span>{event.date} {event.month} {event.year}</span>
                       </div>
 
-                      <div className="flex items-center gap-3 text-sm text-slate-300">
+                      <div className="flex items-center gap-3 text-sm text-[#526477]">
                         <Clock
                           size={16}
-                          className="text-[#29A9E0] shrink-0"
+                          className="text-[#00629B] shrink-0"
                         />
                         <span>{event.time}</span>
                       </div>
 
-                      <div className="flex items-center gap-3 text-sm text-slate-300">
+                      <div className="flex items-center gap-3 text-sm text-[#526477]">
                         <MapPin
                           size={16}
-                          className="text-[#29A9E0] shrink-0"
+                          className="text-[#00629B] shrink-0"
                         />
                         <span>{event.venue}</span>
                       </div>
@@ -278,7 +278,7 @@ function Events() {
                     {/* Register button linking to /join */}
                     <Link
                       href="/join"
-                      className="group/btn mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00629B] to-[#0077B8] px-5 py-3 font-semibold text-white shadow-md transition-all duration-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.4)] hover:scale-[1.01] active:scale-[0.99]"
+                      className="group/btn mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#10243A] px-5 py-3 font-semibold text-white shadow-md transition-all duration-300 hover:bg-[#1A3856] hover:shadow-lg hover:scale-[1.01] active:scale-[0.99]"
                     >
                       <span>Register for Event</span>
                       <ArrowRight

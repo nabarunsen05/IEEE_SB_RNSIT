@@ -60,23 +60,23 @@ export default function Login() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#071A2B] px-4 py-24 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#F3F7FA] px-4 py-24 sm:px-6 lg:px-8">
       {/* Background Glowing Orbs */}
-      <div className="pointer-events-none absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-[#00629B]/20 blur-3xl animate-pulse-glow" />
-      <div className="pointer-events-none absolute -right-32 bottom-1/4 h-96 w-96 rounded-full bg-[#29A9E0]/15 blur-3xl animate-pulse-glow" />
+      <div className="pointer-events-none absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-[#E6F4FB] blur-3xl animate-pulse-glow" />
+      <div className="pointer-events-none absolute -right-32 bottom-1/4 h-96 w-96 rounded-full bg-[#E6F4FB] blur-3xl animate-pulse-glow" />
 
       <div className="relative w-full max-w-md">
         {/* If Already Logged In */}
         {isAuthenticated ? (
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-2xl shadow-2xl text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-[#29A9E0]/40 bg-[#00629B]/20 text-[#29A9E0] shadow-[0_0_25px_rgba(41,169,224,0.3)]">
+          <div className="rounded-3xl border border-[#DCE6EF] bg-white p-8 backdrop-blur-2xl shadow-[0_18px_55px_rgba(16,36,58,0.10)] text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-[#A8D8EF] bg-[#E6F4FB] text-[#00629B] shadow-[0_0_25px_rgba(41,169,224,0.3)]">
               <ShieldCheck size={36} />
             </div>
 
-            <h2 className="mt-5 text-2xl font-bold text-white">
+            <h2 className="mt-5 text-2xl font-bold text-[#10243A]">
               Already Authenticated
             </h2>
-            <p className="mt-2 text-sm text-slate-300">
+            <p className="mt-2 text-sm text-slate-600">
               You are currently logged in as the Administrator with full permissions to manage events and executive committee members.
             </p>
 
@@ -91,7 +91,7 @@ export default function Login() {
 
               <button
                 onClick={() => logout()}
-                className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 font-medium text-slate-300 transition hover:bg-white/[0.08] hover:text-white"
+                className="flex items-center justify-center gap-2 rounded-xl border border-[#DCE6EF] bg-white px-5 py-3 font-medium text-slate-600 transition hover:bg-[#F1F5F9] hover:text-[#10243A]"
               >
                 <LogOut size={16} />
                 <span>Log Out</span>
@@ -100,25 +100,25 @@ export default function Login() {
           </div>
         ) : (
           /* Login Form */
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-2xl shadow-2xl">
+          <div className="rounded-3xl border border-[#DCE6EF] bg-white p-8 backdrop-blur-2xl shadow-[0_18px_55px_rgba(16,36,58,0.10)]">
             {/* Header */}
             <div className="text-center">
-              <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-[#29A9E0]/30 bg-[#00629B]/20 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#29A9E0] backdrop-blur-md">
+              <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-[#B8DCEC] bg-[#E6F4FB] px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#00629B] backdrop-blur-md">
                 <Sparkles size={13} />
                 <span>Executive Control Portal</span>
               </div>
 
-              <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-white">
+              <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243A]">
                 Admin <span className="bg-gradient-to-r from-[#29A9E0] to-cyan-300 bg-clip-text text-transparent">Login</span>
               </h1>
-              <p className="mt-2 text-xs sm:text-sm text-slate-300">
+              <p className="mt-2 text-xs sm:text-sm text-slate-600">
                 Sign in to manage upcoming events, committee members, and domains.
               </p>
             </div>
 
             {/* Error Message */}
             {error && (
-              <div className="mt-6 flex items-center gap-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-sm text-rose-300 backdrop-blur-md">
+              <div className="mt-6 flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-700 backdrop-blur-md">
                 <AlertCircle size={18} className="shrink-0 text-rose-400" />
                 <span>{error}</span>
               </div>
@@ -128,11 +128,11 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               {/* User ID */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                   User ID
                 </label>
                 <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
                     <User size={18} />
                   </div>
                   <input
@@ -141,18 +141,18 @@ export default function Login() {
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
                     placeholder="Enter admin user ID"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.05] py-3 pl-10 pr-4 text-sm text-white placeholder-slate-400 transition focus:border-[#29A9E0] focus:bg-[#071A2B]/80 focus:outline-none focus:ring-2 focus:ring-[#29A9E0]/20"
+                    className="w-full rounded-xl border border-[#DCE6EF] bg-white py-3 pl-10 pr-4 text-sm text-[#10243A] placeholder-slate-400 transition focus:border-[#29A9E0] focus:bg-[#F3F7FA]/80 focus:outline-none focus:ring-2 focus:ring-[#29A9E0]/20"
                   />
                 </div>
               </div>
 
               {/* Password */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
                   Password
                 </label>
                 <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
                     <Lock size={18} />
                   </div>
                   <input
@@ -161,12 +161,12 @@ export default function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password"
-                    className="w-full rounded-xl border border-white/10 bg-white/[0.05] py-3 pl-10 pr-10 text-sm text-white placeholder-slate-400 transition focus:border-[#29A9E0] focus:bg-[#071A2B]/80 focus:outline-none focus:ring-2 focus:ring-[#29A9E0]/20"
+                    className="w-full rounded-xl border border-[#DCE6EF] bg-white py-3 pl-10 pr-10 text-sm text-[#10243A] placeholder-slate-400 transition focus:border-[#29A9E0] focus:bg-[#F3F7FA]/80 focus:outline-none focus:ring-2 focus:ring-[#29A9E0]/20"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-white"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 hover:text-[#10243A]"
                     aria-label="Toggle password visibility"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -198,28 +198,28 @@ export default function Login() {
             </form>
 
             {/* Quick Demo Credentials Box */}
-            <div className="mt-6 rounded-2xl border border-[#29A9E0]/20 bg-[#00629B]/10 p-3.5 text-xs text-slate-300">
+            <div className="mt-6 rounded-2xl border border-[#29A9E0]/20 bg-[#F0F8FC] p-3.5 text-xs text-slate-600">
               <div className="flex items-center justify-between">
-                <span className="flex items-center gap-1.5 font-semibold text-[#29A9E0]">
+                <span className="flex items-center gap-1.5 font-semibold text-[#00629B]">
                   <KeyRound size={14} />
                   <span>Admin Credentials:</span>
                 </span>
                 <button
                   type="button"
                   onClick={handleUseDemoCredentials}
-                  className="rounded-lg bg-[#29A9E0]/15 px-2 py-1 text-[11px] font-semibold text-cyan-300 transition hover:bg-[#29A9E0]/30"
+                  className="rounded-lg bg-[#E6F4FB] px-2 py-1 text-[11px] font-semibold text-[#00629B] transition hover:bg-[#29A9E0]/30"
                 >
                   Auto-fill
                 </button>
               </div>
-              <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-300">
-                <div className="rounded-md bg-white/[0.04] p-1.5 border border-white/5">
-                  <span className="text-slate-400">User: </span>
-                  <span className="text-white font-bold">{adminCredentials.userId}</span>
+              <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-600">
+                <div className="rounded-md bg-white p-1.5 border border-[#E6EDF3]">
+                  <span className="text-slate-500">User: </span>
+                  <span className="text-[#10243A] font-bold">{adminCredentials.userId}</span>
                 </div>
-                <div className="rounded-md bg-white/[0.04] p-1.5 border border-white/5">
-                  <span className="text-slate-400">Pass: </span>
-                  <span className="text-white font-bold">{adminCredentials.password}</span>
+                <div className="rounded-md bg-white p-1.5 border border-[#E6EDF3]">
+                  <span className="text-slate-500">Pass: </span>
+                  <span className="text-[#10243A] font-bold">{adminCredentials.password}</span>
                 </div>
               </div>
             </div>
@@ -228,7 +228,7 @@ export default function Login() {
             <div className="mt-6 text-center">
               <Link
                 href="/"
-                className="text-xs text-slate-400 transition hover:text-[#29A9E0]"
+                className="text-xs text-slate-500 transition hover:text-[#00629B]"
               >
                 ← Return to Public Website
               </Link>

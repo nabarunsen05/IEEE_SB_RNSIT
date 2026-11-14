@@ -71,7 +71,7 @@ export default function Navbar() {
           {/* Orange Join Us Button */}
           <Link
             href="/join"
-            className="flex shrink-0 items-center gap-1.5 rounded-full bg-[#F26522] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-[#E65312] active:scale-95"
+            className="flex shrink-0 items-center gap-1.5 rounded-full bg-[#10243A] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-[#1A3856] active:scale-95"
           >
             <Sparkles size={15} />
             <span>Join Us</span>
@@ -117,7 +117,7 @@ export default function Navbar() {
             <Link
               href="/join"
               onClick={() => setMenuOpen(false)}
-              className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#F26522] px-5 py-3 font-semibold text-white shadow-md transition hover:bg-[#E65312]"
+              className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#10243A] px-5 py-3 font-semibold text-white shadow-md transition hover:bg-[#1A3856]"
             >
               <Sparkles size={16} />
               <span>Join Us</span>

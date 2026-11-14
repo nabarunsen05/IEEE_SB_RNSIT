@@ -55,14 +55,14 @@ function LinkedinIcon({ size = 20, className = "" }) {
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/10 bg-[#071A2B] text-slate-300 overflow-hidden">
+    <footer className="relative z-10 isolate overflow-hidden border-t border-slate-200 bg-[#071A2B] text-slate-300">
       {/* Background ambient lighting */}
       <div className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-y-1/2 rounded-full bg-[#00629B]/15 blur-3xl" />
       <div className="pointer-events-none absolute right-10 bottom-0 h-80 w-80 rounded-full bg-[#29A9E0]/10 blur-3xl" />
 
       {/* Main Footer Container */}
-      <div className="relative mx-auto max-w-7xl px-6 pt-16 pb-12 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-14 pb-10 sm:px-8 sm:pt-16 sm:pb-12 lg:px-12">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-12 lg:grid-cols-4 lg:gap-10">
 
           {/* =========================================
               COLUMN 1: BRANDING & SOCIAL MEDIA
@@ -85,7 +85,7 @@ export default function Footer() {
               </p>
             </div>
 
-            <p className="text-xs leading-relaxed text-slate-400">
+            <p className="max-w-sm text-sm leading-6 text-slate-400">
               Fostering technical innovation, engineering excellence, and academic collaboration. Connecting passionate students with IEEE&apos;s global network of 420,000+ professionals.
             </p>
 
@@ -101,7 +101,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="IEEE RNSIT Instagram"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-300 hover:border-pink-500/50 hover:bg-gradient-to-tr hover:from-amber-500/20 hover:via-pink-500/20 hover:to-purple-500/20 hover:text-pink-400 hover:shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-105"
+                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-pink-500/50 hover:bg-gradient-to-tr hover:from-amber-500/20 hover:via-pink-500/20 hover:to-purple-500/20 hover:text-pink-400 hover:shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-105"
                   title="Follow on Instagram"
                 >
                   <InstagramIcon size={18} className="transition-transform group-hover:scale-110" />
@@ -113,7 +113,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="IEEE RNSIT LinkedIn"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-300 hover:border-[#29A9E0]/50 hover:bg-[#00629B]/30 hover:text-[#29A9E0] hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
+                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-[#29A9E0]/50 hover:bg-[#00629B]/30 hover:text-[#29A9E0] hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
                   title="Connect on LinkedIn"
                 >
                   <LinkedinIcon size={18} className="transition-transform group-hover:scale-110" />
@@ -123,7 +123,7 @@ export default function Footer() {
                 <a
                   href="mailto:ieee@rnsit.ac.in"
                   aria-label="Email IEEE SB RNSIT"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-300 hover:border-cyan-400/50 hover:bg-[#00629B]/30 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
+                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-cyan-400/50 hover:bg-[#00629B]/30 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
                   title="Email Us directly"
                 >
                   <Mail size={18} className="transition-transform group-hover:scale-110" />
@@ -135,7 +135,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="RNSIT College Website"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-300 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.08] hover:text-white hover:scale-105"
+                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.08] hover:text-white hover:scale-105"
                   title="RNSIT Official Portal"
                 >
                   <ExternalLink size={17} className="transition-transform group-hover:scale-110" />
@@ -154,7 +154,7 @@ export default function Footer() {
               Explore Portal
             </h4>
 
-            <ul className="space-y-2.5 text-xs">
+            <ul className="space-y-3 text-sm">
               <li>
                 <Link
                   href="/"
@@ -222,7 +222,7 @@ export default function Footer() {
               Technical Domains
             </h4>
 
-            <ul className="space-y-2.5 text-xs">
+            <ul className="space-y-3 text-sm">
               <li>
                 <Link
                   href="/domains/artificial-intelligence"
@@ -290,7 +290,7 @@ export default function Footer() {
               Contact & Campus
             </h4>
 
-            <div className="space-y-3.5 text-xs text-slate-400">
+            <div className="space-y-4 text-sm text-slate-400">
               {/* Phone Numbers */}
               <div className="flex items-start gap-2.5">
                 <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[#29A9E0]">
@@ -366,7 +366,7 @@ export default function Footer() {
         {/* =========================================
             BOTTOM COPYRIGHT BAR
         ========================================== */}
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-slate-500 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-7 text-xs text-slate-500 sm:mt-14 sm:flex-row sm:pt-8">
           <p className="flex items-center gap-1.5 text-center sm:text-left">
             <span>© 2026 IEEE Student Branch, RNSIT. Advancing Technology for Humanity.</span>
           </p>
