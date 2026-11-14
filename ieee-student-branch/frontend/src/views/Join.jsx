@@ -26,10 +26,10 @@ function Join() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#F4F7FA] px-6 pt-28 pb-20 sm:px-8 sm:pt-32 lg:px-12">
-      {/* Background glowing decorations */}
-      <div className="pointer-events-none absolute -left-40 top-20 h-96 w-96 rounded-full bg-[#00629B]/15 blur-3xl animate-pulse-glow" />
-      <div className="pointer-events-none absolute -right-40 bottom-20 h-96 w-96 rounded-full bg-[#29A9E0]/10 blur-3xl animate-pulse-glow" />
+    <section className="relative min-h-screen overflow-hidden bg-transparent px-6 pt-28 pb-20 sm:px-8 sm:pt-32 lg:px-12">
+      {/* Background glowing decorations with delicate color combinations */}
+      <div className="pointer-events-none absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.38)_0%,rgba(2,132,199,0.24)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
+      <div className="pointer-events-none absolute -right-40 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
 
       <div className="relative mx-auto max-w-7xl">
 
@@ -37,14 +37,15 @@ function Join() {
             HEADER
         ========================== */}
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00629B]/15 bg-[#E6F4FB] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
-            <Sparkles size={14} />
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#00629B] shadow-xs">
+            <Sparkles size={14} className="text-[#29A9E0]" />
             <span>Membership 2026-27</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-[#F26522]" />
           </div>
 
           <h1 className="text-4xl font-bold tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">
             Join the IEEE
-            <span className="text-[#00629B]"> Student Branch</span>
+            <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent"> Student Branch</span>
           </h1>
 
           <p className="mt-5 text-lg leading-8 text-[#526477]">
@@ -53,7 +54,7 @@ function Join() {
           </p>
 
           {isUsingSupabase && (
-            <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-emerald-700">
+            <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-3 py-1 rounded-full">
               <Database size={13} />
               <span>Realtime Cloud Database Active</span>
             </div>
@@ -66,20 +67,20 @@ function Join() {
         ========================== */}
         <div className="mt-14 grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-start">
 
-          {/* Left Column — Perks in Glass Cards */}
+          {/* Left Column — Perks in Glass Cards with subtle color touches */}
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-[#10243A] mb-2 flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-[#29A9E0]" />
+              <span className="h-2 w-2 rounded-full bg-[#00629B]" />
               Why Join IEEE RNSIT?
             </h2>
 
-            <div className="rounded-2xl border border-[#DCE5EC] bg-white p-6 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(16,36,58,0.09)]">
+            <div className="group rounded-2xl border border-blue-100 bg-white p-6 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_16px_32px_rgba(0,98,155,0.1)]">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E6F4FB] text-[#00629B]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/25">
                   <Globe size={24} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#10243A]">Global IEEE Professional Network</h3>
+                  <h3 className="font-semibold text-[#10243A] transition-colors group-hover:text-[#00629B]">Global IEEE Professional Network</h3>
                   <p className="mt-1.5 text-sm leading-relaxed text-[#526477]">
                     Connect directly with over 420,000+ members worldwide, access IEEE Sections, and collaborate across international chapters.
                   </p>
@@ -87,13 +88,13 @@ function Join() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[#DCE5EC] bg-white p-6 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(16,36,58,0.09)]">
+            <div className="group rounded-2xl border border-indigo-100 bg-white p-6 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-[0_16px_32px_rgba(79,70,229,0.1)]">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E6F4FB] text-[#00629B]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-500 text-white shadow-sm shadow-indigo-500/25">
                   <BookOpen size={24} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#10243A]">Research & Publication Grants</h3>
+                  <h3 className="font-semibold text-[#10243A] transition-colors group-hover:text-indigo-600">Research & Publication Grants</h3>
                   <p className="mt-1.5 text-sm leading-relaxed text-[#526477]">
                     Gain exclusive access to IEEE Xplore Digital Library papers, discounts on conference registrations, and guidance for writing research papers.
                   </p>
@@ -101,13 +102,13 @@ function Join() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[#DCE5EC] bg-white p-6 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(16,36,58,0.09)]">
+            <div className="group rounded-2xl border border-orange-100 bg-white p-6 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-[0_16px_32px_rgba(242,101,34,0.1)]">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E6F4FB] text-[#00629B]">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/25">
                   <Award size={24} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#10243A]">Leadership & Executive Experience</h3>
+                  <h3 className="font-semibold text-[#10243A] transition-colors group-hover:text-[#F26522]">Leadership & Executive Experience</h3>
                   <p className="mt-1.5 text-sm leading-relaxed text-[#526477]">
                     Lead teams in flagship tech fests, organize international events, and build verifiable credentials for higher studies and careers.
                   </p>
@@ -118,11 +119,14 @@ function Join() {
 
 
           {/* Right Column — Membership Registration Glass Form */}
-          <div className="rounded-3xl border border-[#DCE5EC] bg-white p-8 shadow-[0_16px_45px_rgba(16,36,58,0.08)] sm:p-10">
+          <div className="relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-8 shadow-[0_16px_45px_rgba(16,36,58,0.08)] sm:p-10">
+            {/* Top delicate multi-color hairline */}
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00629B] via-[#29A9E0] to-[#F26522]" />
+
             {submitted ? (
               <div className="py-12 text-center animate-pulse-glow">
-                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#E6F4FB] text-[#00629B] border border-[#29A9E0]/40 shadow-[0_0_30px_rgba(41,169,224,0.3)]">
-                  <CheckCircle2 size={40} />
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-50 to-sky-100 text-[#00629B] border border-blue-200 shadow-md shadow-blue-500/10">
+                  <CheckCircle2 size={40} className="text-[#00629B]" />
                 </div>
                 <h3 className="mt-6 text-2xl font-bold text-[#10243A]">Application Received!</h3>
                 <p className="mt-3 text-[#526477] leading-relaxed">
@@ -141,7 +145,7 @@ function Join() {
                       phone: "",
                     });
                   }}
-                  className="mt-8 rounded-full border border-[#10243A]/15 bg-white px-6 py-2.5 text-sm font-semibold text-[#10243A] transition hover:border-[#00629B]/30 hover:bg-[#E6F4FB] hover:text-[#00629B]"
+                  className="mt-8 rounded-full border border-[#DCE5EC] bg-white px-6 py-2.5 text-sm font-semibold text-[#10243A] shadow-xs transition hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B]"
                 >
                   Submit Another Application
                 </button>
@@ -271,7 +275,7 @@ function Join() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="group relative mt-2 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-[#10243A] px-6 py-3.5 font-semibold text-white shadow-md transition-all duration-300 hover:scale-[1.01] hover:bg-[#1A3856] hover:shadow-lg active:scale-[0.99] disabled:opacity-60"
+                  className="group relative mt-2 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-6 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/25 transition-all duration-300 hover:scale-[1.01] hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/35 active:scale-[0.99] disabled:opacity-60"
                 >
                   {submitting ? (
                     <span className="flex items-center gap-2">
@@ -287,7 +291,7 @@ function Join() {
                 </button>
 
                 <p className="text-center text-xs text-[#647588] pt-2">
-                  Have questions? Connect directly with us at <span className="text-[#00629B]">ieee@rnsit.ac.in</span>
+                  Have questions? Connect directly with us at <span className="font-semibold text-[#00629B]">ieee@rnsit.ac.in</span>
                 </p>
               </form>
             )}
@@ -297,7 +301,7 @@ function Join() {
         </div>
 
       </div>
-    </main>
+    </section>
   );
 }
 

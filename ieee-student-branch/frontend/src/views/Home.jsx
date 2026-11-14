@@ -2,9 +2,9 @@ import Hero from "./Hero";
 
 function Home() {
   return (
-    <main className="bg-[#F4F7FA]">
+    <div className="bg-transparent">
       <Hero />
-    </main>
+    </div>
   );
 }
 

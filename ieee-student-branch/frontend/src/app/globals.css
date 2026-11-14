@@ -3,7 +3,8 @@
 /* =========================================================
    IEEE STUDENT BRANCH RNSIT — GLOBAL LIGHT THEME
    Primary: IEEE Blue #00629B | Navy #10243A
-   Accent: Orange #F26522 (use sparingly)
+   Accent: Orange #F26522 (tasteful warm touch)
+   Secondary: Electric Cyan #29A9E0
 ========================================================= */
 
 :root {
@@ -12,9 +13,11 @@
   --ieee-blue-hover: #004F7D;
   --navy: #10243A;
   --orange: #F26522;
+  --cyan: #29A9E0;
   --page-white: #FFFFFF;
   --section-grey: #F4F7FA;
   --pale-blue: #E6F4FB;
+  --pale-orange: #FFF4EC;
   --text-primary: #10243A;
   --text-secondary: #526477;
   --border-subtle: #DCE5EC;
@@ -30,14 +33,14 @@
 html {
   scroll-behavior: smooth;
   overflow-x: clip;
-  background: var(--page-white);
+  background: var(--section-grey);
 }
 
 body {
   margin: 0;
   min-width: 320px;
   overflow-x: clip;
-  background: var(--page-white);
+  background: var(--section-grey);
   color: var(--text-primary);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -69,8 +72,7 @@ video {
   outline-offset: 3px;
 }
 
-/* Shared light surfaces. Keep these class names so existing views
-   continue working while their individual layouts are converted. */
+/* Light surfaces with subtle color mixes */
 .glass-panel {
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(16, 36, 58, 0.09);
@@ -92,9 +94,9 @@ video {
 .glass-card:hover,
 .glass-card-interactive:hover {
   background: #FFFFFF;
-  border-color: rgba(0, 98, 155, 0.3);
+  border-color: rgba(0, 98, 155, 0.35);
   transform: translateY(-4px);
-  box-shadow: 0 16px 34px rgba(16, 36, 58, 0.11);
+  box-shadow: 0 18px 36px rgba(0, 98, 155, 0.12);
 }
 
 .glass-card-interactive::after {
@@ -105,7 +107,8 @@ video {
   background: linear-gradient(
     115deg,
     transparent 30%,
-    rgba(0, 98, 155, 0.035) 50%,
+    rgba(0, 98, 155, 0.05) 45%,
+    rgba(41, 169, 224, 0.08) 50%,
     transparent 62%
   );
   transform: translateX(-120%);
@@ -139,28 +142,34 @@ video {
   box-shadow: 0 0 0 3px rgba(0, 98, 155, 0.12);
 }
 
-/* Shared button helpers for gradual page-by-page migration. */
+/* Tasteful gradient buttons with subtle depth */
 .btn-ieee-primary {
-  background: var(--ieee-blue);
+  background: linear-gradient(135deg, #00629B 0%, #0074B5 60%, #0086CE 100%);
   color: #FFFFFF;
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 98, 155, 0.25);
+  transition: all 0.25s ease;
 }
 
 .btn-ieee-primary:hover {
-  background: var(--ieee-blue-hover);
+  background: linear-gradient(135deg, #004F7D 0%, #00629B 60%, #0074B5 100%);
+  box-shadow: 0 6px 20px rgba(0, 98, 155, 0.35);
+  transform: translateY(-1px);
 }
 
 .btn-ieee-navy {
-  background: var(--navy);
+  background: linear-gradient(135deg, #10243A 0%, #1A3856 100%);
   color: #FFFFFF;
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 14px rgba(16, 36, 58, 0.2);
+  transition: all 0.25s ease;
 }
 
 .btn-ieee-navy:hover {
-  background: #1A3856;
+  background: linear-gradient(135deg, #00629B 0%, #0074B5 100%);
+  box-shadow: 0 6px 20px rgba(0, 98, 155, 0.3);
+  transform: translateY(-1px);
 }
 
-/* Motion utilities retained for existing components. */
+/* Motion utilities */
 @keyframes float-slow {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-12px) rotate(1deg); }
@@ -172,20 +181,42 @@ video {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.75; transform: scale(1.05); }
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.05); }
 }
 
-@keyframes shimmer-sweep {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+/* Atmospheric light-theme color flair drift */
+@keyframes flair-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(35px, -30px, 0) scale(1.1);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(-25px, 25px, 0) scale(0.95);
+    opacity: 0.75;
+  }
 }
 
 .animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
 .animate-float-reverse { animation: float-reverse 6s ease-in-out infinite; }
 .animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
+.animate-flair-drift { animation: flair-drift 16s ease-in-out infinite alternate; }
 
-/* Hero atmosphere — subtle blue details on a light canvas. */
+/* Dedicated Light Theme Ambient Background Flairs */
+.flair-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  will-change: transform, opacity;
+  animation: flair-drift 16s ease-in-out infinite alternate;
+}
+
+/* Hero atmosphere — vivid light ambient accents */
 .hero-atmosphere {
   position: absolute;
   z-index: 0;
@@ -199,12 +230,12 @@ video {
   inset: auto -20% -25%;
   height: 75%;
   background-image:
-    linear-gradient(rgba(0, 98, 155, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 98, 155, 0.07) 1px, transparent 1px);
+    linear-gradient(rgba(0, 98, 155, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 98, 155, 0.08) 1px, transparent 1px);
   background-size: 60px 60px;
   transform: perspective(700px) rotateX(60deg);
   transform-origin: center bottom;
-  opacity: 0.55;
+  opacity: 0.65;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
   mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
   animation: hero-grid-drift 24s linear infinite;
@@ -213,31 +244,38 @@ video {
 .hero-glow-blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(75px);
   pointer-events: none;
-  opacity: 0.18;
+  opacity: 0.55;
   animation: hero-glow-pulse 8s ease-in-out infinite alternate;
 }
 
+/* Noticeable, beautiful pastel/vivid glow spots on light theme */
 .hero-glow-blob--blue {
-  top: 15%; left: 10%; width: 380px; height: 380px;
-  background: radial-gradient(circle, rgba(0, 98, 155, 0.28) 0%, transparent 70%);
+  top: 8%; left: 6%; width: 460px; height: 460px;
+  background: radial-gradient(circle, rgba(2, 132, 199, 0.38) 0%, rgba(56, 189, 248, 0.22) 45%, transparent 70%);
 }
 
 .hero-glow-blob--cyan {
-  top: 30%; right: 15%; width: 420px; height: 420px;
-  background: radial-gradient(circle, rgba(41, 169, 224, 0.22) 0%, transparent 70%);
+  top: 22%; right: 10%; width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(14, 165, 233, 0.22) 45%, transparent 70%);
   animation-delay: -3s;
+}
+
+.hero-glow-blob--warm {
+  bottom: 12%; left: 30%; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.25) 0%, rgba(251, 146, 60, 0.18) 45%, transparent 70%);
+  animation-delay: -5s;
 }
 
 .hero-orb {
   position: absolute;
-  border: 1px solid rgba(0, 98, 155, 0.18);
+  border: 1px solid rgba(0, 98, 155, 0.25);
   border-radius: 50%;
   background:
-    radial-gradient(circle at 30% 25%, rgba(41, 169, 224, 0.18), transparent 45%),
-    radial-gradient(circle at 70% 75%, rgba(0, 98, 155, 0.12), rgba(230, 244, 251, 0.12) 75%);
-  box-shadow: 0 0 50px rgba(0, 98, 155, 0.08);
+    radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.32), transparent 45%),
+    radial-gradient(circle at 70% 75%, rgba(2, 132, 199, 0.22), rgba(230, 244, 251, 0.3) 75%);
+  box-shadow: 0 0 50px rgba(0, 98, 155, 0.14);
   transform-style: preserve-3d;
   will-change: transform;
 }
@@ -251,7 +289,7 @@ video {
 .hero-orb--primary::before {
   position: absolute;
   inset: -10%;
-  border: 1px dashed rgba(0, 98, 155, 0.22);
+  border: 1px dashed rgba(0, 98, 155, 0.3);
   border-radius: 50%;
   content: "";
   transform: rotateX(68deg) rotateZ(-20deg);
@@ -261,9 +299,9 @@ video {
 .hero-orb--secondary {
   left: 5%; bottom: 18%; width: clamp(50px, 8vw, 90px);
   aspect-ratio: 1;
-  border-color: rgba(0, 98, 155, 0.2);
-  background: radial-gradient(circle at 35% 30%, rgba(41, 169, 224, 0.2), rgba(0, 98, 155, 0.08) 70%);
-  box-shadow: 0 0 35px rgba(0, 98, 155, 0.1);
+  border-color: rgba(0, 98, 155, 0.25);
+  background: radial-gradient(circle at 35% 30%, rgba(56, 189, 248, 0.35), rgba(2, 132, 199, 0.16) 70%);
+  box-shadow: 0 0 35px rgba(0, 98, 155, 0.16);
   animation: hero-orb-float 8s ease-in-out -3s infinite reverse;
 }
 
@@ -283,8 +321,8 @@ video {
 }
 
 @keyframes hero-glow-pulse {
-  0% { opacity: 0.12; transform: scale(0.95); }
-  100% { opacity: 0.24; transform: scale(1.1); }
+  0% { opacity: 0.45; transform: scale(0.95); }
+  100% { opacity: 0.75; transform: scale(1.1); }
 }
 
 @media (max-width: 768px) {

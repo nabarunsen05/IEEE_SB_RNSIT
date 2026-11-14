@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -24,14 +23,17 @@ export default function Navbar() {
   }, [pathname]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-xl">
-      <nav className="mx-auto flex h-[82px] max-w-7xl items-center justify-between gap-4 px-6 py-0 lg:px-8">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200/90 bg-white/95 shadow-xs backdrop-blur-xl">
+      {/* Top subtle multi-color accent hairline */}
+      <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#00629B]/40 via-[#29A9E0]/35 to-[#F26522]/30" />
 
-        {/* Option C: Integrated IEEE and RNSIT Logos */}
+      <nav className="mx-auto flex h-[80px] max-w-7xl items-center justify-between gap-4 px-6 py-0 lg:px-8">
+
+        {/* Integrated IEEE and RNSIT Logos */}
         <Link
           href="/"
           onClick={() => setMenuOpen(false)}
-          className="flex shrink-0 items-center gap-3 lg:gap-4"
+          className="flex shrink-0 items-center gap-3 lg:gap-4 transition-transform duration-300 hover:scale-[1.01]"
         >
           {/* Black IEEE RNSIT Student Branch Logo */}
           <img
@@ -53,7 +55,7 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-4 md:flex lg:gap-5">
-          <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1.5">
+          <div className="flex items-center gap-1 rounded-full border border-slate-200/90 bg-slate-50/90 p-1.5 shadow-2xs">
             {navLinks.map((link) => {
               const active = pathname === link.href;
 
@@ -61,10 +63,10 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-all duration-200 lg:px-4 ${
+                  className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-semibold transition-all duration-200 lg:px-4 ${
                     active
-                      ? "border border-[#B9E2F5] bg-[#E6F4FB] text-[#00629B] shadow-sm"
-                      : "text-slate-700 hover:bg-slate-100 hover:text-[#00629B]"
+                      ? "border border-[#B9E2F5] bg-gradient-to-r from-[#E6F4FB] to-sky-50 text-[#00629B] shadow-2xs"
+                      : "text-slate-700 hover:bg-white hover:text-[#00629B]"
                   }`}
                 >
                   {link.name}
@@ -73,12 +75,12 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Orange Join Us Button */}
+          {/* Radiant IEEE Accent Join Us Button */}
           <Link
             href="/join"
-            className="flex shrink-0 items-center gap-1.5 rounded-full bg-[#10243A] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:bg-[#1A3856] active:scale-95"
+            className="flex shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-[#00629B]/25 transition-all duration-200 hover:scale-105 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-md active:scale-95"
           >
-            <Sparkles size={15} />
+            <Sparkles size={15} className="text-cyan-200" />
             <span>Join Us</span>
           </Link>
         </div>
@@ -123,9 +125,9 @@ export default function Navbar() {
             <Link
               href="/join"
               onClick={() => setMenuOpen(false)}
-              className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#10243A] px-5 py-3 font-semibold text-white shadow-md transition hover:bg-[#1A3856]"
+              className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-3 font-semibold text-white shadow-md transition hover:from-[#004F7D] hover:to-[#0074B5]"
             >
-              <Sparkles size={16} />
+              <Sparkles size={16} className="text-cyan-200" />
               <span>Join Us</span>
             </Link>
           </div>
