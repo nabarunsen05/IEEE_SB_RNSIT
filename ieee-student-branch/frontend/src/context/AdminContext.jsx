@@ -5,10 +5,6 @@ import { supabase, isSupabaseConfigured } from "../lib/supabase";
 
 const AdminContext = createContext();
 
-// Default admin credentials (single user id & password)
-const ADMIN_USER_ID = "admin";
-const ADMIN_PASSWORD = "admin123";
-
 // Initial default events
 const initialEvents = [
   {
@@ -248,68 +244,102 @@ export function AdminProvider({ children }) {
     }
   }, []);
 
-  // Initialize Auth & Data (SSR Safe)
+  // Initialize Supabase Auth and verify that the signed-in user is an
+  // explicitly approved administrator. Browser storage is never treated as proof
+  // of authentication.
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Check Supabase Auth Session
-    if (supabase) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          setIsAuthenticated(true);
-          setAuthUser(session.user);
-        } else {
-          // Check local auth fallback
-          const localAuth = localStorage.getItem("ieee_auth_status");
-          if (localAuth === "true") setIsAuthenticated(true);
-        }
-      });
+    let mounted = true;
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (_event, session) => {
-          if (session) {
-            setIsAuthenticated(true);
-            setAuthUser(session.user);
-          } else {
-            const localAuth = localStorage.getItem("ieee_auth_status");
-            setIsAuthenticated(localAuth === "true");
+    const verifyAdminSession = async (session) => {
+      if (!mounted) return;
+
+      if (!session?.user || !supabase) {
+        setIsAuthenticated(false);
+        setAuthUser(null);
+        return;
+      }
+
+      try {
+       const { data, error } = await supabase.rpc("is_admin");
+
+        if (!mounted) return;
+
+        if (error || data !== true) {
+  setIsAuthenticated(false);
+  setAuthUser(null);
+  await supabase.auth.signOut();
+  return;
+}
+        setIsAuthenticated(true);
+        setAuthUser(session.user);
+      } catch (error) {
+        console.error("Admin authorization check failed:", error);
+        if (mounted) {
+          setIsAuthenticated(false);
+          setAuthUser(null);
+        }
+      }
+    };
+
+    const loadInitialData = async () => {
+      if (supabase) {
+        try {
+          const { data, error } = await supabase.auth.getSession();
+          if (error) throw error;
+          await verifyAdminSession(data?.session ?? null);
+          await fetchDataFromSupabase();
+        } catch (error) {
+          console.error("Supabase initialization failed:", error);
+          if (mounted) {
+            setIsAuthenticated(false);
             setAuthUser(null);
           }
         }
-      );
+      } else {
+        // Load cached public content only. No local auth fallback is allowed.
+        try {
+          const savedEvents = localStorage.getItem("ieee_events_data");
+          if (savedEvents) setEvents(JSON.parse(savedEvents));
 
-      // Load Supabase DB data
-      fetchDataFromSupabase();
+          const savedExecom = localStorage.getItem("ieee_execom_data");
+          if (savedExecom) setExecutiveCommittee(JSON.parse(savedExecom));
 
-      return () => {
-        subscription?.unsubscribe();
-      };
-    } else {
-      // Local fallback mode
-      try {
-        const auth = localStorage.getItem("ieee_auth_status");
-        if (auth === "true") setIsAuthenticated(true);
+          const savedDomains = localStorage.getItem("ieee_domains_data");
+          if (savedDomains) setDomains(JSON.parse(savedDomains));
 
-        const savedEvents = localStorage.getItem("ieee_events_data");
-        if (savedEvents) setEvents(JSON.parse(savedEvents));
-
-        const savedExecom = localStorage.getItem("ieee_execom_data");
-        if (savedExecom) setExecutiveCommittee(JSON.parse(savedExecom));
-
-        const savedDomains = localStorage.getItem("ieee_domains_data");
-        if (savedDomains) setDomains(JSON.parse(savedDomains));
-
-        const savedRegs = localStorage.getItem("ieee_regs_data");
-        if (savedRegs) setRegistrations(JSON.parse(savedRegs));
-      } catch (e) {
-        console.error("Local state initialization error", e);
+          const savedRegs = localStorage.getItem("ieee_regs_data");
+          if (savedRegs) setRegistrations(JSON.parse(savedRegs));
+        } catch (error) {
+          console.error("Local content initialization error:", error);
+        }
       }
+
+      if (mounted) setIsInitialized(true);
+    };
+
+    loadInitialData();
+
+    let subscription;
+    if (supabase) {
+      const authListener = supabase.auth.onAuthStateChange((_event, session) => {
+        // Defer the database authorization check so it does not run inside the
+        // Supabase auth event callback.
+        window.setTimeout(() => {
+          verifyAdminSession(session);
+        }, 0);
+      });
+      subscription = authListener.data?.subscription;
     }
 
-    setIsInitialized(true);
+    return () => {
+      mounted = false;
+      subscription?.unsubscribe();
+    };
   }, [fetchDataFromSupabase]);
 
-  // Sync to localStorage as local cache / fallback
+  // Keep a local cache of content; it is not an authentication mechanism.
   useEffect(() => {
     if (isInitialized && typeof window !== "undefined") {
       localStorage.setItem("ieee_events_data", JSON.stringify(events));
@@ -319,90 +349,68 @@ export function AdminProvider({ children }) {
     }
   }, [events, executiveCommittee, domains, registrations, isInitialized]);
 
-  // Login handler
+  // Sign in through Supabase Auth, then require an active admin_users allow-list row.
   const login = async (userIdOrEmail, password) => {
-    const cleanId = userIdOrEmail.trim();
-    const cleanPass = password.trim();
+    const email = String(userIdOrEmail || "").trim().toLowerCase();
+    const cleanPass = String(password || "");
 
-    // 1. Check Supabase admin_credentials table
-    if (supabase) {
-      try {
-        const { data, error } = await supabase
-          .from("admin_credentials")
-          .select("*")
-          .eq("username", cleanId)
-          .eq("password", cleanPass)
-          .maybeSingle();
-
-        if (!error && data) {
-          setIsAuthenticated(true);
-          setAuthUser({ username: data.username, role: "admin" });
-          if (typeof window !== "undefined") {
-            localStorage.setItem("ieee_auth_status", "true");
-            localStorage.setItem("ieee_admin_user", data.username);
-          }
-          return { success: true };
-        }
-      } catch (err) {
-        console.warn("Supabase admin_credentials check failed, checking fallback:", err);
-      }
+    if (!email || !cleanPass) {
+      return { success: false, message: "Enter your admin email and password." };
     }
 
-    // 2. Try Supabase Auth if configured and input is an email
-    if (supabase && cleanId.includes("@")) {
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: cleanId,
-          password: cleanPass,
-        });
-
-        if (!error && data?.session) {
-          setIsAuthenticated(true);
-          setAuthUser(data.user);
-          localStorage.setItem("ieee_auth_status", "true");
-          return { success: true };
-        }
-      } catch (err) {
-        console.warn("Supabase Auth error:", err);
-      }
+    if (!supabase || !isSupabaseConfigured()) {
+      return {
+        success: false,
+        message: "Supabase is not configured. Check the frontend .env.local values and restart the development server.",
+      };
     }
 
-    // 3. Single Admin Credential match
-    const isPrimaryMatch =
-      (cleanId.toLowerCase() === ADMIN_USER_ID ||
-        cleanId.toLowerCase() === "ieee_admin@rnsit.ac.in" ||
-        cleanId.toLowerCase() === "admin@ieee.org") &&
-      (cleanPass === ADMIN_PASSWORD || cleanPass === "IEEE@RNSIT2026");
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: cleanPass,
+      });
 
-    if (isPrimaryMatch) {
+      if (error || !data?.user || !data?.session) {
+        return {
+          success: false,
+          message: error?.message || "Sign-in failed. Check your email and password.",
+        };
+      }
+
+    const { data: isAdmin, error: adminError } =
+  await supabase.rpc("is_admin");
+
+     if (adminError || isAdmin !== true) {
+        await supabase.auth.signOut();
+        setIsAuthenticated(false);
+        setAuthUser(null);
+        return {
+          success: false,
+          message: "This account is not authorized as an IEEE Student Branch administrator.",
+        };
+      }
+
       setIsAuthenticated(true);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("ieee_auth_status", "true");
-        localStorage.setItem("ieee_admin_user", cleanId);
-      }
+      setAuthUser(data.user);
       return { success: true };
+    } catch (error) {
+      console.error("Admin sign-in failed:", error);
+      return {
+        success: false,
+        message: "Unable to sign in right now. Check your Supabase connection and try again.",
+      };
     }
-
-    return {
-      success: false,
-      message: "Invalid credentials. Please verify your User ID / Email and Password.",
-    };
   };
 
-  // Logout handler
+  // Sign out and clear the in-memory administrator state.
   const logout = async () => {
     if (supabase) {
-      try {
-        await supabase.auth.signOut();
-      } catch (e) {
-        console.warn("Supabase signout error:", e);
-      }
+      const { error } = await supabase.auth.signOut();
+      if (error) console.error("Supabase sign-out error:", error);
     }
     setIsAuthenticated(false);
     setAuthUser(null);
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("ieee_auth_status");
-    }
   };
 
   // =========================================
@@ -528,44 +536,39 @@ export function AdminProvider({ children }) {
   // =========================================
   // STUDENT REGISTRATIONS
   // =========================================
-  const addRegistration = async (regData) => {
-    const newReg = {
-      ...regData,
-      id: "reg-" + Date.now(),
-      status: "pending",
-      created_at: new Date().toISOString(),
-    };
-
-    setRegistrations((prev) => [newReg, ...prev]);
-
-    if (supabase) {
-      try {
-        const { data, error } = await supabase.from("registrations").insert([
-          {
-            name: regData.name,
-            email: regData.email,
-            branch: regData.branch,
-            year: regData.year,
-            domain: regData.domain,
-            phone: regData.phone || null,
-            status: "pending",
-          },
-        ]).select();
-
-        if (!error && data && data[0]) {
-          // Replace temporary id with Supabase UUID
-          setRegistrations((prev) =>
-            prev.map((r) => (r.id === newReg.id ? data[0] : r))
-          );
-          return { success: true, data: data[0] };
-        }
-      } catch (err) {
-        console.error("Supabase registration error:", err);
-      }
-    }
-
-    return { success: true, data: newReg };
+const addRegistration = async (regData) => {
+  const newReg = {
+    ...regData,
+    id: "reg-" + Date.now(),
+    status: "pending",
+    created_at: new Date().toISOString(),
   };
+
+  if (supabase) {
+    try {
+      const { error } = await supabase.from("registrations").insert([
+        {
+          name: regData.name,
+          email: regData.email,
+          branch: regData.branch,
+          year: regData.year,
+          domain: regData.domain,
+          phone: regData.phone || null,
+          status: "pending",
+        },
+      ]);
+
+      if (error) throw error;
+    } catch (err) {
+      console.error("Supabase registration error:", err);
+      return { success: false, message: "Registration could not be saved." };
+    }
+  }
+
+  setRegistrations((prev) => [newReg, ...prev]);
+
+  return { success: true, data: newReg };
+};
 
   const removeRegistration = async (id) => {
     setRegistrations((prev) => prev.filter((reg) => reg.id !== id));
@@ -599,7 +602,6 @@ export function AdminProvider({ children }) {
         isUsingSupabase,
         isAuthenticated,
         authUser,
-        adminCredentials: { userId: ADMIN_USER_ID, password: ADMIN_PASSWORD },
         login,
         logout,
         isLoading,
