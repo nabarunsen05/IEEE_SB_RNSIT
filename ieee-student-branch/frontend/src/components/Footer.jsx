@@ -9,7 +9,6 @@ import {
   ArrowRight,
   Sparkles,
   ExternalLink,
-  Heart,
 } from "lucide-react";
 
 // Standard Inline SVG Icons for Instagram and LinkedIn (Lucide removed them in newer builds)
@@ -372,8 +371,8 @@ export default function Footer() {
           </p>
 
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1 text-slate-400">
-              Built with <Heart size={12} className="text-rose-500 fill-rose-500" /> by IEEE SB RNSIT Tech Team
+            <span className="text-slate-400">
+              Built by IEEE SB RNSIT Tech Team
             </span>
           </div>
         </div>

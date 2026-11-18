@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -78,9 +78,8 @@ export default function Navbar() {
           {/* Radiant IEEE Accent Join Us Button */}
           <Link
             href="/join"
-            className="flex shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-[#00629B]/25 transition-all duration-200 hover:scale-105 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-md active:scale-95"
+            className="flex shrink-0 items-center rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-[#00629B]/25 transition-all duration-200 hover:scale-105 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-md active:scale-95"
           >
-            <Sparkles size={15} className="text-cyan-200" />
             <span>Join Us</span>
           </Link>
         </div>
@@ -125,9 +124,8 @@ export default function Navbar() {
             <Link
               href="/join"
               onClick={() => setMenuOpen(false)}
-              className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-3 font-semibold text-white shadow-md transition hover:from-[#004F7D] hover:to-[#0074B5]"
+              className="mt-3 flex items-center justify-center rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-3 font-semibold text-white shadow-md transition hover:from-[#004F7D] hover:to-[#0074B5]"
             >
-              <Sparkles size={16} className="text-cyan-200" />
               <span>Join Us</span>
             </Link>
           </div>
