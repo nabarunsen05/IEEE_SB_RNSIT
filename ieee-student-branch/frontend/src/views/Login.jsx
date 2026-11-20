@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   AlertCircle,
   ArrowRight,
-  Sparkles,
+  KeyRound,
   LogOut,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
@@ -102,10 +102,7 @@ export default function Login() {
           <div className="rounded-3xl border border-[#DCE6EF] bg-white p-8 shadow-[0_18px_55px_rgba(16,36,58,0.10)]">
             {/* Header */}
             <div className="text-center">
-              <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-[#B8DCEC] bg-[#E6F4FB] px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
-                <Sparkles size={13} />
-                <span>Executive Control Portal</span>
-              </div>
+
 
               <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243A]">
                 Admin{" "}

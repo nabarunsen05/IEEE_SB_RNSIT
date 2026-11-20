@@ -122,7 +122,7 @@ VALUES
   ('execom-2', 'Poorvika Nagraj', 'Student Vice Chair', 'Oversees technical societies, industry partnerships and core branch operations.', 'poorvika@ieee.org', 'https://linkedin.com'),
   ('execom-3', 'Nikhil Nayak', 'Webmaster', 'Architects digital platforms, manages the branch web ecosystem and online resources.', 'nikhil@ieee.org', 'https://linkedin.com'),
   ('execom-4', 'Bhadrinath G R', 'Treasurer', 'Directs budget allocations, financial audits and sponsorship logistics for all major events.', 'bhadrinath@ieee.org', 'https://linkedin.com'),
-  ('execom-5', 'prathika P', 'Secretary', 'Coordinates executive proceedings, official IEEE communication and regulatory documentation.', 'prathika@ieee.org', 'https://linkedin.com')
+  ('execom-5', 'Prathika P', 'Secretary', 'Coordinates executive proceedings, official IEEE communication and regulatory documentation.', 'prathika@ieee.org', 'https://linkedin.com')
 ON CONFLICT (id) DO NOTHING;
 
 -- Initial Domains

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, CheckCircle2, Globe, Award, BookOpen, Send, Phone, Database } from "lucide-react";
+import { CheckCircle2, Globe, Award, BookOpen, Send, Phone, Database } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
 function Join() {
@@ -37,11 +37,7 @@ function Join() {
             HEADER
         ========================== */}
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#00629B] shadow-xs">
-            <Sparkles size={14} className="text-[#29A9E0]" />
-            <span>Membership 2026-27</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-[#F26522]" />
-          </div>
+
 
           <h1 className="text-4xl font-bold tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">
             Join the IEEE

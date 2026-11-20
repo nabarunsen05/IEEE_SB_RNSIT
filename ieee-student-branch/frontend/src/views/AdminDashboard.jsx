@@ -12,7 +12,6 @@ import {
   Calendar,
   LogOut,
   ExternalLink,
-  Sparkles,
   CheckCircle,
   RotateCcw,
   UserCheck,
@@ -91,7 +90,6 @@ const DOMAIN_ICONS_MAP = {
   Radio,
   Server,
   Workflow,
-  Sparkles,
 };
 
 export default function AdminDashboard() {
