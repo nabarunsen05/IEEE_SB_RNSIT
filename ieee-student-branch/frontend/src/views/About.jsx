@@ -4,7 +4,6 @@ import {
   CalendarDays,
   Lightbulb,
   Trophy,
-  Sparkles,
   Compass,
 } from "lucide-react";
 
@@ -72,11 +71,7 @@ function About() {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           {/* Left: introduction */}
           <div>
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#00629B] shadow-xs">
-              <Sparkles size={14} className="text-[#29A9E0]" />
-              <span>About IEEE Student Branch</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-[#F26522]" />
-            </div>
+
 
             <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl">
               Building the next generation of{" "}

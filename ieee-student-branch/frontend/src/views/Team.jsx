@@ -5,7 +5,6 @@ import {
   ExternalLink,
   Mail,
   UserRound,
-  Sparkles,
   Users,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
@@ -83,11 +82,7 @@ function Team() {
         ========================== */}
         <div className="mx-auto max-w-3xl text-center">
 
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#00629B] shadow-xs">
-            <Sparkles size={14} className="text-[#29A9E0]" />
-            <span>Executive Leadership</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-[#F26522]" />
-          </div>
+
 
           <h2 className="text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl">
             Meet the people behind
@@ -321,11 +316,7 @@ function Team() {
 
           <div className="relative z-10 mx-auto max-w-2xl">
 
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-white/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#00629B] shadow-2xs backdrop-blur-md">
-              <Sparkles size={14} className="text-[#29A9E0]" />
-              <span>Be Part of the Community</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-[#F26522]" />
-            </div>
+
 
             <h3 className="mt-4 text-3xl font-bold text-[#10243A] sm:text-4xl">
               Ready to create an impact?

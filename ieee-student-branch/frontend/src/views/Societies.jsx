@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import {
   Building2,
   GraduationCap,
-  Sparkles,
   Search,
   Filter,
   X,
@@ -81,14 +80,6 @@ export default function Societies() {
             HEADER & HERO DESCRIPTION
         ========================================== */}
         <div className="max-w-3xl">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#00629B] shadow-xs">
-            <Sparkles size={14} className="text-[#29A9E0]" />
-            <span>
-              {societies.length} Chapters Across {departmentGroups.length} Departments
-            </span>
-            <span className="h-1.5 w-1.5 rounded-full bg-[#F26522]" />
-          </div>
-
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">
             IEEE Societies at{" "}
             <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">

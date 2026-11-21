@@ -89,7 +89,7 @@ const initialExecom = [
   },
   {
     id: "execom-5",
-    name: "prathika P",
+    name: "Prathika P",
     role: "Secretary",
     description:
       "Coordinates executive proceedings, official IEEE communication and regulatory documentation.",
@@ -304,7 +304,14 @@ export function AdminProvider({ children }) {
           if (savedEvents) setEvents(JSON.parse(savedEvents));
 
           const savedExecom = localStorage.getItem("ieee_execom_data");
-          if (savedExecom) setExecutiveCommittee(JSON.parse(savedExecom));
+          if (savedExecom) {
+            const parsed = JSON.parse(savedExecom);
+            setExecutiveCommittee(
+              parsed.map((member) =>
+                member.name === "prathika P" ? { ...member, name: "Prathika P" } : member
+              )
+            );
+          }
 
           const savedDomains = localStorage.getItem("ieee_domains_data");
           if (savedDomains) setDomains(JSON.parse(savedDomains));

@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles, Award, Zap, ChevronRight } from "lucide-react";
+import { ArrowRight, Globe, Award, Zap, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 function Hero() {
@@ -16,12 +16,7 @@ function Hero() {
 
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-96px)] w-full max-w-7xl items-center gap-12 px-6 py-16 sm:px-8 lg:grid-cols-2 lg:px-12">
         <div className="relative z-10">
-          {/* Subtle dual-tint pill badge */}
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#00629B] shadow-xs">
-            <Sparkles size={14} className="text-[#29A9E0]" />
-            <span>IEEE Student Branch · RNSIT</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-[#F26522]" />
-          </p>
+
 
           <h1 className="max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-[#10243A] sm:text-6xl lg:text-7xl">
             Innovate.<br />
@@ -65,7 +60,7 @@ function Hero() {
               <span>Project Mentorship</span>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-gradient-to-r from-emerald-50/80 to-teal-50/50 px-3.5 py-2 text-xs font-semibold text-emerald-950 shadow-xs">
-              <Sparkles size={14} className="text-emerald-600" />
+              <Globe size={14} className="text-emerald-600" />
               <span>Global Community</span>
             </div>
           </div>

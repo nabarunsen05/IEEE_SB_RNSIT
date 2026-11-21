@@ -7,7 +7,6 @@ import {
   MapPin,
   Clock,
   ArrowRight,
-  Sparkles,
   ExternalLink,
 } from "lucide-react";
 
@@ -204,7 +203,6 @@ export default function Footer() {
                   href="/join"
                   className="group inline-flex items-center gap-1.5 font-semibold text-cyan-300 transition-colors hover:text-white"
                 >
-                  <Sparkles size={12} className="text-[#29A9E0]" />
                   <span>Join Student Branch 2026</span>
                 </Link>
               </li>

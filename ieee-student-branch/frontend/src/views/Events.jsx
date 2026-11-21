@@ -7,7 +7,6 @@ import {
   CalendarDays,
   Clock,
   MapPin,
-  Sparkles,
   Search,
   Filter,
   X,
@@ -87,11 +86,7 @@ function Events() {
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
 
           <div>
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#00629B] shadow-xs">
-              <Sparkles size={14} className="text-[#29A9E0]" />
-              <span>RNSIT Campus Events & Activities</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-[#F26522]" />
-            </div>
+
 
             <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl">
               Learn. Connect.
