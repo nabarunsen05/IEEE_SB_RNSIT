@@ -8,8 +8,8 @@ export const metadata = {
   description:
     "Official portal for IEEE Student Branch at RNS Institute of Technology, Bangalore",
   icons: {
-    icon: "/favicon.svg",
-  },
+  icon: "/icon.png",
+},
 };
 
 export default function RootLayout({ children }) {
