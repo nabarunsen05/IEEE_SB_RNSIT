@@ -291,7 +291,13 @@ function Join() {
                 </button>
 
                 <p className="text-center text-xs text-[#647588] pt-2">
-                  Have questions? Connect directly with us at <span className="font-semibold text-[#00629B]">ieee@rnsit.ac.in</span>
+                  Have questions? Connect directly with us at{" "}
+                  <a
+                    href="mailto:ieeestudentbranchrnsit@gmail.com"
+                    className="font-semibold text-[#00629B] hover:underline"
+                  >
+                    ieeestudentbranchrnsit@gmail.com
+                  </a>
                 </p>
               </form>
             )}

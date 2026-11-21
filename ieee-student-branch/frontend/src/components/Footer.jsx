@@ -96,34 +96,34 @@ export default function Footer() {
               <div className="flex items-center gap-2.5">
                 {/* Instagram */}
                 <a
-                  href="https://www.instagram.com/ieee_rnsit/"
+                  href="https://www.instagram.com/ieee_rnsit_sb/"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="IEEE RNSIT Instagram"
+                  aria-label="IEEE RNSIT SB Instagram"
                   className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-pink-500/50 hover:bg-gradient-to-tr hover:from-amber-500/20 hover:via-pink-500/20 hover:to-purple-500/20 hover:text-pink-400 hover:shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-105"
-                  title="Follow on Instagram"
+                  title="Follow IEEE RNSIT SB on Instagram"
                 >
                   <InstagramIcon size={18} className="transition-transform group-hover:scale-110" />
                 </a>
 
                 {/* LinkedIn */}
                 <a
-                  href="https://www.linkedin.com/company/ieee-rnsit/"
+                  href="https://www.linkedin.com/company/ieee-rnsit-sb/"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="IEEE RNSIT LinkedIn"
+                  aria-label="IEEE RNSIT SB LinkedIn"
                   className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-[#29A9E0]/50 hover:bg-[#00629B]/30 hover:text-[#29A9E0] hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
-                  title="Connect on LinkedIn"
+                  title="Connect with IEEE RNSIT SB on LinkedIn"
                 >
                   <LinkedinIcon size={18} className="transition-transform group-hover:scale-110" />
                 </a>
 
                 {/* Official Email */}
                 <a
-                  href="mailto:ieee@rnsit.ac.in"
+                  href="mailto:ieeestudentbranchrnsit@gmail.com"
                   aria-label="Email IEEE SB RNSIT"
                   className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-cyan-400/50 hover:bg-[#00629B]/30 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
-                  title="Email Us directly"
+                  title="Email IEEE SB RNSIT directly"
                 >
                   <Mail size={18} className="transition-transform group-hover:scale-110" />
                 </a>
@@ -322,13 +322,8 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold text-slate-300">Official Email</p>
                   <p className="mt-0.5">
-                    <a href="mailto:ieee@rnsit.ac.in" className="hover:text-[#29A9E0] transition-colors">
-                      ieee@rnsit.ac.in
-                    </a>
-                  </p>
-                  <p className="mt-0.5">
-                    <a href="mailto:ieee_admin@rnsit.ac.in" className="hover:text-[#29A9E0] transition-colors text-slate-400">
-                      ieee_admin@rnsit.ac.in
+                    <a href="mailto:ieeestudentbranchrnsit@gmail.com" className="hover:text-[#29A9E0] transition-colors break-all">
+                      ieeestudentbranchrnsit@gmail.com
                     </a>
                   </p>
                 </div>

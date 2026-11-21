@@ -1,3 +1,72 @@
+export const departmentsInfo = {
+  ECE: {
+    name: "Department of Electronics & Communication Engineering",
+    shortName: "Electronics & Communication",
+    code: "ECE",
+    description: "Leading research and chapters across communications, signal processing, photonics, biomedical systems, and vehicular tech.",
+  },
+  CSE: {
+    name: "Department of Computer Science & Engineering",
+    shortName: "Computer Science",
+    code: "CSE",
+    description: "Driving initiatives in consumer technologies, pervasive systems, and software engineering.",
+  },
+  ISE: {
+    name: "Department of Information Science & Engineering",
+    shortName: "Information Science",
+    code: "ISE",
+    description: "Exploring computational intelligence, neural systems, and advanced algorithm design.",
+  },
+  AIML: {
+    name: "Department of Artificial Intelligence & Machine Learning",
+    shortName: "AI & Machine Learning",
+    code: "AIML",
+    description: "Innovating in autonomous robotics, intelligent control systems, and automated vision.",
+  },
+  DS: {
+    name: "Department of Computer Science (Data Science)",
+    shortName: "Data Science",
+    code: "DS",
+    description: "Advancing information theory, predictive modeling, statistical learning, and analytics.",
+  },
+  CY: {
+    name: "Department of Computer Science (Cyber Security)",
+    shortName: "Cyber Security",
+    code: "CY",
+    description: "Fostering computing excellence, defense architectures, and secure computing systems.",
+  },
+  EEE: {
+    name: "Department of Electrical & Electronics Engineering",
+    shortName: "Electrical & Electronics",
+    code: "EEE",
+    description: "Pioneering power electronic systems, energy transitions, and aerospace electronic systems.",
+  },
+  CV: {
+    name: "Department of Civil Engineering",
+    shortName: "Civil Engineering",
+    code: "CV",
+    description: "Focusing on smart transportation networks, environmental tech, and social implications of engineering.",
+  },
+  ME: {
+    name: "Department of Mechanical Engineering",
+    shortName: "Mechanical Engineering",
+    code: "ME",
+    description: "Bridging industry application engineering, mechatronics, and smart manufacturing systems.",
+  },
+  MCA: {
+    name: "Department of Master of Computer Applications",
+    shortName: "Computer Applications (MCA)",
+    code: "MCA",
+    description: "Advancing education technology, pedagogic methods, and applied computational practices.",
+  },
+  MBA: {
+    name: "Department of Management Studies (MBA)",
+    shortName: "Management Studies (MBA)",
+    code: "MBA",
+    description: "Cultivating tech management, entrepreneurial leadership, and engineering management systems.",
+  },
+};
+
 export const societies = [
   { name: "IEEE Computational Intelligence Society (CIS)", department: "ISE", advisor: "Dr. Sunitha K" },
   { name: "IEEE Consumer Technology Society (CTSoc)", department: "CSE", advisor: "Ms. Rashmi M" },
@@ -20,3 +89,4 @@ export const societies = [
   { name: "IEEE Society on Social Implications of Technology (SSIT)", department: "CV", advisor: "Dr. Ramya" },
   { name: "IEEE Intelligent Transportation Systems Society (ITSS)", department: "CV", advisor: "Ms. D M.Suman" },
 ];
+
