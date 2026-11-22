@@ -50,6 +50,7 @@ const CATEGORIES = [
   "CONFERENCE",
   "COMPETITION",
   "MEETUP",
+  "EVENT GROUP",
 ];
 
 const MONTHS = [
@@ -144,7 +145,26 @@ export default function AdminDashboard() {
     venue: "RNSIT Campus",
     description: "",
     registration_url: "",
+    parent_event_id: "",
   });
+
+  // Any existing event can be a parent, enabling multi-level structures such as
+  // LUMINUS -> Department-wise Events -> CSE -> individual competitions.
+  const getEventPathLabel = (event) => {
+    const parts = [event.title];
+    let parentId = event.parent_event_id;
+    const visited = new Set([event.id]);
+    while (parentId && !visited.has(parentId)) {
+      visited.add(parentId);
+      const parent = events.find((item) => item.id === parentId);
+      if (!parent) break;
+      parts.unshift(parent.title);
+      parentId = parent.parent_event_id;
+    }
+    return parts.join(" / ");
+  };
+
+  const rootEvents = events.filter((event) => !event.parent_event_id);
 
   // ExeCom Form State
   const [memberForm, setMemberForm] = useState({
@@ -244,8 +264,20 @@ export default function AdminDashboard() {
       return;
     }
 
-    await addEvent(eventForm);
-    showNotification(`Event "${eventForm.title}" successfully saved!`);
+    const selectedParent = eventForm.parent_event_id;
+    const result = await addEvent({
+      ...eventForm,
+      parent_event_id: selectedParent || null,
+    });
+    if (result?.success === false) {
+      showNotification(result.message || "Could not save the event.", "error");
+      return;
+    }
+    showNotification(
+      selectedParent
+        ? `"${eventForm.title}" added under its selected parent!`
+        : `Event "${eventForm.title}" successfully saved!`
+    );
     
     // Reset form
     setEventForm({
@@ -258,6 +290,7 @@ export default function AdminDashboard() {
       venue: "RNSIT Campus",
       description: "",
       registration_url: "",
+      parent_event_id: "",
     });
   };
 
@@ -313,8 +346,12 @@ export default function AdminDashboard() {
   // Handle Event Delete
   const handleDeleteEvent = async (id, title) => {
     if (window.confirm(`Are you sure you want to delete the event "${title}"?`)) {
-      await removeEvent(id);
-      showNotification(`Event "${title}" has been deleted.`);
+      const result = await removeEvent(id);
+      if (result?.success === false) {
+        showNotification(result.message || `Could not delete "${title}".`, "error");
+        return;
+      }
+      showNotification(`Event "${title}" and its nested items have been deleted.`);
     }
   };
 
@@ -353,6 +390,57 @@ export default function AdminDashboard() {
   if (!isAuthenticated && !isLoading) {
     return null;
   }
+
+  // Render the complete event hierarchy in the admin list.
+  const renderEventNode = (event, depth = 0) => {
+    const children = events.filter((item) => item.parent_event_id === event.id);
+    return (
+      <div
+        key={event.id}
+        className={`rounded-2xl border bg-white p-4 transition hover:border-[#A8D8EF] ${depth === 0 ? "border-[#DCE6EF]" : "border-slate-200"}`}
+        style={{ marginLeft: depth > 0 ? `${Math.min(depth, 4) * 12}px` : 0 }}
+      >
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 gap-3">
+            <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl border border-[#B8DCEC] bg-[#E6F4FB] text-[#10243A]">
+              <span className="text-base font-bold leading-none">{event.date}</span>
+              <span className="mt-1 text-[10px] font-bold tracking-wider text-[#00629B]">{event.month}</span>
+            </div>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-[#B8DCEC] bg-[#E6F4FB] px-2.5 py-0.5 text-[10px] font-bold text-[#00629B]">{event.category}</span>
+                <span className="text-xs text-slate-500">{event.year}</span>
+                {children.length > 0 && (
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+                    {children.length} direct item{children.length === 1 ? "" : "s"}
+                  </span>
+                )}
+              </div>
+              <h4 className="mt-1.5 break-words text-sm font-bold text-[#10243A]">{event.title}</h4>
+              <p className="mt-1 line-clamp-2 text-xs text-slate-600">{event.description}</p>
+              <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-slate-500">
+                <span className="inline-flex items-center gap-1"><Clock size={12} className="text-[#00629B]" />{event.time}</span>
+                <span className="inline-flex items-center gap-1"><MapPin size={12} className="text-[#00629B]" />{event.venue}</span>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => handleDeleteEvent(event.id, event.title)}
+            className="inline-flex shrink-0 items-center gap-1.5 self-end rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-100 sm:self-start"
+            title={children.length ? "Remove this item and all nested items" : "Remove this event"}
+          >
+            <Trash2 size={13} /><span>Remove</span>
+          </button>
+        </div>
+        {children.length > 0 && (
+          <div className="mt-4 space-y-3 border-l-2 border-[#B8DCEC] pl-3 sm:pl-4">
+            {children.map((child) => renderEventNode(child, depth + 1))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="relative min-h-screen bg-[#F3F7FA] pt-24 pb-20 text-[#10243A] sm:pt-28">
@@ -631,6 +719,29 @@ export default function AdminDashboard() {
                     />
                   </div>
 
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                      Add Under Parent Event / Group (Optional)
+                    </label>
+                    <select
+                      value={eventForm.parent_event_id}
+                      onChange={(e) =>
+                        setEventForm({ ...eventForm, parent_event_id: e.target.value })
+                      }
+                      className="w-full rounded-xl border border-[#DCE6EF] bg-white px-3 py-2.5 text-sm text-[#10243A] focus:border-[#29A9E0] focus:outline-none"
+                    >
+                      <option value="">Create as a standalone / main event</option>
+                      {events.map((parent) => (
+                        <option key={parent.id} value={parent.id}>
+                          {getEventPathLabel(parent)}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-[11px] text-slate-500">
+                      Select any existing event or group to create a nested item. Leave empty to create a standalone / main event. Choose EVENT GROUP for containers such as Department-wise Events.
+                    </p>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
@@ -789,89 +900,23 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Right: Existing Events List */}
+            {/* Right: Existing Events List, recursively grouped */}
             <div className="lg:col-span-7">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-lg font-bold text-[#10243A]">
-                  Active Upcoming Events ({events.length})
+                  Active Main Events ({rootEvents.length})
                 </h3>
-                <span className="text-xs text-slate-500">
-                  Visible live to all students
-                </span>
+                <span className="text-xs text-slate-500">Nested items appear under their parent groups</span>
               </div>
-
-              {events.length === 0 ? (
+              {rootEvents.length === 0 ? (
                 <div className="rounded-3xl border border-dashed border-[#DCE6EF] p-12 text-center">
                   <CalendarDays className="mx-auto text-slate-500" size={40} />
                   <p className="mt-3 text-sm text-slate-500">No events currently scheduled.</p>
-                  <p className="text-xs text-slate-500">Use the form on the left to add your first upcoming event.</p>
+                  <p className="text-xs text-slate-500">Use the form on the left to add your first main event.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {events.map((event) => (
-                    <div
-                      key={event.id}
-                      className="group relative rounded-2xl border border-[#DCE6EF] bg-white p-5 backdrop-blur-xl transition hover:border-[#A8D8EF] hover:bg-white"
-                    >
-                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div className="flex gap-4">
-                          {/* Date Block */}
-                          <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl border border-[#B8DCEC] bg-[#E6F4FB] text-[#10243A]">
-                            <span className="text-lg font-bold leading-none">
-                              {event.date}
-                            </span>
-                            <span className="mt-1 text-[10px] font-bold tracking-wider text-[#00629B]">
-                              {event.month}
-                            </span>
-                          </div>
-
-                          {/* Event Info */}
-                          <div>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="inline-block rounded-full bg-[#E6F4FB] px-2.5 py-0.5 text-[10px] font-bold text-[#00629B] border border-[#B8DCEC]">
-                                {event.category}
-                              </span>
-                              <span className="text-xs text-slate-500">
-                                {event.year}
-                              </span>
-                            </div>
-
-                            <h4 className="mt-1.5 text-base font-bold text-[#10243A] group-hover:text-[#00629B] transition-colors">
-                              {event.title}
-                            </h4>
-
-                            <p className="mt-1 text-xs text-slate-600 line-clamp-2">
-                              {event.description}
-                            </p>
-
-                            <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-500">
-                              <span className="flex items-center gap-1.5">
-                                <Clock size={13} className="text-[#00629B]" />
-                                {event.time}
-                              </span>
-                              <span className="flex items-center gap-1.5">
-                                <MapPin size={13} className="text-[#00629B]" />
-                                {event.venue}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Delete Button */}
-                        <div className="shrink-0 self-end sm:self-start">
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteEvent(event.id, event.title)}
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-100 hover:text-[#10243A]"
-                            title="Delete this event"
-                          >
-                            <Trash2 size={13} />
-                            <span>Remove</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                  {rootEvents.map((event) => renderEventNode(event))}
                 </div>
               )}
             </div>
