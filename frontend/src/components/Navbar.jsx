@@ -50,7 +50,7 @@ export default function Navbar() {
           <img
             src="/assets/rnsit-logo.png"
             alt="RNS Institute of Technology"
-            className="h-auto w-[125px] sm:w-[160px] lg:w-[190px] xl:w-[225px] object-contain"
+            className="h-auto w-[125px] sm:w-[160px] lg:w-[190px] xl:w-[225px] object-contain transition-transform duration-200"
           />
         </Link>
 
