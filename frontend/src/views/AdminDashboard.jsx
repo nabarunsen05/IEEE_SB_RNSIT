@@ -38,6 +38,7 @@ import {
   Phone,
   Camera,
   Upload,
+  X,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
@@ -102,6 +103,7 @@ export default function AdminDashboard() {
     events,
     addEvent,
     removeEvent,
+    updateEventPhotos,
     executiveCommittee,
     addExecomMember,
     removeExecomMember,
@@ -131,6 +133,76 @@ export default function AdminDashboard() {
       console.error("Logout failed:", err);
       showNotification("Failed to log out. Please try again.", "error");
       setIsLoggingOutLocal(false);
+    }
+  };
+
+  // Event Photo Management State
+  const [photoModalEvent, setPhotoModalEvent] = useState(null);
+  const [photoInputUrl, setPhotoInputUrl] = useState("");
+  const [eventPhotosList, setEventPhotosList] = useState([]);
+  const [isSavingPhotos, setIsSavingPhotos] = useState(false);
+
+  const openPhotoModal = (event) => {
+    setPhotoModalEvent(event);
+    setEventPhotosList(Array.isArray(event.photos) ? [...event.photos] : []);
+    setPhotoInputUrl("");
+  };
+
+  const closePhotoModal = () => {
+    setPhotoModalEvent(null);
+    setEventPhotosList([]);
+    setPhotoInputUrl("");
+  };
+
+  const handleAddPhotoUrl = (e) => {
+    if (e) e.preventDefault();
+    const url = photoInputUrl.trim();
+    if (!url) return;
+    if (eventPhotosList.includes(url)) {
+      showNotification("This photo is already added to the list.", "error");
+      return;
+    }
+    setEventPhotosList((prev) => [...prev, url]);
+    setPhotoInputUrl("");
+  };
+
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    files.forEach((file) => {
+      if (!file.type.startsWith("image/")) {
+        showNotification("Please select valid image files.", "error");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        const dataUrl = uploadEvent.target?.result;
+        if (dataUrl) {
+          setEventPhotosList((prev) => [...prev, String(dataUrl)]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = "";
+  };
+
+  const handleRemovePhoto = (indexToRemove) => {
+    setEventPhotosList((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  const handleSavePhotos = async () => {
+    if (!photoModalEvent) return;
+    setIsSavingPhotos(true);
+    try {
+      await updateEventPhotos(photoModalEvent.id, eventPhotosList);
+      showNotification(`Event photos saved successfully for "${photoModalEvent.title}".`);
+      closePhotoModal();
+    } catch (err) {
+      console.error("Save photos error:", err);
+      showNotification("Failed to save photos.", "error");
+    } finally {
+      setIsSavingPhotos(false);
     }
   };
 
@@ -415,6 +487,12 @@ export default function AdminDashboard() {
                     {children.length} direct item{children.length === 1 ? "" : "s"}
                   </span>
                 )}
+                {event.photos?.length > 0 && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-[10px] font-semibold text-[#00629B]">
+                    <Camera size={10} />
+                    <span>{event.photos.length} photo{event.photos.length === 1 ? "" : "s"}</span>
+                  </span>
+                )}
               </div>
               <h4 className="mt-1.5 break-words text-sm font-bold text-[#10243A]">{event.title}</h4>
               <p className="mt-1 line-clamp-2 text-xs text-slate-600">{event.description}</p>
@@ -424,14 +502,25 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => handleDeleteEvent(event.id, event.title)}
-            className="inline-flex shrink-0 items-center gap-1.5 self-end rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-100 sm:self-start"
-            title={children.length ? "Remove this item and all nested items" : "Remove this event"}
-          >
-            <Trash2 size={13} /><span>Remove</span>
-          </button>
+          <div className="flex shrink-0 items-center gap-2 self-end sm:self-start">
+            <button
+              type="button"
+              onClick={() => openPhotoModal(event)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-[#00629B] transition hover:bg-sky-100"
+              title="Add or manage photos for this event"
+            >
+              <Camera size={13} />
+              <span>{event.photos?.length ? `Photos (${event.photos.length})` : "Add Photos"}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDeleteEvent(event.id, event.title)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-100"
+              title={children.length ? "Remove this item and all nested items" : "Remove this event"}
+            >
+              <Trash2 size={13} /><span>Remove</span>
+            </button>
+          </div>
         </div>
         {children.length > 0 && (
           <div className="mt-4 space-y-3 border-l-2 border-[#B8DCEC] pl-3 sm:pl-4">
@@ -449,6 +538,161 @@ export default function AdminDashboard() {
       <div className="pointer-events-none absolute -right-40 bottom-32 h-96 w-96 rounded-full bg-[#F0F8FC] blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* =========================================
+            EVENT PHOTOS MANAGEMENT MODAL
+        ========================================== */}
+        {photoModalEvent && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm">
+            <div className="relative w-full max-w-2xl rounded-3xl border border-[#DCE6EF] bg-white p-6 shadow-2xl sm:p-8">
+              {/* Header */}
+              <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-[#00629B] border border-sky-100">
+                    <Camera size={22} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-[#10243A]">
+                      Event Photos Gallery
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      {photoModalEvent.title} · {photoModalEvent.date} {photoModalEvent.month} {photoModalEvent.year}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={closePhotoModal}
+                  className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+                  aria-label="Close dialog"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Add Photo Controls */}
+              <div className="mt-5 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                    Add Photo via URL
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      placeholder="Paste image URL (https://...)"
+                      value={photoInputUrl}
+                      onChange={(e) => setPhotoInputUrl(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddPhotoUrl();
+                        }
+                      }}
+                      className="flex-1 rounded-xl border border-[#DCE6EF] bg-slate-50/60 px-3.5 py-2 text-xs text-[#10243A] placeholder-slate-400 transition focus:border-[#00629B] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00629B]/10"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddPhotoUrl}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-[#00629B] px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-[#004F7D]"
+                    >
+                      <Plus size={14} />
+                      <span>Add URL</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="h-px flex-1 bg-slate-100" />
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">or</span>
+                  <div className="h-px flex-1 bg-slate-100" />
+                </div>
+
+                {/* Upload Local File */}
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                    Upload Photos from Computer
+                  </label>
+                  <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-sky-300 bg-sky-50/50 px-4 py-3 text-xs font-semibold text-[#00629B] transition hover:bg-sky-100/60">
+                    <Upload size={15} />
+                    <span>Select Image Files</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                {/* Photo Previews */}
+                <div className="mt-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Photos ({eventPhotosList.length})
+                    </span>
+                    {eventPhotosList.length > 0 && (
+                      <span className="text-[11px] text-slate-400">
+                        These photos will appear inside the event button on the Events page
+                      </span>
+                    )}
+                  </div>
+
+                  {eventPhotosList.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 p-6 text-center">
+                      <Camera size={28} className="mx-auto text-slate-400" />
+                      <p className="mt-2 text-xs text-slate-500">
+                        No photos added yet. Add URLs or upload photos above.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid max-h-56 grid-cols-3 gap-3 overflow-y-auto p-1 sm:grid-cols-4">
+                      {eventPhotosList.map((url, idx) => (
+                        <div
+                          key={idx}
+                          className="group relative aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-2xs"
+                        >
+                          <img
+                            src={url}
+                            alt={`Event photo ${idx + 1}`}
+                            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePhoto(idx)}
+                            className="absolute right-1 top-1 rounded-md bg-rose-600/90 p-1 text-white opacity-0 transition group-hover:opacity-100 hover:bg-rose-700"
+                            title="Remove photo"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                <button
+                  type="button"
+                  onClick={closePhotoModal}
+                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={isSavingPhotos}
+                  onClick={handleSavePhotos}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#00629B] to-[#0077B8] px-5 py-2 text-xs font-semibold text-white shadow-sm transition hover:scale-[1.02] disabled:opacity-50"
+                >
+                  {isSavingPhotos ? "Saving..." : "Save Photos"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Floating Notification */}
         {notification && (
           <div

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   ArrowRight,
   CalendarDays,
@@ -12,6 +12,9 @@ import {
   Layers,
   ChevronDown,
   ChevronUp,
+  Camera,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
@@ -84,11 +87,12 @@ function getSearchableTreeText(events, event, visited = new Set()) {
     .toLowerCase();
 }
 
-function EventTreeNode({ event, events, depth = 0 }) {
+function EventTreeNode({ event, events, depth = 0, onOpenGallery }) {
   const children = getChildren(events, event.id);
   const isGroup = children.length > 0;
   const isStructuralGroup = event.category?.toUpperCase() === "EVENT GROUP";
   const isPast = isPastEvent(event);
+  const hasPhotos = Array.isArray(event.photos) && event.photos.length > 0;
 
   return (
     <div className={`${depth === 0 ? "" : "border-l-2 border-[#B8DCEC] pl-4 sm:pl-5"} ${depth > 0 ? "mt-4" : ""}`}>
@@ -115,17 +119,28 @@ function EventTreeNode({ event, events, depth = 0 }) {
               {event.venue && <span className="inline-flex items-center gap-1.5"><MapPin size={13} className="text-[#00629B]" />{event.venue}</span>}
             </div>
           </div>
-          {isGroup ? (
-            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#E6F4FB] px-3 py-1.5 text-xs font-semibold text-[#00629B]">
-              <Layers size={13} /> {getDescendantCount(events, event.id)} nested item{getDescendantCount(events, event.id) === 1 ? "" : "s"}
-            </span>
-          ) : !isPast && event.registration_url ? (
-            <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-[#10243A] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#00629B]">
-              Register <ArrowRight size={14} />
-            </a>
-          ) : isPast ? (
-            <span className="inline-flex shrink-0 items-center rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">Event completed</span>
-          ) : null}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {hasPhotos && (
+              <button
+                type="button"
+                onClick={() => onOpenGallery && onOpenGallery(event)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-[#00629B] to-[#0284C7] px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-95"
+              >
+                <Camera size={14} /> Photos ({event.photos.length})
+              </button>
+            )}
+            {isGroup ? (
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#E6F4FB] px-3 py-1.5 text-xs font-semibold text-[#00629B]">
+                <Layers size={13} /> {getDescendantCount(events, event.id)} nested item{getDescendantCount(events, event.id) === 1 ? "" : "s"}
+              </span>
+            ) : !isPast && event.registration_url ? (
+              <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-[#10243A] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#00629B]">
+                Register <ArrowRight size={14} />
+              </a>
+            ) : isPast && !hasPhotos ? (
+              <span className="inline-flex shrink-0 items-center rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">Event completed</span>
+            ) : null}
+          </div>
         </div>
         {children.length > 0 && (
           <div className="mt-5 space-y-4">
@@ -133,7 +148,7 @@ function EventTreeNode({ event, events, depth = 0 }) {
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#00629B]">Departments and competitions</p>
             )}
             {children.map((child) => (
-              <EventTreeNode key={child.id} event={child} events={events} depth={depth + 1} />
+              <EventTreeNode key={child.id} event={child} events={events} depth={depth + 1} onOpenGallery={onOpenGallery} />
             ))}
           </div>
         )}
@@ -147,6 +162,40 @@ function Events() {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEventId, setSelectedEventId] = useState(null);
+  const [galleryEvent, setGalleryEvent] = useState(null);
+  const [currentPhotoIdx, setCurrentPhotoIdx] = useState(0);
+
+  const handleOpenGallery = (event, initialIndex = 0) => {
+    if (!event?.photos?.length) return;
+    setGalleryEvent(event);
+    setCurrentPhotoIdx(initialIndex);
+  };
+
+  const handleCloseGallery = () => {
+    setGalleryEvent(null);
+    setCurrentPhotoIdx(0);
+  };
+
+  const handlePrevPhoto = () => {
+    if (!galleryEvent?.photos?.length) return;
+    setCurrentPhotoIdx((prev) => (prev > 0 ? prev - 1 : galleryEvent.photos.length - 1));
+  };
+
+  const handleNextPhoto = () => {
+    if (!galleryEvent?.photos?.length) return;
+    setCurrentPhotoIdx((prev) => (prev < galleryEvent.photos.length - 1 ? prev + 1 : 0));
+  };
+
+  useEffect(() => {
+    if (!galleryEvent) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") handleCloseGallery();
+      if (e.key === "ArrowLeft") handlePrevPhoto();
+      if (e.key === "ArrowRight") handleNextPhoto();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [galleryEvent]);
 
   // Only top-level records are shown as public event cards. Existing PARADOX
   // children and new multi-level LUMINUS groups share the same hierarchy.
@@ -258,7 +307,23 @@ function Events() {
                       {event.image_url && <div className="absolute inset-0 bg-slate-950/35" />}
                       <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full border border-white/20 animate-float-slow" />
                       <div className="absolute -bottom-16 -left-8 h-44 w-44 rounded-full border border-white/15 animate-float-reverse" />
-                      <div className="relative z-10 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/20 px-3.5 py-1 text-xs font-semibold tracking-wider text-white backdrop-blur-md shadow-sm"><span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" /><span>{event.category}</span></div>
+                      <div className="relative z-10 flex items-center justify-between gap-2">
+                        <div className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/20 px-3.5 py-1 text-xs font-semibold tracking-wider text-white backdrop-blur-md shadow-sm">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />
+                          <span>{event.category}</span>
+                        </div>
+                        {event.photos?.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); handleOpenGallery(event); }}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/40 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md shadow-sm transition hover:bg-black/60"
+                            title="View Photos"
+                          >
+                            <Camera size={13} className="text-[#29A9E0]" />
+                            <span>{event.photos.length} Photo{event.photos.length === 1 ? "" : "s"}</span>
+                          </button>
+                        )}
+                      </div>
                       <div className="absolute bottom-4 left-5 z-10 flex items-center gap-3">
                         <div className="flex h-14 min-w-[4.25rem] flex-col items-center justify-center rounded-2xl border border-white/40 bg-white/95 px-2 text-[#10243A] shadow-md backdrop-blur-md">
                           <span className="whitespace-nowrap text-[17px] font-extrabold leading-none tracking-tight">{getDateRangeLabel(event.date)}</span>
@@ -276,18 +341,34 @@ function Events() {
                         <div className="flex items-center gap-2.5 text-[13px] text-[#526477]"><Clock size={16} className="shrink-0 text-[#29A9E0]" /><span>{event.time}</span></div>
                         <div className="flex items-center gap-2.5 text-[13px] text-[#526477]"><MapPin size={16} className="shrink-0 text-[#F26522]" /><span>{event.venue}</span></div>
                       </div>
-                      {nestedCount > 0 ? (
-                        <button type="button" onClick={() => handleExplore(event)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]">
-                          {isExpanded ? "Hide Event Details" : "Explore Event"}
-                          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                        </button>
-                      ) : !isPast && event.registration_url ? (
-                        <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]">
-                          Register for Event <ArrowRight size={16} />
-                        </a>
-                      ) : isPast ? (
-                        <p className="mt-6 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">Event completed</p>
-                      ) : null}
+
+                      <div className="mt-4 flex flex-col gap-2">
+                        {event.photos?.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => handleOpenGallery(event)}
+                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0284C7] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:scale-[1.01] hover:brightness-110"
+                          >
+                            <Camera size={16} />
+                            <span>View Event Photos ({event.photos.length})</span>
+                          </button>
+                        )}
+
+                        {nestedCount > 0 ? (
+                          <button type="button" onClick={() => handleExplore(event)} className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]">
+                            {isExpanded ? "Hide Event Details" : "Explore Event"}
+                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          </button>
+                        ) : !isPast && event.registration_url ? (
+                          <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]">
+                            Register for Event <ArrowRight size={16} />
+                          </a>
+                        ) : isPast && (!event.photos || event.photos.length === 0) ? (
+                          <p className="py-2 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">Event completed</p>
+                        ) : isPast && event.photos?.length > 0 ? (
+                          <p className="text-center text-[11px] font-medium uppercase tracking-wider text-slate-400">Event completed</p>
+                        ) : null}
+                      </div>
                     </div>
                   </article>
                 );
@@ -307,9 +388,109 @@ function Events() {
               <button type="button" onClick={() => setSelectedEventId(null)} className="inline-flex items-center gap-2 self-start rounded-lg border border-[#DCE5EC] px-3 py-2 text-xs font-semibold text-[#526477] hover:bg-slate-50"><X size={14} /> Close</button>
             </div>
             <div className="mt-6 space-y-5">
-              {selectedChildren.map((child) => <EventTreeNode key={child.id} event={child} events={events} depth={0} />)}
+              {selectedChildren.map((child) => (
+                <EventTreeNode
+                  key={child.id}
+                  event={child}
+                  events={events}
+                  depth={0}
+                  onOpenGallery={handleOpenGallery}
+                />
+              ))}
             </div>
           </section>
+        )}
+
+        {/* Event Photos Lightbox Modal */}
+        {galleryEvent && Array.isArray(galleryEvent.photos) && galleryEvent.photos.length > 0 && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 sm:p-6"
+            onClick={handleCloseGallery}
+          >
+            <div
+              className="relative flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl bg-[#0F172A] border border-white/10 shadow-2xl text-white"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+                <div className="min-w-0 pr-4">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full bg-[#00629B]/50 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[#38BDF8]">
+                      {galleryEvent.category || "Event"}
+                    </span>
+                    <span className="text-xs text-slate-400">
+                      Photo {currentPhotoIdx + 1} of {galleryEvent.photos.length}
+                    </span>
+                  </div>
+                  <h3 className="mt-1 truncate text-base font-bold text-white sm:text-lg">
+                    {galleryEvent.title}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCloseGallery}
+                  className="rounded-full p-2 text-slate-400 transition hover:bg-white/10 hover:text-white"
+                  aria-label="Close photo gallery"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Main Image View */}
+              <div className="relative flex flex-1 items-center justify-center bg-black/60 p-4 min-h-[280px] max-h-[60vh] overflow-hidden select-none">
+                <img
+                  src={galleryEvent.photos[currentPhotoIdx]}
+                  alt={`${galleryEvent.title} photo ${currentPhotoIdx + 1}`}
+                  className="max-h-[56vh] w-auto max-w-full rounded-xl object-contain shadow-2xl"
+                />
+
+                {galleryEvent.photos.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handlePrevPhoto}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-sm transition hover:bg-white/20 hover:scale-110"
+                      aria-label="Previous photo"
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNextPhoto}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-sm transition hover:bg-white/20 hover:scale-110"
+                      aria-label="Next photo"
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Thumbnails strip */}
+              {galleryEvent.photos.length > 1 && (
+                <div className="flex gap-2.5 overflow-x-auto border-t border-white/10 p-3 bg-[#0a0f1d]/90">
+                  {galleryEvent.photos.map((photo, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setCurrentPhotoIdx(idx)}
+                      className={`relative h-14 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition ${
+                        currentPhotoIdx === idx
+                          ? "border-[#38BDF8] opacity-100 ring-2 ring-[#38BDF8]/40 scale-105"
+                          : "border-transparent opacity-50 hover:opacity-85"
+                      }`}
+                    >
+                      <img
+                        src={photo}
+                        alt={`Thumbnail ${idx + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </section>

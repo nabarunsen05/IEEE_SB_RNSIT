@@ -18,6 +18,10 @@ const initialEvents = [
     time: "10:00 AM",
     venue: "RNSIT Main Auditorium",
     category: "WORKSHOP",
+    photos: [
+      "/assets/domains/artificial-intelligence.webp",
+      "/assets/domains/robotics-iot.webp",
+    ],
   },
   {
     id: "event-2",
@@ -709,6 +713,38 @@ export function AdminProvider({ children }) {
     return { success: true };
   };
 
+  const updateEventPhotos = async (eventId, photos) => {
+    setEvents((prev) => {
+      const updated = prev.map((ev) =>
+        ev.id === eventId ? { ...ev, photos } : ev
+      );
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("ieee_events_data", JSON.stringify(updated));
+        } catch (e) {
+          console.warn("Could not save to localStorage:", e);
+        }
+      }
+      return updated;
+    });
+
+    if (supabase) {
+      try {
+        const { error } = await supabase
+          .from("events")
+          .update({ photos })
+          .eq("id", eventId);
+        if (error) {
+          console.warn("Could not update photos in Supabase events table:", error);
+        }
+      } catch (err) {
+        console.warn("Supabase photo update error:", err);
+      }
+    }
+
+    return { success: true };
+  };
+
   // =========================================
   // EXECUTIVE COMMITTEE
   // =========================================
@@ -881,6 +917,7 @@ export function AdminProvider({ children }) {
         events,
         addEvent,
         removeEvent,
+        updateEventPhotos,
         // ExeCom
         executiveCommittee,
         addExecomMember,
