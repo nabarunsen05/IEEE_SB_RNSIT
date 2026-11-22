@@ -77,12 +77,12 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Join Us */}
+          {/* Join IEEE */}
           <Link
             href="/join"
             className="flex shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:scale-105 hover:from-[#004F7D] hover:to-[#0074B5] active:scale-95"
           >
-            Join Us
+            Join IEEE
           </Link>
         </div>
 
@@ -127,13 +127,13 @@ export default function Navbar() {
               );
             })}
 
-            {/* Mobile Join Us */}
+            {/* Mobile Join IEEE */}
             <Link
               href="/join"
               onClick={() => setMenuOpen(false)}
               className="mt-3 flex items-center justify-center rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-3 font-semibold text-white shadow-md transition hover:from-[#004F7D] hover:to-[#0074B5]"
             >
-              Join Us
+              Join IEEE
             </Link>
 
           </div>
