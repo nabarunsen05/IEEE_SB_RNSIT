@@ -18,15 +18,6 @@ export default function DepartmentSocieties({ deptCode }) {
   // Get all societies for this specific department
   const deptSocieties = societies.filter((s) => s.department === normalizedCode);
 
-  // Other departments for quick cross-navigation
-  const allDeptCodes = Object.keys(departmentsInfo);
-  const otherDepartments = allDeptCodes
-    .filter((code) => code !== normalizedCode)
-    .map((code) => ({
-      ...departmentsInfo[code],
-      count: societies.filter((s) => s.department === code).length,
-    }));
-
   if (!department) {
     return (
       <div className="flex min-h-[70vh] flex-col items-center justify-center px-4 text-center">
@@ -91,7 +82,7 @@ export default function DepartmentSocieties({ deptCode }) {
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-[#00629B]">
                       <Sparkles size={12} className="text-[#29A9E0]" />
-                      <span>Academic Department</span>
+                      <span>IEEE Societies</span>
                     </span>
 
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
@@ -174,48 +165,15 @@ export default function DepartmentSocieties({ deptCode }) {
           </div>
         </div>
 
-        {/* =========================================
-            EXPLORE OTHER DEPARTMENTS
-        ========================================== */}
-        <div className="mt-16 rounded-3xl border border-slate-200/80 bg-white/70 p-6 backdrop-blur-xs sm:p-8">
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <h3 className="text-base font-bold text-[#10243A]">
-                Explore Other Academic Departments
-              </h3>
-              <p className="mt-0.5 text-xs text-slate-500">
-                Click any department to view its specialized IEEE societies
-              </p>
-            </div>
-            <Link
-              href="/societies"
-              className="text-xs font-semibold text-[#00629B] hover:underline"
-            >
-              View All ({societies.length}) →
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {otherDepartments.map((dept) => (
-              <Link
-                key={dept.code}
-                href={`/societies/${dept.code.toLowerCase()}`}
-                className="group flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-3.5 transition-all hover:-translate-y-0.5 hover:border-[#00629B]/40 hover:bg-sky-50/40 hover:shadow-2xs"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-extrabold text-[#00629B] group-hover:bg-[#00629B] group-hover:text-white transition-colors">
-                    {dept.code}
-                  </span>
-                  <span className="text-[11px] font-semibold text-slate-400">
-                    {dept.count} {dept.count === 1 ? "ch." : "chs."}
-                  </span>
-                </div>
-                <span className="mt-2 text-xs font-semibold leading-tight text-[#10243A] group-hover:text-[#00629B] transition-colors truncate">
-                  {dept.shortName}
-                </span>
-              </Link>
-            ))}
-          </div>
+        {/* Back to All Societies */}
+        <div className="mt-14 flex items-center justify-center">
+          <Link
+            href="/societies"
+            className="group inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-[#00629B]/40 hover:bg-[#E6F4FB] hover:text-[#00629B]"
+          >
+            <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
+            <span>Back to All Societies</span>
+          </Link>
         </div>
       </div>
     </section>

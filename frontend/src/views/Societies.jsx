@@ -74,7 +74,7 @@ export default function Societies() {
         <div className="max-w-3xl">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-3.5 py-1.5 text-xs font-semibold text-[#00629B] shadow-2xs">
             <Sparkles size={13} className="text-[#29A9E0]" />
-            <span>{societies.length} Chapters Across {departmentGroups.length} Academic Departments</span>
+            <span>{societies.length} Chapters Across {departmentGroups.length} Departments</span>
           </div>
 
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">
@@ -134,10 +134,10 @@ export default function Societies() {
         <div className="mt-10">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
-              Academic Departments
+              Societies by Department
             </h2>
             <span className="text-xs text-slate-400">
-              Click any department block to view its societies
+              Click any block to view its societies
             </span>
           </div>
 

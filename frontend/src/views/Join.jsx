@@ -1,11 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Globe, Award, BookOpen, Send, Phone, Database } from "lucide-react";
+import {
+  CheckCircle2,
+  Globe,
+  BookOpen,
+  Send,
+  Phone,
+  ExternalLink,
+  Mail,
+} from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
 function Join() {
-  const { addRegistration, domains, isUsingSupabase } = useAdmin();
+  const { addRegistration, domains } = useAdmin();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,87 +40,121 @@ function Join() {
       <div className="pointer-events-none absolute -right-40 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
 
       <div className="relative mx-auto max-w-7xl">
-
         {/* =========================
             HEADER
         ========================== */}
         <div className="mx-auto max-w-3xl text-center">
-
-
           <h1 className="text-4xl font-bold tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">
             Join the IEEE
-            <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent"> Student Branch</span>
+            <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
+              {" "}
+              Student Branch
+            </span>
           </h1>
 
           <p className="mt-5 text-lg leading-8 text-[#526477]">
-            Step into the world&apos;s largest technical professional organization. Gain access to IEEE Xplore,
-            distinguished lecture series, flagship student hackathons, and global peer networks.
+            Step into the world&apos;s largest technical professional organization. Gain access to
+            IEEE Xplore, distinguished lecture series, flagship student hackathons, and global peer
+            networks.
           </p>
-
-          {isUsingSupabase && (
-            <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-3 py-1 rounded-full">
-              <Database size={13} />
-              <span>Realtime Cloud Database Active</span>
-            </div>
-          )}
         </div>
-
 
         {/* =========================
             CONTENT GRID
         ========================== */}
         <div className="mt-14 grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-start">
-
-          {/* Left Column — Perks in Glass Cards with subtle color touches */}
+          {/* Left Column — Benefits of IEEE Membership */}
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-[#10243A] mb-2 flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-[#00629B]" />
-              Why Join IEEE RNSIT?
+              Benefits of IEEE Membership
             </h2>
 
-            <div className="group rounded-2xl border border-blue-100 bg-white p-6 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_16px_32px_rgba(0,98,155,0.1)]">
+            {/* Benefit 1 */}
+            <div className="group rounded-2xl border border-blue-100 bg-white p-5 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_16px_32px_rgba(0,98,155,0.1)]">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/25">
-                  <Globe size={24} />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/25">
+                  <BookOpen size={22} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#10243A] transition-colors group-hover:text-[#00629B]">Global IEEE Professional Network</h3>
+                  <h3 className="font-semibold text-[#10243A] transition-colors group-hover:text-[#00629B]">
+                    IEEE Xplore Digital Library &amp; Research Access
+                  </h3>
                   <p className="mt-1.5 text-sm leading-relaxed text-[#526477]">
-                    Connect directly with over 420,000+ members worldwide, access IEEE Sections, and collaborate across international chapters.
+                    Access over 5 million peer-reviewed technical documents, journals, and
+                    conference proceedings with substantial member discounts.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="group rounded-2xl border border-indigo-100 bg-white p-6 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-[0_16px_32px_rgba(79,70,229,0.1)]">
+            {/* Benefit 2 */}
+            <div className="group rounded-2xl border border-indigo-100 bg-white p-5 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-[0_16px_32px_rgba(79,70,229,0.1)]">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-500 text-white shadow-sm shadow-indigo-500/25">
-                  <BookOpen size={24} />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-500 text-white shadow-sm shadow-indigo-500/25">
+                  <Globe size={22} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#10243A] transition-colors group-hover:text-indigo-600">Research & Publication Grants</h3>
+                  <h3 className="font-semibold text-[#10243A] transition-colors group-hover:text-indigo-600">
+                    Global Professional Network &amp; Mentorship
+                  </h3>
                   <p className="mt-1.5 text-sm leading-relaxed text-[#526477]">
-                    Gain exclusive access to IEEE Xplore Digital Library papers, discounts on conference registrations, and guidance for writing research papers.
+                    Connect with 420,000+ members worldwide, collaborate on IEEE Collabratec, and
+                    participate in active IEEE Bangalore Section programs.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="group rounded-2xl border border-orange-100 bg-white p-6 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-[0_16px_32px_rgba(242,101,34,0.1)]">
+            {/* Benefit 3 */}
+            <div className="group rounded-2xl border border-emerald-100 bg-white p-5 shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-[0_16px_32px_rgba(16,185,129,0.1)]">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/25">
-                  <Award size={24} />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-500 text-white shadow-sm shadow-emerald-500/25">
+                  <Mail size={22} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[#10243A] transition-colors group-hover:text-[#F26522]">Leadership & Executive Experience</h3>
+                  <h3 className="font-semibold text-[#10243A] transition-colors group-hover:text-emerald-600">
+                    Exclusive @ieee.org Email &amp; Competitions
+                  </h3>
                   <p className="mt-1.5 text-sm leading-relaxed text-[#526477]">
-                    Lead teams in flagship tech fests, organize international events, and build verifiable credentials for higher studies and careers.
+                    Receive an official Google Workspace @ieee.org email alias, and compete in the
+                    annual IEEEXtreme 24h global programming hackathon.
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Redirecting Links: Official IEEE & IEEE Bangalore Section */}
+            <div className="rounded-2xl border border-[#00629B]/25 bg-gradient-to-r from-sky-50/70 via-white to-blue-50/50 p-5 shadow-xs">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#00629B]">
+                Official IEEE &amp; Regional Portals
+              </span>
+              <p className="mt-1 text-xs text-[#526477]">
+                Register directly for global membership or connect with our regional section:
+              </p>
+              <div className="mt-3.5 flex flex-wrap gap-2.5">
+                <a
+                  href="https://www.ieee.org/membership/join/index.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0284C7] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                >
+                  <span>Join IEEE (ieee.org)</span>
+                  <ExternalLink size={14} />
+                </a>
+
+                <a
+                  href="https://ieeebangalore.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#00629B]/35 bg-white px-4 py-2.5 text-xs font-bold text-[#00629B] shadow-2xs transition hover:border-[#00629B] hover:bg-[#E6F4FB]"
+                >
+                  <span>IEEE Bangalore Section</span>
+                  <ExternalLink size={14} />
+                </a>
               </div>
             </div>
           </div>
-
 
           {/* Right Column — Membership Registration Glass Form */}
           <div className="relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-8 shadow-[0_16px_45px_rgba(16,36,58,0.08)] sm:p-10">
@@ -126,7 +168,10 @@ function Join() {
                 </div>
                 <h3 className="mt-6 text-2xl font-bold text-[#10243A]">Application Received!</h3>
                 <p className="mt-3 text-[#526477] leading-relaxed">
-                  Thank you, <strong className="text-[#00629B]">{formData.name || "Student"}</strong>. Your membership registration has been stored. Our executive council will reach out to you via <strong className="text-[#00629B]">{formData.email || "your email"}</strong> with next steps.
+                  Thank you, <strong className="text-[#00629B]">{formData.name || "Student"}</strong>.
+                  Your membership registration has been stored. Our executive council will reach out
+                  to you via <strong className="text-[#00629B]">{formData.email || "your email"}</strong>{" "}
+                  with next steps.
                 </p>
                 <button
                   type="button"
@@ -156,7 +201,10 @@ function Join() {
                 </div>
 
                 <div>
-                  <label htmlFor="join-name" className="block text-xs font-semibold uppercase tracking-wider text-[#526477]">
+                  <label
+                    htmlFor="join-name"
+                    className="block text-xs font-semibold uppercase tracking-wider text-[#526477]"
+                  >
                     Full Name *
                   </label>
                   <input
@@ -171,7 +219,10 @@ function Join() {
                 </div>
 
                 <div>
-                  <label htmlFor="join-email" className="block text-xs font-semibold uppercase tracking-wider text-[#526477]">
+                  <label
+                    htmlFor="join-email"
+                    className="block text-xs font-semibold uppercase tracking-wider text-[#526477]"
+                  >
                     College / Personal Email *
                   </label>
                   <input
@@ -187,7 +238,10 @@ function Join() {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="join-branch" className="block text-xs font-semibold uppercase tracking-wider text-[#526477]">
+                    <label
+                      htmlFor="join-branch"
+                      className="block text-xs font-semibold uppercase tracking-wider text-[#526477]"
+                    >
                       Department / Branch *
                     </label>
                     <input
@@ -202,7 +256,10 @@ function Join() {
                   </div>
 
                   <div>
-                    <label htmlFor="join-year" className="block text-xs font-semibold uppercase tracking-wider text-[#526477]">
+                    <label
+                      htmlFor="join-year"
+                      className="block text-xs font-semibold uppercase tracking-wider text-[#526477]"
+                    >
                       Academic Year
                     </label>
                     <select
@@ -221,7 +278,10 @@ function Join() {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="join-domain" className="block text-xs font-semibold uppercase tracking-wider text-[#526477]">
+                    <label
+                      htmlFor="join-domain"
+                      className="block text-xs font-semibold uppercase tracking-wider text-[#526477]"
+                    >
                       Domain of Interest
                     </label>
                     <select
@@ -238,18 +298,21 @@ function Join() {
                         ))
                       ) : (
                         <>
-                          <option>Artificial Intelligence & Data Science</option>
-                          <option>Web & Mobile App Development</option>
-                          <option>Robotics, IoT & Embedded Systems</option>
-                          <option>Cybersecurity & Ethical Hacking</option>
-                          <option>Cloud Computing & DevOps</option>
+                          <option>Artificial Intelligence &amp; Data Science</option>
+                          <option>Web &amp; Mobile App Development</option>
+                          <option>Robotics, IoT &amp; Embedded Systems</option>
+                          <option>Cybersecurity &amp; Ethical Hacking</option>
+                          <option>Cloud Computing &amp; DevOps</option>
                         </>
                       )}
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="join-phone" className="block text-xs font-semibold uppercase tracking-wider text-[#526477]">
+                    <label
+                      htmlFor="join-phone"
+                      className="block text-xs font-semibold uppercase tracking-wider text-[#526477]"
+                    >
                       Phone Number (Optional)
                     </label>
                     <div className="relative mt-2">
@@ -280,7 +343,10 @@ function Join() {
                     </span>
                   ) : (
                     <>
-                      <Send size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+                      <Send
+                        size={16}
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                      />
                       <span>Submit Membership Request</span>
                     </>
                   )}
@@ -297,11 +363,8 @@ function Join() {
                 </p>
               </form>
             )}
-
           </div>
-
         </div>
-
       </div>
     </section>
   );
