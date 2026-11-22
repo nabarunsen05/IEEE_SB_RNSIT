@@ -126,6 +126,7 @@ export default function AdminDashboard() {
     time: "10:00 AM",
     venue: "RNSIT Campus",
     description: "",
+    registration_url: "",
   });
 
   // ExeCom Form State
@@ -239,6 +240,7 @@ export default function AdminDashboard() {
       time: "10:00 AM",
       venue: "RNSIT Campus",
       description: "",
+      registration_url: "",
     });
   };
 
@@ -703,6 +705,30 @@ export default function AdminDashboard() {
                       className="w-full rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2.5 text-sm text-[#10243A] placeholder-slate-400 focus:border-[#29A9E0] focus:outline-none focus:ring-1 focus:ring-[#29A9E0]"
                     />
                   </div>
+                   
+<div>
+  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
+    Google Form Registration Link
+  </label>
+
+  <input
+    type="url"
+    placeholder="https://forms.gle/your-event-form"
+    value={eventForm.registration_url}
+    onChange={(e) =>
+      setEventForm({
+        ...eventForm,
+        registration_url: e.target.value,
+      })
+    }
+    className="w-full rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2.5 text-sm text-[#10243A] placeholder-slate-400 focus:border-[#29A9E0] focus:outline-none focus:ring-1 focus:ring-[#29A9E0]"
+  />
+
+  <p className="mt-1.5 text-[11px] text-slate-500">
+    Paste the Google Form link created specifically for this event.
+    Leave empty if registration is not open yet.
+  </p>
+</div>
 
                   <button
                     type="submit"

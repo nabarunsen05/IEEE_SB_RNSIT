@@ -287,16 +287,24 @@ function Events() {
 
 
                     {/* Register button with gradient */}
-                    <Link
-                      href="/join"
-                      className="group/btn mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-5 py-3 font-semibold text-white shadow-sm transition-all duration-300 hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE] hover:shadow-md hover:shadow-[#00629B]/25 hover:scale-[1.01] active:scale-[0.99]"
-                    >
-                      <span>Register for Event</span>
-                      <ArrowRight
-                        size={16}
-                        className="transition-transform duration-200 group-hover/btn:translate-x-1"
-                      />
-                    </Link>
+                   <a
+  href={event.registration_url || undefined}
+  target={event.registration_url ? "_blank" : undefined}
+  rel={event.registration_url ? "noopener noreferrer" : undefined}
+  onClick={(e) => {
+    if (!event.registration_url) {
+      e.preventDefault();
+      alert("Registration link is not available yet.");
+    }
+  }}
+  className="group/btn mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-5 py-3 font-semibold text-white shadow-sm transition-all duration-300 hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE] hover:shadow-md hover:shadow-[#00629B]/25 hover:scale-[1.01] active:scale-[0.99]"
+>
+  <span>Register for Event</span>
+  <ArrowRight
+    size={16}
+    className="transition-transform duration-200 group-hover/btn:translate-x-1"
+  />
+</a>
 
                   </div>
 

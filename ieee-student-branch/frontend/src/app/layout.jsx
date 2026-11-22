@@ -7,9 +7,6 @@ export const metadata = {
   title: "IEEE Student Branch | RNSIT",
   description:
     "Official portal for IEEE Student Branch at RNS Institute of Technology, Bangalore",
-  icons: {
-  icon: "/icon.png",
-},
 };
 
 export default function RootLayout({ children }) {
