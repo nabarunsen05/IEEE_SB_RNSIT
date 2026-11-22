@@ -73,10 +73,17 @@ export async function GET() {
   try {
     const supabase = await createClient();
 
-    const { errorResponse } = await getAuthenticatedAdmin(supabase);
+    const { profile, errorResponse } = await getAuthenticatedAdmin(supabase);
 
     if (errorResponse) {
       return errorResponse;
+    }
+
+    if (profile.role !== "super_admin") {
+      return NextResponse.json(
+        { error: "Super Admin permissions required" },
+        { status: 403 }
+      );
     }
 
     const { data: adminUsers, error: queryError } = await supabase
@@ -168,8 +175,8 @@ export async function POST(request) {
       );
     }
 
-    const rawEmail = body.email;
-    const rawRole = body.role;
+    const rawEmail = body.p_email;
+    const rawRole = body.p_role;  
 
     // Validate email.
     if (typeof rawEmail !== "string" || !rawEmail.trim()) {

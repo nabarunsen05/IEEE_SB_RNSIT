@@ -1,5 +1,5 @@
 "use client";
-
+import AdminManagement from "../components/admin/AdminManagement";
 import { useState, useRef } from "react";
 import Link from "next/link";
 import {
@@ -92,9 +92,11 @@ const DOMAIN_ICONS_MAP = {
   Workflow,
 };
 
+
 export default function AdminDashboard() {
   const {
     logout,
+    adminProfile,
     events,
     addEvent,
     removeEvent,
@@ -485,15 +487,22 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 rounded-2xl border border-[#E6EDF3] bg-[#F8FAFC] p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700">
-                <UserPlus size={24} />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-slate-500">Registrations</p>
-                <p className="text-2xl font-bold text-[#10243A]">{registrations.length}</p>
-              </div>
-            </div>
+            {["admin", "super_admin"].includes(adminProfile?.role) &&
+              adminProfile?.is_active === true && (
+                <div className="flex items-center gap-4 rounded-2xl border border-[#E6EDF3] bg-[#F8FAFC] p-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700">
+                    <UserPlus size={24} />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-slate-500">
+                      Registrations
+                    </p>
+                    <p className="text-2xl font-bold text-[#10243A]">
+                      {registrations.length}
+                    </p>
+                  </div>
+                </div>
+              )}
           </div>
         </div>
 
@@ -537,17 +546,35 @@ export default function AdminDashboard() {
             <span>Manage Domains ({domains.length})</span>
           </button>
 
-          <button
-            onClick={() => setActiveTab("registrations")}
-            className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
-              activeTab === "registrations"
-                ? "border border-emerald-400/40 bg-emerald-50 text-emerald-700 shadow-[0_0_20px_rgba(16,185,129,0.25)]"
-                : "text-slate-500 hover:bg-white hover:text-[#10243A]"
-            }`}
-          >
-            <UserPlus size={18} />
-            <span>Student Registrations ({registrations.length})</span>
-          </button>
+          {["admin", "super_admin"].includes(adminProfile?.role) &&
+            adminProfile?.is_active === true && (
+              <button
+                onClick={() => setActiveTab("registrations")}
+                className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
+                  activeTab === "registrations"
+                    ? "border border-emerald-400/40 bg-emerald-50 text-emerald-700"
+                    : "text-slate-500 hover:bg-white hover:text-[#10243A]"
+                }`}
+              >
+                <UserPlus size={18} />
+                <span>Student Registrations ({registrations.length})</span>
+              </button>
+            )}
+
+          {adminProfile?.role === "super_admin" &&
+            adminProfile?.is_active === true && (
+              <button
+                onClick={() => setActiveTab("administrators")}
+                className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
+                  activeTab === "administrators"
+                    ? "border border-[#A8D8EF] bg-[#E6F4FB] text-[#00629B]"
+                    : "text-slate-500 hover:bg-white hover:text-[#10243A]"
+                }`}
+              >
+                <ShieldCheck size={18} />
+                <span>Manage Administrators</span>
+              </button>
+            )}
         </div>
 
         {/* =========================================
@@ -1282,7 +1309,9 @@ export default function AdminDashboard() {
         {/* =========================================
             TAB 4: STUDENT REGISTRATIONS
         ========================================== */}
-        {activeTab === "registrations" && (
+        {activeTab === "registrations" &&
+          ["admin", "super_admin"].includes(adminProfile?.role) &&
+          adminProfile?.is_active === true && (
           <div className="mt-8">
             <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -1396,7 +1425,12 @@ export default function AdminDashboard() {
             )}
           </div>
         )}
-      </div>
-    </div>
-  );
+        {activeTab === "administrators" &&
+              adminProfile?.role === "super_admin" &&
+              adminProfile?.is_active === true && (
+                <AdminManagement />
+              )}
+          </div>
+        </div>
+    );
 }

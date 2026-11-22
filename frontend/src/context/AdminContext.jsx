@@ -256,7 +256,9 @@ export function AdminProvider({ children }) {
           regsError.message?.toLowerCase().includes("permission") ||
           regsError.message?.toLowerCase().includes("policy");
 
-        if (!isPermissionError) {
+        if (isPermissionError) {
+          setRegistrations([]);
+        } else {
           errors.push(`Registrations: ${regsError.message}`);
         }
       } else if (regsData) {
@@ -335,6 +337,9 @@ export function AdminProvider({ children }) {
         setIsAuthenticated(false);
         setAuthUser(null);
         setAdminProfile(null);
+        setAdminUsers([]);
+        setAdminUsersError(null);
+        setRegistrations([]);
         setIsLoading(false);
         return;
       }
@@ -348,6 +353,9 @@ export function AdminProvider({ children }) {
           setIsAuthenticated(false);
           setAuthUser(session.user);
           setAdminProfile(null);
+          setAdminUsers([]);
+          setAdminUsersError(null);
+          setRegistrations([]);
           setIsLoading(false);
           return;
         }
@@ -367,6 +375,9 @@ export function AdminProvider({ children }) {
         ) {
           setIsAuthenticated(false);
           setAdminProfile(null);
+          setAdminUsers([]);
+          setAdminUsersError(null);
+          setRegistrations([]);
           return;
         }
 
@@ -374,8 +385,13 @@ export function AdminProvider({ children }) {
         setAdminProfile(profileData);
         setIsAuthenticated(true);
 
-        // Fetch administrator allowlist
-        fetchAdminUsers();
+        // Only Super Admins may load the administrator allowlist.
+        if (profileData.role === "super_admin") {
+          await fetchAdminUsers();
+        } else {
+          setAdminUsers([]);
+          setAdminUsersError(null);
+        }
 
       } catch (error) {
         console.error("Admin authorization check failed:", error);
@@ -383,6 +399,9 @@ export function AdminProvider({ children }) {
           setIsAuthenticated(false);
           setAuthUser(null);
           setAdminProfile(null);
+          setAdminUsers([]);
+          setAdminUsersError(null);
+          setRegistrations([]);
         }
       } finally {
         if (mounted) setIsLoading(false);
@@ -509,6 +528,8 @@ export function AdminProvider({ children }) {
       setAuthUser(null);
       setAdminProfile(null);
       setAdminUsers([]);
+      setAdminUsersError(null);
+      setRegistrations([]);     
     }
   };
 
@@ -526,8 +547,15 @@ export function AdminProvider({ children }) {
       return { success: false, message: "Email is required." };
     }
 
-    if (!["admin", "editor", "super_admin"].includes(role)) {
-      return { success: false, message: "Invalid administrator role." };
+    if (adminProfile?.role !== "super_admin" || adminProfile?.is_active !== true) {
+      return { success: false, message: "Only an active Super Admin can add administrators." };
+    }
+
+    if (!["super_admin", "admin", "editor"].includes(role)) {
+      return {
+        success: false,
+        message: "Invalid administrator role."
+      };
     }
 
     try {
@@ -538,8 +566,8 @@ export function AdminProvider({ children }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: cleanEmail,
-          role,
+          p_email: cleanEmail,
+          p_role: role,
         }),
       });
 
