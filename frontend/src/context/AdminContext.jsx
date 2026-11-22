@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { supabase, isSupabaseConfigured } from "../lib/supabase";
+import { supabase, isSupabaseConfigured, getSupabaseConfigStatus } from "../lib/supabase";
 
 const AdminContext = createContext();
 
@@ -173,10 +173,15 @@ const initialRegistrations = [
 
 export function AdminProvider({ children }) {
   const isUsingSupabase = isSupabaseConfigured();
+  const configStatus = getSupabaseConfigStatus();
 
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authUser, setAuthUser] = useState(null);
+  const [adminProfile, setAdminProfile] = useState(null);
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [adminUsersLoading, setAdminUsersLoading] = useState(false);
+  const [adminUsersError, setAdminUsersError] = useState(null);
 
   // Data States
   const [events, setEvents] = useState(initialEvents);
@@ -184,21 +189,27 @@ export function AdminProvider({ children }) {
   const [domains, setDomains] = useState(initialDomains);
   const [registrations, setRegistrations] = useState(initialRegistrations);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch all data from Supabase
   const fetchDataFromSupabase = useCallback(async () => {
-    if (!supabase) return;
+    if (!supabase) {
+      return { success: false, message: "Database not connected." };
+    }
     setIsLoading(true);
 
     try {
+      const errors = [];
+
       // 1. Events
       const { data: eventsData, error: eventsError } = await supabase
         .from("events")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!eventsError && eventsData && eventsData.length > 0) {
+      if (eventsError) {
+        errors.push(`Events: ${eventsError.message}`);
+      } else if (eventsData) {
         setEvents(eventsData);
       }
 
@@ -208,7 +219,9 @@ export function AdminProvider({ children }) {
         .select("*")
         .order("created_at", { ascending: true });
 
-      if (!execomError && execomData && execomData.length > 0) {
+      if (execomError) {
+        errors.push(`Executive Committee: ${execomError.message}`);
+      } else if (execomData) {
         setExecutiveCommittee(execomData);
       }
 
@@ -218,7 +231,9 @@ export function AdminProvider({ children }) {
         .select("*")
         .order("number", { ascending: true });
 
-      if (!domainsError && domainsData && domainsData.length > 0) {
+      if (domainsError) {
+        errors.push(`Domains: ${domainsError.message}`);
+      } else if (domainsData) {
         setDomains(
           domainsData.map((d) => ({
             ...d,
@@ -234,19 +249,80 @@ export function AdminProvider({ children }) {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!regsError && regsData) {
+      if (regsError) {
+        // Exclude expected RLS permission errors for roles not permitted to read registrations (e.g. editor)
+        const isPermissionError =
+          regsError.code === "42501" ||
+          regsError.message?.toLowerCase().includes("permission") ||
+          regsError.message?.toLowerCase().includes("policy");
+
+        if (!isPermissionError) {
+          errors.push(`Registrations: ${regsError.message}`);
+        }
+      } else if (regsData) {
         setRegistrations(regsData);
       }
+
+      if (errors.length > 0) {
+        return { success: false, message: errors.join(", ") };
+      }
+
+      return { success: true };
     } catch (err) {
       console.warn("Supabase fetch failed, falling back to local state:", err);
+      return { success: false, message: err.message || "Failed to synchronize data." };
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Initialize Supabase Auth and verify that the signed-in user is an
-  // explicitly approved administrator. Browser storage is never treated as proof
-  // of authentication.
+  // Fetch administrator allowlist through the protected API
+  const fetchAdminUsers = useCallback(async () => {
+    if (!supabase) {
+      const message = "Database not connected.";
+      setAdminUsersError(message);
+      return { success: false, message };
+    }
+
+    setAdminUsersLoading(true);
+    setAdminUsersError(null);
+
+    try {
+      const response = await fetch("/api/admin/users", {
+        method: "GET",
+        credentials: "same-origin",
+        cache: "no-store",
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          result.error || result.message || "Failed to load administrators."
+        );
+      }
+
+      if (!Array.isArray(result.data)) {
+        throw new Error("Invalid administrator list received from server.");
+      }
+
+      setAdminUsers(result.data);
+      return { success: true, data: result.data };
+    } catch (err) {
+      console.error("Could not fetch admin users:", err);
+
+      setAdminUsersError(err.message || "Failed to load administrators.");
+
+      return {
+        success: false,
+        message: err.message || "Failed to load administrators.",
+      };
+    } finally {
+      setAdminUsersLoading(false);
+    }
+  }, []);
+
+  // Initialize Supabase Auth and verify administrator authorization
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -258,28 +334,58 @@ export function AdminProvider({ children }) {
       if (!session?.user || !supabase) {
         setIsAuthenticated(false);
         setAuthUser(null);
+        setAdminProfile(null);
+        setIsLoading(false);
         return;
       }
 
       try {
-       const { data, error } = await supabase.rpc("is_admin");
+        const { data: isAdmin, error } = await supabase.rpc("is_admin");
 
         if (!mounted) return;
 
-        if (error || data !== true) {
-  setIsAuthenticated(false);
-  setAuthUser(null);
-  await supabase.auth.signOut();
-  return;
-}
-        setIsAuthenticated(true);
+        if (error || isAdmin !== true) {
+          setIsAuthenticated(false);
+          setAuthUser(session.user);
+          setAdminProfile(null);
+          setIsLoading(false);
+          return;
+        }
+
         setAuthUser(session.user);
+
+        // Verify the administrator profile
+        const { data: profileData, error: profileError } = await supabase
+          .rpc("get_current_admin_profile")
+          .maybeSingle();
+
+        if (
+          profileError ||
+          !profileData ||
+          profileData.user_id !== session.user.id ||
+          profileData.is_active !== true
+        ) {
+          setIsAuthenticated(false);
+          setAdminProfile(null);
+          return;
+        }
+
+        // Authenticate only after profile verification succeeds
+        setAdminProfile(profileData);
+        setIsAuthenticated(true);
+
+        // Fetch administrator allowlist
+        fetchAdminUsers();
+
       } catch (error) {
         console.error("Admin authorization check failed:", error);
         if (mounted) {
           setIsAuthenticated(false);
           setAuthUser(null);
+          setAdminProfile(null);
         }
+      } finally {
+        if (mounted) setIsLoading(false);
       }
     };
 
@@ -295,31 +401,26 @@ export function AdminProvider({ children }) {
           if (mounted) {
             setIsAuthenticated(false);
             setAuthUser(null);
+            setIsLoading(false);
           }
         }
       } else {
-        // Load cached public content only. No local auth fallback is allowed.
+        // Fallback to local cached content
         try {
           const savedEvents = localStorage.getItem("ieee_events_data");
           if (savedEvents) setEvents(JSON.parse(savedEvents));
 
           const savedExecom = localStorage.getItem("ieee_execom_data");
-          if (savedExecom) {
-            const parsed = JSON.parse(savedExecom);
-            setExecutiveCommittee(
-              parsed.map((member) =>
-                member.name === "prathika P" ? { ...member, name: "Prathika P" } : member
-              )
-            );
-          }
+          if (savedExecom) setExecutiveCommittee(JSON.parse(savedExecom));
 
           const savedDomains = localStorage.getItem("ieee_domains_data");
           if (savedDomains) setDomains(JSON.parse(savedDomains));
 
-          const savedRegs = localStorage.getItem("ieee_regs_data");
-          if (savedRegs) setRegistrations(JSON.parse(savedRegs));
+          localStorage.removeItem("ieee_regs_data");
         } catch (error) {
           console.error("Local content initialization error:", error);
+        } finally {
+          if (mounted) setIsLoading(false);
         }
       }
 
@@ -331,8 +432,6 @@ export function AdminProvider({ children }) {
     let subscription;
     if (supabase) {
       const authListener = supabase.auth.onAuthStateChange((_event, session) => {
-        // Defer the database authorization check so it does not run inside the
-        // Supabase auth event callback.
         window.setTimeout(() => {
           verifyAdminSession(session);
         }, 0);
@@ -344,80 +443,174 @@ export function AdminProvider({ children }) {
       mounted = false;
       subscription?.unsubscribe();
     };
-  }, [fetchDataFromSupabase]);
+  }, [fetchDataFromSupabase, fetchAdminUsers]);
 
-  // Keep a local cache of content; it is not an authentication mechanism.
+  // Sync content cache (student registrations are excluded from browser storage for privacy)
   useEffect(() => {
     if (isInitialized && typeof window !== "undefined") {
       localStorage.setItem("ieee_events_data", JSON.stringify(events));
       localStorage.setItem("ieee_execom_data", JSON.stringify(executiveCommittee));
       localStorage.setItem("ieee_domains_data", JSON.stringify(domains));
-      localStorage.setItem("ieee_regs_data", JSON.stringify(registrations));
+      localStorage.removeItem("ieee_regs_data");
     }
-  }, [events, executiveCommittee, domains, registrations, isInitialized]);
+  }, [events, executiveCommittee, domains, isInitialized]);
 
-  // Sign in through Supabase Auth, then require an active admin_users allow-list row.
-  const login = async (userIdOrEmail, password) => {
-    const email = String(userIdOrEmail || "").trim().toLowerCase();
-    const cleanPass = String(password || "");
-
-    if (!email || !cleanPass) {
-      return { success: false, message: "Enter your admin email and password." };
-    }
-
+  // Google OAuth Sign-In
+  const signInWithGoogle = async (redirectTo = "/admin") => {
     if (!supabase || !isSupabaseConfigured()) {
       return {
         success: false,
-        message: "Supabase is not configured. Check the frontend .env.local values and restart the development server.",
+        message: configStatus.error || "Supabase is not configured. Check the frontend .env.local values and restart the development server.",
       };
     }
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password: cleanPass,
+      const targetUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`;
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: targetUrl,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
       });
 
-      if (error || !data?.user || !data?.session) {
-        return {
-          success: false,
-          message: error?.message || "Sign-in failed. Check your email and password.",
-        };
+      if (error) {
+        return { success: false, message: error.message };
       }
 
-    const { data: isAdmin, error: adminError } =
-  await supabase.rpc("is_admin");
-
-     if (adminError || isAdmin !== true) {
-        await supabase.auth.signOut();
-        setIsAuthenticated(false);
-        setAuthUser(null);
-        return {
-          success: false,
-          message: "This account is not authorized as an IEEE Student Branch administrator.",
-        };
-      }
-
-      setIsAuthenticated(true);
-      setAuthUser(data.user);
-      return { success: true };
-    } catch (error) {
-      console.error("Admin sign-in failed:", error);
+      return { success: true, url: data?.url };
+    } catch (err) {
+      console.error("Google sign in failed:", err);
       return {
         success: false,
-        message: "Unable to sign in right now. Check your Supabase connection and try again.",
+        message: "Failed to connect to Google OAuth service. Please check your network.",
       };
     }
   };
 
-  // Sign out and clear the in-memory administrator state.
+  // Sign out and clear session
   const logout = async () => {
-    if (supabase) {
-      const { error } = await supabase.auth.signOut();
-      if (error) console.error("Supabase sign-out error:", error);
+    try {
+      if (supabase) {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error("Supabase sign-out error:", error);
+          throw error;
+        }
+      }
+    } catch (err) {
+      console.error("Logout exception:", err);
+      throw err;
+    } finally {
+      setIsAuthenticated(false);
+      setAuthUser(null);
+      setAdminProfile(null);
+      setAdminUsers([]);
     }
-    setIsAuthenticated(false);
-    setAuthUser(null);
+  };
+
+  // =========================================
+  // ADMINISTRATOR ALLOWLIST MANAGEMENT (Super Admin)
+  // =========================================
+  const addAdminUser = async ({ email, role = "admin" }) => {
+    if (!supabase) {
+      return { success: false, message: "Database not connected." };
+    }
+
+    const cleanEmail = email?.trim().toLowerCase();
+
+    if (!cleanEmail) {
+      return { success: false, message: "Email is required." };
+    }
+
+    if (!["admin", "editor", "super_admin"].includes(role)) {
+      return { success: false, message: "Invalid administrator role." };
+    }
+
+    try {
+      const response = await fetch("/api/admin/users", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: cleanEmail,
+          role,
+        }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        return {
+          success: false,
+          code: result.code || null,
+          message:
+            result.error ||
+            result.message ||
+            "Failed to add administrator.",
+          status: response.status,
+        };
+      }
+
+      // Refresh the allowlist after successful provisioning.
+      const refreshResult = await fetchAdminUsers();
+
+      return {
+        success: true,
+        data: result.data,
+        refreshWarning: refreshResult.success
+          ? null
+          : refreshResult.message,
+      };
+    } catch (err) {
+      console.error("Error adding administrator:", err);
+
+      return {
+        success: false,
+        message: err.message || "Failed to add administrator.",
+      };
+    }
+  };
+
+  const updateAdminUser = async (userId, updates) => {
+    if (!supabase) return { success: false, message: "Database not connected." };
+    try {
+      const { error } = await supabase
+        .from("admin_users")
+        .update(updates)
+        .eq("user_id", userId);
+
+      if (error) throw error;
+      setAdminUsers((prev) =>
+        prev.map((u) => (u.user_id === userId ? { ...u, ...updates } : u))
+      );
+      return { success: true };
+    } catch (err) {
+      console.error("Error updating admin user:", err);
+      return { success: false, message: err.message || "Failed to update administrator." };
+    }
+  };
+
+  const removeAdminUser = async (userId) => {
+    if (!supabase) return { success: false, message: "Database not connected." };
+    try {
+      const { error } = await supabase
+        .from("admin_users")
+        .delete()
+        .eq("user_id", userId);
+
+      if (error) throw error;
+      setAdminUsers((prev) => prev.filter((u) => u.user_id !== userId));
+      return { success: true };
+    } catch (err) {
+      console.error("Error removing admin user:", err);
+      return { success: false, message: err.message || "Failed to remove administrator." };
+    }
   };
 
   // =========================================
@@ -543,39 +736,38 @@ export function AdminProvider({ children }) {
   // =========================================
   // STUDENT REGISTRATIONS
   // =========================================
-const addRegistration = async (regData) => {
-  const newReg = {
-    ...regData,
-    id: "reg-" + Date.now(),
-    status: "pending",
-    created_at: new Date().toISOString(),
-  };
+  const addRegistration = async (regData) => {
+    const newReg = {
+      ...regData,
+      id: "reg-" + Date.now(),
+      status: "pending",
+      created_at: new Date().toISOString(),
+    };
 
-  if (supabase) {
-    try {
-      const { error } = await supabase.from("registrations").insert([
-        {
-          name: regData.name,
-          email: regData.email,
-          branch: regData.branch,
-          year: regData.year,
-          domain: regData.domain,
-          phone: regData.phone || null,
-          status: "pending",
-        },
-      ]);
+    if (supabase) {
+      try {
+        const { error } = await supabase.from("registrations").insert([
+          {
+            name: regData.name,
+            email: regData.email,
+            branch: regData.branch,
+            year: regData.year,
+            domain: regData.domain,
+            phone: regData.phone || null,
+            status: "pending",
+          },
+        ]);
 
-      if (error) throw error;
-    } catch (err) {
-      console.error("Supabase registration error:", err);
-      return { success: false, message: "Registration could not be saved." };
+        if (error) throw error;
+      } catch (err) {
+        console.error("Supabase registration error:", err);
+        return { success: false, message: "Registration could not be saved." };
+      }
     }
-  }
 
-  setRegistrations((prev) => [newReg, ...prev]);
-
-  return { success: true, data: newReg };
-};
+    setRegistrations((prev) => [newReg, ...prev]);
+    return { success: true, data: newReg };
+  };
 
   const removeRegistration = async (id) => {
     setRegistrations((prev) => prev.filter((reg) => reg.id !== id));
@@ -599,7 +791,7 @@ const addRegistration = async (regData) => {
       localStorage.setItem("ieee_events_data", JSON.stringify(initialEvents));
       localStorage.setItem("ieee_execom_data", JSON.stringify(initialExecom));
       localStorage.setItem("ieee_domains_data", JSON.stringify(initialDomains));
-      localStorage.setItem("ieee_regs_data", JSON.stringify(initialRegistrations));
+      localStorage.removeItem("ieee_regs_data");
     }
   };
 
@@ -607,11 +799,21 @@ const addRegistration = async (regData) => {
     <AdminContext.Provider
       value={{
         isUsingSupabase,
+        configError: configStatus.error,
         isAuthenticated,
         authUser,
-        login,
+        adminProfile,
+        adminUsers,
+        adminUsersLoading,
+        adminUsersError,
+        signInWithGoogle,
         logout,
         isLoading,
+        // Allowlist Management
+        fetchAdminUsers,
+        addAdminUser,
+        updateAdminUser,
+        removeAdminUser,
         // Events
         events,
         addEvent,
