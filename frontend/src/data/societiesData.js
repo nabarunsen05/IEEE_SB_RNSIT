@@ -1,0 +1,92 @@
+export const departmentsInfo = {
+  ECE: {
+    name: "Department of Electronics & Communication Engineering",
+    shortName: "Electronics & Communication",
+    code: "ECE",
+    description: "Leading research and chapters across communications, signal processing, photonics, biomedical systems, and vehicular tech.",
+  },
+  CSE: {
+    name: "Department of Computer Science & Engineering",
+    shortName: "Computer Science",
+    code: "CSE",
+    description: "Driving initiatives in consumer technologies, pervasive systems, and software engineering.",
+  },
+  ISE: {
+    name: "Department of Information Science & Engineering",
+    shortName: "Information Science",
+    code: "ISE",
+    description: "Exploring computational intelligence, neural systems, and advanced algorithm design.",
+  },
+  AIML: {
+    name: "Department of Artificial Intelligence & Machine Learning",
+    shortName: "AI & Machine Learning",
+    code: "AIML",
+    description: "Innovating in autonomous robotics, intelligent control systems, and automated vision.",
+  },
+  DS: {
+    name: "Department of Computer Science (Data Science)",
+    shortName: "Data Science",
+    code: "DS",
+    description: "Advancing information theory, predictive modeling, statistical learning, and analytics.",
+  },
+  CY: {
+    name: "Department of Computer Science (Cyber Security)",
+    shortName: "Cyber Security",
+    code: "CY",
+    description: "Fostering computing excellence, defense architectures, and secure computing systems.",
+  },
+  EEE: {
+    name: "Department of Electrical & Electronics Engineering",
+    shortName: "Electrical & Electronics",
+    code: "EEE",
+    description: "Pioneering power electronic systems, energy transitions, and aerospace electronic systems.",
+  },
+  CV: {
+    name: "Department of Civil Engineering",
+    shortName: "Civil Engineering",
+    code: "CV",
+    description: "Focusing on smart transportation networks, environmental tech, and social implications of engineering.",
+  },
+  ME: {
+    name: "Department of Mechanical Engineering",
+    shortName: "Mechanical Engineering",
+    code: "ME",
+    description: "Bridging industry application engineering, mechatronics, and smart manufacturing systems.",
+  },
+  MCA: {
+    name: "Department of Master of Computer Applications",
+    shortName: "Computer Applications (MCA)",
+    code: "MCA",
+    description: "Advancing education technology, pedagogic methods, and applied computational practices.",
+  },
+  MBA: {
+    name: "Department of Management Studies (MBA)",
+    shortName: "Management Studies (MBA)",
+    code: "MBA",
+    description: "Cultivating tech management, entrepreneurial leadership, and engineering management systems.",
+  },
+};
+
+export const societies = [
+  { name: "IEEE Computational Intelligence Society (CIS)", department: "ISE", advisor: "Dr. Sunitha K" },
+  { name: "IEEE Consumer Technology Society (CTSoc)", department: "CSE", advisor: "Ms. Rashmi M" },
+  { name: "IEEE Information Theory Society (ITS)", department: "DS", advisor: "Dr. Sreevidya R C" },
+  { name: "IEEE Robotics and Automation Society (RAS)", department: "AIML", advisor: "Dr. Poornima H S" },
+  { name: "IEEE Computer Society", department: "CY", advisor: "Dr. Swathi Darla" },
+  { name: "IEEE Education Society (EdSoc)", department: "MCA", advisor: "Ms. Roopa HM" },
+  { name: "IEEE Communications Society (ComSoc)", department: "ECE", advisor: "Dr. Rajni V H" },
+  { name: "IEEE Photonics Society", department: "ECE", advisor: "Dr. Ibrar Jahan M A" },
+  { name: "IEEE Sensor Council", department: "ECE", advisor: "Dr. Ibrar Jahan M A" },
+  { name: "IEEE Women in Engineering", department: "ECE", advisor: "Dr. Prabhavathi C N" },
+  { name: "IEEE Engineering in Medicine and Biology Society (EMBS)", department: "ECE", advisor: "Dr. Leena Chandrashekar" },
+  { name: "IEEE Signal Processing Society (SPS)", department: "ECE", advisor: "Dr. Vipula Singh" },
+  { name: "IEEE Circuits and Systems Society (CAS)", department: "ECE", advisor: "Dr. Uma S V" },
+  { name: "IEEE Vehicular Technology Society (VTS)", department: "ECE", advisor: "Dr. K. Anuradha" },
+  { name: "IEEE Power Electronics Society (PELS)", department: "EEE", advisor: "Dr. Vijayshree C G" },
+  { name: "IEEE Aerospace and Electronic Systems Society (AESS)", department: "EEE", advisor: "Dr. Roopa Nayak" },
+  { name: "IEEE Technology and Engineering Management Society (TEMS)", department: "MBA", advisor: "Dr. Rakesh N" },
+  { name: "IEEE Industry Applications Society (IAS)", department: "ME", advisor: "Dr. Shridhar Shastry" },
+  { name: "IEEE Society on Social Implications of Technology (SSIT)", department: "CV", advisor: "Dr. Ramya" },
+  { name: "IEEE Intelligent Transportation Systems Society (ITSS)", department: "CV", advisor: "Ms. D M.Suman" },
+];
+
