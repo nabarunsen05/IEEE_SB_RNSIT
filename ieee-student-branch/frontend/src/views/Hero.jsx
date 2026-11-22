@@ -93,11 +93,11 @@ function Hero() {
               {/* Top subtle multi-color accent hairline */}
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00629B] via-[#29A9E0] to-[#F26522]" />
 
-              <div className="flex min-h-[250px] items-center justify-center rounded-2xl border border-[#DCE5EC] bg-gradient-to-b from-[#F8FAFC] to-[#F1F5F9] p-6 shadow-inner">
+              <div className="flex min-h-[290px] items-center justify-center rounded-2xl border border-[#DCE5EC] bg-gradient-to-b from-[#F8FAFC] to-[#F1F5F9] p-6 shadow-inner">
                 <img
-                  src="/assets/ieee-rnsit-sb-logo-black.png"
+                  src="/assets/ieee-rnsit-sb-logo-featured.png"
                   alt="IEEE RNSIT Student Branch"
-                  className="h-auto max-h-56 w-full object-contain filter drop-shadow-[0_4px_12px_rgba(0,98,155,0.08)]"
+                  className="h-auto max-h-64 w-full object-contain filter drop-shadow-[0_4px_12px_rgba(0,98,155,0.08)]"
                 />
               </div>
 

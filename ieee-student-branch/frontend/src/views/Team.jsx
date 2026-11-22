@@ -12,24 +12,29 @@ import { useAdmin } from "../context/AdminContext";
 
 const operationsTeam = [
   {
-    name: "Technical Lead",
-    role: "Technical Division",
+    division: "Technical Division",
+    head: "Technical Lead",
+    members: [],
   },
   {
-    name: "Coordination Lead",
-    role: "Coordination & Professional",
+    division: "Coordination & Professional",
+    head: "Coordination Lead",
+    members: [],
   },
   {
-    name: "Editorial Lead",
-    role: "Content & Documentation",
+    division: "Content & Documentation",
+    head: "Editorial Lead",
+    members: [],
   },
   {
-    name: "Creative Lead",
-    role: "Media, Editing & Design",
+    division: "Media, Editing & Design",
+    head: "Creative Lead",
+    members: [],
   },
   {
-    name: "Activities Lead",
-    role: "Event Management",
+    division: "Event Management",
+    head: "Activities Lead",
+    members: [],
   },
 ];
 
@@ -270,35 +275,67 @@ function Team() {
           </div>
 
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
-            {operationsTeam.map((member) => (
+            {operationsTeam.map((division) => (
               <article
-                key={member.role}
-                className="group flex items-center gap-4 rounded-2xl border border-[#DCE5EC] bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/30 hover:shadow-[0_12px_28px_rgba(16,36,58,0.09)]"
+                key={division.division}
+                className="group rounded-3xl border border-[#DCE5EC] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/30 hover:shadow-[0_12px_28px_rgba(16,36,58,0.09)]"
               >
-
-                {/* Small Profile with soft color */}
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-blue-200/50 bg-gradient-to-br from-blue-50 to-sky-100 text-[#00629B] transition-all duration-300 group-hover:bg-[#00629B] group-hover:text-white group-hover:shadow-[0_0_15px_rgba(0,98,155,0.25)]">
-                  <UserRound size={22} />
+                <div className="flex items-center gap-3 border-b border-[#DCE5EC] pb-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-blue-200/50 bg-gradient-to-br from-blue-50 to-sky-100 text-[#00629B] transition-all duration-300 group-hover:bg-[#00629B] group-hover:text-white group-hover:shadow-[0_0_15px_rgba(0,98,155,0.25)]">
+                    <Users size={22} />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="truncate text-base font-bold text-[#10243A] group-hover:text-[#00629B] transition-colors">
+                      {division.division}
+                    </h4>
+                    <span className="text-xs font-medium text-[#647588]">
+                      {division.members.length + 1} {division.members.length + 1 === 1 ? "person" : "people"}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="min-w-0">
-
-                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#00629B]">
-                    {member.role}
+                <div className="mt-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#00629B]">
+                    Division Head
                   </p>
-
-                  <h4 className="mt-0.5 truncate text-sm font-bold text-[#10243A] group-hover:text-[#00629B] transition-colors">
-                    {member.name}
-                  </h4>
-
-                  <span className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[#647588]">
-                    Lead
-                  </span>
-
+                  <div className="mt-2 flex items-center gap-3 rounded-xl bg-[#F4F7FA] p-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00629B] text-white">
+                      <UserRound size={17} />
+                    </div>
+                    <p className="truncate text-sm font-bold text-[#10243A]">
+                      {division.head}
+                    </p>
+                  </div>
                 </div>
 
+                <div className="mt-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#647588]">
+                    Members
+                  </p>
+                  <div className="mt-2 space-y-2">
+                    {division.members.length > 0 ? (
+                      division.members.map((member) => (
+                        <div
+                          key={member.id || member.name}
+                          className="flex items-center gap-3 rounded-xl border border-[#DCE5EC] p-2.5"
+                        >
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#E6F4FB] text-[#00629B]">
+                            <UserRound size={15} />
+                          </div>
+                          <span className="truncate text-sm font-medium text-[#526477]">
+                            {member.name}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="rounded-xl border border-dashed border-[#DCE5EC] px-3 py-2.5 text-xs text-[#8291A0]">
+                        Members can be added to this division.
+                      </p>
+                    )}
+                  </div>
+                </div>
               </article>
             ))}
 
