@@ -36,6 +36,29 @@ function getChildren(events, parentId) {
   return events.filter((event) => event.parent_event_id === parentId);
 }
 
+// Keep date ranges such as "08-09" on one line inside the date tile.
+function getDateRangeLabel(date = "") {
+  const parts = String(date).match(/\d+/g) || [];
+  if (parts.length >= 2) return `${parts[0]}–${parts[1]}`;
+  return parts[0] || String(date);
+}
+
+// Supports a single day ("17") or a range ("08-09" / "08–09").
+// An event is past only after the final day has ended in the event's local date.
+function isPastEvent(event) {
+  const monthNumbers = {
+    JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
+    JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11,
+  };
+  const monthIndex = monthNumbers[String(event.month || "").toUpperCase().slice(0, 3)];
+  const year = Number(event.year);
+  const days = String(event.date || "").match(/\d+/g);
+  if (monthIndex === undefined || !year || !days?.length) return false;
+  const finalDay = Number(days[days.length - 1]);
+  const endOfEvent = new Date(year, monthIndex, finalDay, 23, 59, 59, 999);
+  return endOfEvent < new Date();
+}
+
 function getDescendantCount(events, eventId, visited = new Set()) {
   if (visited.has(eventId)) return 0;
   visited.add(eventId);
@@ -65,10 +88,14 @@ function EventTreeNode({ event, events, depth = 0 }) {
   const children = getChildren(events, event.id);
   const isGroup = children.length > 0;
   const isStructuralGroup = event.category?.toUpperCase() === "EVENT GROUP";
+  const isPast = isPastEvent(event);
 
   return (
     <div className={`${depth === 0 ? "" : "border-l-2 border-[#B8DCEC] pl-4 sm:pl-5"} ${depth > 0 ? "mt-4" : ""}`}>
       <article className={`rounded-2xl border p-5 ${isStructuralGroup ? "border-[#B8DCEC] bg-[#F0F8FC]" : "border-[#DCE5EC] bg-white"}`}>
+        {event.image_url && (
+          <img src={event.image_url} alt={`${event.title} event photo`} loading="lazy" className="mb-4 max-h-72 w-full rounded-xl border border-[#DCE5EC] object-cover" />
+        )}
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
@@ -76,7 +103,7 @@ function EventTreeNode({ event, events, depth = 0 }) {
                 {isStructuralGroup ? "EVENT CATEGORY" : event.category || "EVENT"}
               </span>
               {event.date && event.month && event.year && (
-                <span className="text-xs text-slate-500">{event.date} {event.month} {event.year}</span>
+                <span className="text-xs text-slate-500">{getDateRangeLabel(event.date)} {event.month} {event.year}</span>
               )}
             </div>
             <h4 className="mt-2 text-lg font-bold text-[#10243A]">{event.title}</h4>
@@ -92,10 +119,12 @@ function EventTreeNode({ event, events, depth = 0 }) {
             <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#E6F4FB] px-3 py-1.5 text-xs font-semibold text-[#00629B]">
               <Layers size={13} /> {getDescendantCount(events, event.id)} nested item{getDescendantCount(events, event.id) === 1 ? "" : "s"}
             </span>
-          ) : event.registration_url ? (
+          ) : !isPast && event.registration_url ? (
             <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-[#10243A] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[#00629B]">
               Register <ArrowRight size={14} />
             </a>
+          ) : isPast ? (
+            <span className="inline-flex shrink-0 items-center rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">Event completed</span>
           ) : null}
         </div>
         {children.length > 0 && (
@@ -217,34 +246,48 @@ function Events() {
               {(searchQuery || selectedCategory !== "ALL") && <button type="button" onClick={handleViewAll} className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] to-[#0074B5] px-5 py-2.5 text-xs font-semibold text-white shadow-md transition hover:scale-105">Reset Filters & View All</button>}
             </div>
           ) : (
-            <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            <div className="mt-8 grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredEvents.map((event) => {
                 const nestedCount = getDescendantCount(events, event.id);
                 const isExpanded = selectedEventId === event.id;
+                const isPast = isPastEvent(event);
                 return (
-                  <article key={event.id} className="group relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_8px_24px_rgba(16,36,58,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/35 hover:shadow-[0_20px_40px_rgba(0,98,155,0.14)]">
-                    <div className={`relative h-48 overflow-hidden bg-gradient-to-br ${getEventHeaderGradient(event.category)} p-6`}>
+                  <article key={event.id} className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_8px_24px_rgba(16,36,58,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/35 hover:shadow-[0_20px_40px_rgba(0,98,155,0.14)]">
+                    <div className={`relative h-40 shrink-0 overflow-hidden bg-gradient-to-br ${getEventHeaderGradient(event.category)} p-5`}>
+                      {event.image_url && <img src={event.image_url} alt={`${event.title} event photo`} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
+                      {event.image_url && <div className="absolute inset-0 bg-slate-950/35" />}
                       <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full border border-white/20 animate-float-slow" />
                       <div className="absolute -bottom-16 -left-8 h-44 w-44 rounded-full border border-white/15 animate-float-reverse" />
                       <div className="relative z-10 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/20 px-3.5 py-1 text-xs font-semibold tracking-wider text-white backdrop-blur-md shadow-sm"><span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" /><span>{event.category}</span></div>
-                      <div className="absolute bottom-5 left-6 z-10 flex items-center gap-3">
-                        <div className="flex h-14 w-14 flex-col items-center justify-center rounded-2xl border border-white/40 bg-white/95 text-[#10243A] shadow-md backdrop-blur-md"><span className="text-xl font-bold leading-none">{event.date}</span><span className="mt-1 text-[11px] font-bold tracking-wide text-[#00629B]">{event.month}</span></div>
+                      <div className="absolute bottom-4 left-5 z-10 flex items-center gap-3">
+                        <div className="flex h-14 min-w-[4.25rem] flex-col items-center justify-center rounded-2xl border border-white/40 bg-white/95 px-2 text-[#10243A] shadow-md backdrop-blur-md">
+                          <span className="whitespace-nowrap text-[17px] font-extrabold leading-none tracking-tight">{getDateRangeLabel(event.date)}</span>
+                          <span className="mt-1 text-[10px] font-bold tracking-wide text-[#00629B]">{event.month}</span>
+                        </div>
                         <div className="text-xs font-semibold tracking-wider text-white drop-shadow-sm">YEAR {event.year}</div>
                       </div>
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold leading-snug text-[#10243A] transition-colors duration-200 group-hover:text-[#00629B]">{event.title}</h3>
-                      <p className="mt-3 text-sm leading-6 text-[#526477]">{event.description}</p>
-                      {nestedCount > 0 && <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#E6F4FB] px-3 py-1 text-xs font-semibold text-[#00629B]"><Layers size={13} /> {nestedCount} nested event/group{nestedCount === 1 ? "" : "s"}</p>}
-                      <div className="mt-5 space-y-2.5 border-t border-[#DCE5EC] pt-5">
-                        <div className="flex items-center gap-3 text-sm text-[#526477]"><CalendarDays size={16} className="shrink-0 text-[#00629B]" /><span>{event.date} {event.month} {event.year}</span></div>
-                        <div className="flex items-center gap-3 text-sm text-[#526477]"><Clock size={16} className="shrink-0 text-[#29A9E0]" /><span>{event.time}</span></div>
-                        <div className="flex items-center gap-3 text-sm text-[#526477]"><MapPin size={16} className="shrink-0 text-[#F26522]" /><span>{event.venue}</span></div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3 className="text-lg font-bold leading-snug text-[#10243A] transition-colors duration-200 group-hover:text-[#00629B]">{event.title}</h3>
+                      <p className="mt-2 line-clamp-4 text-[13px] leading-5 text-[#526477]">{event.description}</p>
+                      {nestedCount > 0 && <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#E6F4FB] px-3 py-1 text-[11px] font-semibold text-[#00629B]"><Layers size={13} /> {nestedCount} nested event/group{nestedCount === 1 ? "" : "s"}</p>}
+                      <div className="mt-auto space-y-2 border-t border-[#DCE5EC] pt-4">
+                        <div className="flex items-center gap-2.5 text-[13px] text-[#526477]"><CalendarDays size={16} className="shrink-0 text-[#00629B]" /><span>{getDateRangeLabel(event.date)} {event.month} {event.year}</span></div>
+                        <div className="flex items-center gap-2.5 text-[13px] text-[#526477]"><Clock size={16} className="shrink-0 text-[#29A9E0]" /><span>{event.time}</span></div>
+                        <div className="flex items-center gap-2.5 text-[13px] text-[#526477]"><MapPin size={16} className="shrink-0 text-[#F26522]" /><span>{event.venue}</span></div>
                       </div>
-                      <button type="button" onClick={() => handleExplore(event)} className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-5 py-3 font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]">
-                        {nestedCount > 0 ? (isExpanded ? "Hide Event Details" : "Explore Event") : "Register for Event"}
-                        {nestedCount > 0 ? (isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />) : <ArrowRight size={16} />}
-                      </button>
+                      {nestedCount > 0 ? (
+                        <button type="button" onClick={() => handleExplore(event)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]">
+                          {isExpanded ? "Hide Event Details" : "Explore Event"}
+                          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        </button>
+                      ) : !isPast && event.registration_url ? (
+                        <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]">
+                          Register for Event <ArrowRight size={16} />
+                        </a>
+                      ) : isPast ? (
+                        <p className="mt-6 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">Event completed</p>
+                      ) : null}
                     </div>
                   </article>
                 );
