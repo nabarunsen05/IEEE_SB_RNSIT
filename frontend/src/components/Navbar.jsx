@@ -28,29 +28,29 @@ export default function Navbar() {
       {/* Top accent */}
       <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#00629B]/40 via-[#29A9E0]/35 to-[#F26522]/30" />
 
-      <nav className="mx-auto flex h-[76px] lg:h-[96px] max-w-7xl items-center justify-between gap-3 px-3 sm:px-5 lg:px-8">
+      <nav className="mx-auto flex h-[76px] lg:h-[88px] max-w-7xl items-center justify-between gap-3 px-3 sm:px-5 lg:px-8">
 
         {/* IEEE + RNSIT Branding */}
         <Link
           href="/"
           onClick={() => setMenuOpen(false)}
-          className="flex min-w-0 shrink items-center gap-2 sm:gap-3 lg:gap-5"
+          className="flex min-w-0 shrink items-center gap-2 sm:gap-3 lg:gap-4"
         >
           {/* IEEE RNSIT Student Branch */}
           <img
             src="/assets/ieee-rnsit-sb-logo-black.png"
             alt="IEEE RNSIT Student Branch"
-            className="h-auto w-[145px] sm:w-[200px] lg:w-[250px] xl:w-[290px] object-contain"
+            className="h-auto w-[120px] sm:w-[155px] lg:w-[185px] xl:w-[210px] object-contain"
           />
 
           {/* Vertical Divider */}
-          <div className="h-9 sm:h-12 lg:h-16 w-px shrink-0 bg-slate-300" />
+          <div className="h-7 sm:h-8 lg:h-9 w-px shrink-0 bg-slate-300" />
 
           {/* RNSIT College Branding */}
           <img
             src="/assets/rnsit-logo.png"
             alt="RNS Institute of Technology"
-            className="h-auto w-[125px] sm:w-[160px] lg:w-[190px] xl:w-[225px] object-contain transition-transform duration-200"
+            className="h-auto w-[85px] sm:w-[110px] lg:w-[130px] xl:w-[145px] object-contain transition-transform duration-200"
           />
         </Link>
 
