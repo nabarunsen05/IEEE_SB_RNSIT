@@ -18,13 +18,6 @@ export async function middleware(request) {
     request,
   });
 
-  // Redirect standalone /login directly to the unified /admin portal
-  if (request.nextUrl.pathname === "/login") {
-    const adminUrl = request.nextUrl.clone();
-    adminUrl.pathname = "/admin";
-    return NextResponse.redirect(adminUrl);
-  }
-
   const supabaseUrl = sanitizeEnv(
     process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
   ).replace(/\/+$/, "");

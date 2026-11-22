@@ -182,6 +182,7 @@ export function AdminProvider({ children }) {
   const [adminUsers, setAdminUsers] = useState([]);
   const [adminUsersLoading, setAdminUsersLoading] = useState(false);
   const [adminUsersError, setAdminUsersError] = useState(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Data States
   const [events, setEvents] = useState(initialEvents);
@@ -512,6 +513,10 @@ export function AdminProvider({ children }) {
 
   // Sign out and clear session
   const logout = async () => {
+    if (isLoggingOut) {
+      return { success: false, message: "Logout already in progress" };
+    }
+    setIsLoggingOut(true);
     try {
       if (supabase) {
         const { error } = await supabase.auth.signOut();
@@ -520,6 +525,7 @@ export function AdminProvider({ children }) {
           throw error;
         }
       }
+      return { success: true };
     } catch (err) {
       console.error("Logout exception:", err);
       throw err;
@@ -528,8 +534,11 @@ export function AdminProvider({ children }) {
       setAuthUser(null);
       setAdminProfile(null);
       setAdminUsers([]);
+      setAdminUsersLoading(false);
       setAdminUsersError(null);
-      setRegistrations([]);     
+      setRegistrations([]);
+      setIsLoading(false);
+      setIsLoggingOut(false);
     }
   };
 
@@ -837,6 +846,7 @@ export function AdminProvider({ children }) {
         signInWithGoogle,
         logout,
         isLoading,
+        isLoggingOut,
         // Allowlist Management
         fetchAdminUsers,
         addAdminUser,

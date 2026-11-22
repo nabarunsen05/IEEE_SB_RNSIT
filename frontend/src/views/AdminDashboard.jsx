@@ -97,6 +97,7 @@ export default function AdminDashboard() {
   const {
     logout,
     adminProfile,
+    isAuthenticated,
     events,
     addEvent,
     removeEvent,
@@ -117,6 +118,20 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("events"); // "events" | "execom" | "domains" | "registrations"
   const [notification, setNotification] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoggingOutLocal, setIsLoggingOutLocal] = useState(false);
+
+  const handleLogout = async () => {
+    if (isLoggingOutLocal) return;
+    setIsLoggingOutLocal(true);
+    try {
+      await logout();
+      window.location.replace("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+      showNotification("Failed to log out. Please try again.", "error");
+      setIsLoggingOutLocal(false);
+    }
+  };
 
   // Event Form State
   const [eventForm, setEventForm] = useState({
@@ -335,6 +350,10 @@ export default function AdminDashboard() {
     }
   };
 
+  if (!isAuthenticated && !isLoading) {
+    return null;
+  }
+
   return (
     <div className="relative min-h-screen bg-[#F3F7FA] pt-24 pb-20 text-[#10243A] sm:pt-28">
       {/* Background Ambience */}
@@ -446,11 +465,13 @@ export default function AdminDashboard() {
               </button>
 
               <button
-                onClick={logout}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOutLocal}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:opacity-50"
               >
-                <LogOut size={13} />
-                <span>Logout</span>
+                <LogOut size={13} className={isLoggingOutLocal ? "animate-spin" : ""} />
+                <span>{isLoggingOutLocal ? "Logging out..." : "Logout"}</span>
               </button>
             </div>
           </div>

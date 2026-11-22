@@ -6,13 +6,8 @@ import Login from "../views/Login";
 export default function ProtectedRoute({ children, initialUser }) {
   const { isAuthenticated, isLoading } = useAdmin();
 
-  // If initial server verification succeeded
-  if (initialUser) {
-    return children;
-  }
-
   // Loading state during client session verification
-  if (isLoading) {
+  if (isLoading && !initialUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F3F7FA]">
         <div className="flex flex-col items-center gap-3">
@@ -24,7 +19,7 @@ export default function ProtectedRoute({ children, initialUser }) {
   }
 
   // Not authenticated
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !isLoading) {
     return <Login />;
   }
 
