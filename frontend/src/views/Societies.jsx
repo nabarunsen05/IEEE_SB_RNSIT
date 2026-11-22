@@ -1,24 +1,27 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   Building2,
   GraduationCap,
   Search,
-  Filter,
   X,
   Layers,
   BookOpen,
+  ChevronRight,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import { societies, departmentsInfo } from "../data/societiesData";
 
 export default function Societies() {
-  const [selectedDept, setSelectedDept] = useState("ALL");
+  // Start with ECE (most chapters) or null/ALL
+  const [selectedDept, setSelectedDept] = useState("ECE");
   const [searchQuery, setSearchQuery] = useState("");
+  const detailsRef = useRef(null);
 
   // Group societies into department-specific blocks
   const departmentGroups = useMemo(() => {
-    // Preserve department order as defined in departmentsInfo
     const deptCodes = Object.keys(departmentsInfo);
 
     return deptCodes
@@ -33,21 +36,30 @@ export default function Societies() {
       .filter((dept) => dept.societies.length > 0);
   }, []);
 
-  // Filter department blocks based on department pill selection and search query
+  // Handle department selection
+  const handleSelectDepartment = (deptCode) => {
+    setSelectedDept((prev) => (prev === deptCode ? "ALL" : deptCode));
+    // Smooth scroll to the societies container if on mobile/small screen
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setTimeout(() => {
+        detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  };
+
+  // Filter department blocks based on search and selected department
   const filteredDepartments = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
 
     return departmentGroups
       .filter((dept) => {
-        if (selectedDept !== "ALL" && dept.code !== selectedDept) {
-          return false;
-        }
-        return true;
+        if (q) return true; // If searching, search across all departments
+        if (selectedDept === "ALL") return true;
+        return dept.code === selectedDept;
       })
       .map((dept) => {
         if (!q) return dept;
 
-        // Filter societies within this department by search query
         const matchingSocieties = dept.societies.filter(
           (s) =>
             s.name.toLowerCase().includes(q) ||
@@ -80,6 +92,11 @@ export default function Societies() {
             HEADER & HERO DESCRIPTION
         ========================================== */}
         <div className="max-w-3xl">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-3.5 py-1.5 text-xs font-semibold text-[#00629B] shadow-2xs">
+            <Sparkles size={13} className="text-[#29A9E0]" />
+            <span>{societies.length} Chapters · {departmentGroups.length} Academic Departments</span>
+          </div>
+
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">
             IEEE Societies at{" "}
             <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
@@ -87,19 +104,17 @@ export default function Societies() {
             </span>
           </h1>
 
-          <p className="mt-5 text-base leading-7 text-[#526477] sm:text-lg sm:leading-8">
-            Explore our specialized technical society chapters organized into department-specific
-            academic blocks, led by dedicated faculty advisors and student leaders driving hands-on
-            research and engineering excellence.
+          <p className="mt-4 text-base leading-7 text-[#526477] sm:text-lg sm:leading-8">
+            Click on any department block below to explore its active IEEE society chapters,
+            specialized research domains, and guiding faculty advisors.
           </p>
         </div>
 
         {/* =========================================
-            SEARCH & DEPARTMENT FILTER CONTROLS
+            SEARCH CONTROLS
         ========================================== */}
-        <div className="mt-10 rounded-2xl border border-[#DCE5EC] bg-white/90 p-4 shadow-sm backdrop-blur-sm sm:p-5">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            {/* Search Input */}
+        <div className="mt-8 rounded-2xl border border-[#DCE5EC] bg-white/90 p-4 shadow-2xs backdrop-blur-sm sm:p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative flex-1">
               <Search
                 size={18}
@@ -109,7 +124,7 @@ export default function Societies() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by society name, faculty advisor, or department..."
+                placeholder="Search across all societies or faculty advisors..."
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-10 text-sm text-[#10243A] placeholder-slate-400 transition focus:border-[#00629B] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00629B]/20"
                 aria-label="Search societies"
               />
@@ -125,66 +140,122 @@ export default function Societies() {
               )}
             </div>
 
-            {/* Quick Summary Pill */}
-            <div className="flex shrink-0 items-center gap-2 text-xs font-medium text-slate-600">
-              <span className="rounded-full bg-sky-50 px-3 py-1.5 font-semibold text-[#00629B] border border-sky-100">
-                {totalVisibleSocieties} of {societies.length} Societies
+            <div className="flex shrink-0 items-center gap-2">
+              <span className="rounded-xl border border-slate-200/90 bg-slate-50 px-3 py-2 text-xs font-semibold text-[#00629B]">
+                {totalVisibleSocieties} {totalVisibleSocieties === 1 ? "Chapter" : "Chapters"}
               </span>
-            </div>
-          </div>
-
-          {/* Department Filter Pills */}
-          <div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-3">
-            <Filter size={14} className="shrink-0 text-slate-400" />
-            <span className="shrink-0 text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Department:
-            </span>
-            <div className="flex flex-wrap gap-1.5 overflow-x-auto pb-1 text-xs">
               <button
                 type="button"
-                onClick={() => setSelectedDept("ALL")}
-                aria-pressed={selectedDept === "ALL"}
-                className={`rounded-full px-3 py-1 font-semibold transition ${
-                  selectedDept === "ALL"
+                onClick={() => {
+                  setSelectedDept("ALL");
+                  setSearchQuery("");
+                }}
+                className={`rounded-xl px-4 py-2 text-xs font-semibold transition ${
+                  selectedDept === "ALL" && !searchQuery
                     ? "bg-[#00629B] text-white shadow-xs"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+                    : "border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
                 }`}
               >
-                All ({societies.length})
+                View All ({societies.length})
               </button>
-
-              {departmentGroups.map((dept) => {
-                const isSelected = selectedDept === dept.code;
-                return (
-                  <button
-                    key={dept.code}
-                    type="button"
-                    onClick={() => setSelectedDept(dept.code)}
-                    aria-pressed={isSelected}
-                    className={`rounded-full px-3 py-1 font-semibold transition ${
-                      isSelected
-                        ? "bg-[#00629B] text-white shadow-xs"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-                    }`}
-                  >
-                    {dept.code} ({dept.societies.length})
-                  </button>
-                );
-              })}
             </div>
           </div>
         </div>
 
         {/* =========================================
-            DEPARTMENT-SPECIFIC BLOCKS
+            DEPARTMENT SMALL BLOCKS GRID
         ========================================== */}
-        <div className="mt-12 space-y-12">
+        <div className="mt-8">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Select an Academic Department
+            </h2>
+            <span className="text-xs text-slate-400">
+              {departmentGroups.length} Departments Available
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {departmentGroups.map((dept) => {
+              const isSelected = selectedDept === dept.code && !searchQuery;
+
+              return (
+                <button
+                  key={dept.code}
+                  type="button"
+                  onClick={() => handleSelectDepartment(dept.code)}
+                  aria-expanded={isSelected}
+                  className={`group relative flex flex-col justify-between rounded-2xl border p-4 text-left transition-all duration-200 ${
+                    isSelected
+                      ? "border-[#00629B] bg-gradient-to-br from-[#F0F8FD] to-sky-50/70 shadow-md ring-2 ring-[#00629B]/25"
+                      : "border-slate-200/90 bg-white hover:-translate-y-0.5 hover:border-[#00629B]/40 hover:bg-slate-50/50 hover:shadow-xs"
+                  }`}
+                >
+                  {/* Top Bar: Code Badge & Chapter Count */}
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-xs font-extrabold tracking-wide transition-colors ${
+                        isSelected
+                          ? "bg-[#00629B] text-white shadow-2xs"
+                          : "bg-slate-100 text-[#00629B] group-hover:bg-[#00629B] group-hover:text-white"
+                      }`}
+                    >
+                      {dept.code}
+                    </span>
+
+                    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100/90 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                      <Layers size={11} className="text-[#00629B]" />
+                      <span>
+                        {dept.societies.length} {dept.societies.length === 1 ? "Chapter" : "Chapters"}
+                      </span>
+                    </span>
+                  </div>
+
+                  {/* Middle: Short Department Name */}
+                  <div className="mt-3">
+                    <h3
+                      className={`text-sm font-bold leading-snug transition-colors ${
+                        isSelected ? "text-[#00629B]" : "text-[#10243A] group-hover:text-[#00629B]"
+                      }`}
+                    >
+                      {dept.shortName}
+                    </h3>
+                  </div>
+
+                  {/* Bottom: Action Cue */}
+                  <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-2.5 text-xs">
+                    <span
+                      className={`font-medium transition-colors ${
+                        isSelected ? "font-semibold text-[#00629B]" : "text-slate-500 group-hover:text-[#00629B]"
+                      }`}
+                    >
+                      {isSelected ? "Currently Viewing" : "Click to view"}
+                    </span>
+                    <ChevronRight
+                      size={14}
+                      className={`transition-transform duration-200 ${
+                        isSelected
+                          ? "translate-x-0.5 text-[#00629B]"
+                          : "text-slate-400 group-hover:translate-x-0.5 group-hover:text-[#00629B]"
+                      }`}
+                    />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* =========================================
+            SOCIETIES DISPLAY SECTION FOR SELECTED DEPT
+        ========================================== */}
+        <div ref={detailsRef} className="mt-12 space-y-10">
           {filteredDepartments.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-white/70 p-12 text-center">
               <BookOpen size={40} className="mx-auto text-slate-400" />
               <h3 className="mt-4 text-lg font-bold text-[#10243A]">No societies found</h3>
               <p className="mt-2 text-sm text-slate-500">
-                We couldn't find any society matching &ldquo;{searchQuery}&rdquo;.
+                No society matched your search &ldquo;{searchQuery}&rdquo;.
               </p>
               <button
                 type="button"
@@ -194,22 +265,22 @@ export default function Societies() {
                 }}
                 className="mt-5 rounded-full bg-[#00629B] px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[#004F7D] transition"
               >
-                Reset Filters
+                Reset Search
               </button>
             </div>
           ) : (
             filteredDepartments.map((dept) => (
               <section
                 key={dept.code}
-                id={dept.code.toLowerCase()}
+                id={`dept-${dept.code.toLowerCase()}`}
                 aria-labelledby={`dept-heading-${dept.code}`}
-                className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_8px_30px_rgba(16,36,58,0.06)] transition-all hover:shadow-[0_12px_36px_rgba(16,36,58,0.09)]"
+                className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_8px_30px_rgba(16,36,58,0.06)]"
               >
-                {/* Department Header Hairline */}
+                {/* Hairline IEEE Gradient Bar */}
                 <div className="h-1.5 w-full bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#F26522]" />
 
-                {/* Department Block Banner */}
-                <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-sky-50/40 p-6 sm:px-8 sm:py-6">
+                {/* Department Header Banner */}
+                <div className="border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-sky-50/40 p-5 sm:p-7">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-start gap-4">
                       {/* Department Code Badge */}
@@ -238,16 +309,27 @@ export default function Societies() {
                         </p>
                       </div>
                     </div>
+
+                    {selectedDept !== "ALL" && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDept("ALL")}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-[#00629B]"
+                      >
+                        <span>Show all</span>
+                        <ArrowRight size={13} />
+                      </button>
+                    )}
                   </div>
                 </div>
 
-                {/* Society Cards Grid within Department Block */}
-                <div className="p-6 sm:p-8">
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                {/* Society Cards Grid within this Department */}
+                <div className="p-5 sm:p-7">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {dept.societies.map((society, idx) => (
                       <article
                         key={society.name}
-                        className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/40 p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-[#00629B]/35 hover:bg-white hover:shadow-md hover:shadow-[#00629B]/10"
+                        className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/40 p-5 shadow-2xs transition-all duration-200 hover:-translate-y-1 hover:border-[#00629B]/35 hover:bg-white hover:shadow-md hover:shadow-[#00629B]/10"
                       >
                         {/* Top: Icon & Society Title */}
                         <div>
