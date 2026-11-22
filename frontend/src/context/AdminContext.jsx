@@ -657,31 +657,56 @@ export function AdminProvider({ children }) {
     const eventItem = {
       ...newEvent,
       id: "event-" + Date.now(),
+      parent_event_id: newEvent.parent_event_id || null,
     };
-
-    setEvents((prev) => [eventItem, ...prev]);
 
     if (supabase) {
       try {
-        await supabase.from("events").insert([eventItem]);
+        const { error } = await supabase.from("events").insert([eventItem]);
+        if (error) throw error;
       } catch (err) {
         console.error("Supabase insert event error:", err);
+        return {
+          success: false,
+          message: err.message || "Could not save the event to Supabase.",
+        };
       }
     }
 
+    setEvents((prev) => [eventItem, ...prev]);
     return eventItem;
   };
 
   const removeEvent = async (id) => {
-    setEvents((prev) => prev.filter((event) => event.id !== id));
+    // Collect every descendant recursively so local state mirrors the database
+    // ON DELETE CASCADE behaviour for arbitrarily nested event groups.
+    setEvents((prev) => {
+      const idsToRemove = new Set([id]);
+      let changed = true;
+      while (changed) {
+        changed = false;
+        for (const event of prev) {
+          if (event.parent_event_id && idsToRemove.has(event.parent_event_id) && !idsToRemove.has(event.id)) {
+            idsToRemove.add(event.id);
+            changed = true;
+          }
+        }
+      }
+      return prev.filter((event) => !idsToRemove.has(event.id));
+    });
 
     if (supabase) {
       try {
-        await supabase.from("events").delete().eq("id", id);
+        const { error } = await supabase.from("events").delete().eq("id", id);
+        if (error) throw error;
       } catch (err) {
         console.error("Supabase delete event error:", err);
+        // Refresh to restore the authoritative database state if deletion failed.
+        await fetchDataFromSupabase();
+        return { success: false, message: err.message || "Could not delete event." };
       }
     }
+    return { success: true };
   };
 
   // =========================================
