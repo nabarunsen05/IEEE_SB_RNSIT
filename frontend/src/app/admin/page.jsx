@@ -1,7 +1,7 @@
 import { createClient } from "../../lib/supabase/server";
 import AdminDashboard from "../../views/AdminDashboard";
 import Login from "../../views/Login";
-import AccessDenied from "../../components/AccessDenied";
+import PendingApproval from "../../components/PendingApproval";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
 export const dynamic = "force-dynamic";
@@ -45,10 +45,10 @@ export default async function AdminPage({ searchParams }) {
     adminRecord.user_id === user.id &&
     adminRecord.is_active === true;
 
-  // 3. Authenticated but unauthorized / inactive -> Display Access Denied view
+  // 3. Authenticated but unapproved / inactive -> Display Pending Approval view
   if (!isAuthorized) {
     const isInactive = Boolean(adminRecord && adminRecord.is_active === false);
-    return <AccessDenied email={user.email} isInactive={isInactive} />;
+    return <PendingApproval email={user.email} isInactive={isInactive} />;
   }
 
   // 4. Authorized administrator -> Render Dashboard

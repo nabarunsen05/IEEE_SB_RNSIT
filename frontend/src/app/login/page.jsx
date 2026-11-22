@@ -20,15 +20,9 @@ export default async function LoginPage({ searchParams }) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // If user is already authenticated with an active admin profile, redirect to /admin
+  // If user is already authenticated with Google, forward to /admin to evaluate approval status
   if (user) {
-    const { data: adminRecord } = await supabase
-      .rpc("get_current_admin_profile")
-      .maybeSingle();
-
-    if (adminRecord && adminRecord.is_active === true) {
-      redirect("/admin");
-    }
+    redirect("/admin");
   }
 
   return <Login initialError={urlError} initialEmail={errorEmail} />;
