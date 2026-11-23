@@ -1,7 +1,7 @@
 "use client";
 
 import AdminManagement from "../components/admin/AdminManagement";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   CalendarDays,
   Clock,
@@ -22,6 +22,12 @@ import {
   Search,
   X,
   ChevronDown,
+  Pencil,
+  Images,
+  MoreHorizontal,
+  GripVertical,
+  CheckCircle2,
+  RotateCcw,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
@@ -54,6 +60,13 @@ export default function AdminDashboard() {
     isAuthenticated,
     events,
     addEvent,
+    updateEvent,
+    setEventStatus,
+    updateEventRecap,
+    uploadEventPhotos,
+    removeEventPhoto,
+    setEventCoverPhoto,
+    reorderEventPhotos,
     removeEvent,
     executiveCommittee,
     addExecomMember,
@@ -65,11 +78,43 @@ export default function AdminDashboard() {
   const [notification, setNotification] = useState(null);
   const [isLoggingOutLocal, setIsLoggingOutLocal] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [photoManagerEventId, setPhotoManagerEventId] = useState(null);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [editEventForm, setEditEventForm] = useState(null);
+  const [isSavingEvent, setIsSavingEvent] = useState(false);
+  const [isUploadingPhotos, setIsUploadingPhotos] = useState(false);
+  const [openEventMenuId, setOpenEventMenuId] = useState(null);
+  const [confirmation, setConfirmation] = useState(null);
+  const [draggedPhotoId, setDraggedPhotoId] = useState(null);
+  const [isPhotoDropActive, setIsPhotoDropActive] = useState(false);
+  const photoInputRef = useRef(null);
   const [eventSearch, setEventSearch] = useState("");
   const [eventCategoryFilter, setEventCategoryFilter] = useState("ALL");
   const [eventSort, setEventSort] = useState("DATE_DESC");
   const [eventPage, setEventPage] = useState(1);
   const EVENTS_PER_PAGE = 10;
+
+  // Keep the page behind dialogs from scrolling. Each dialog owns one scroll area.
+  useEffect(() => {
+    const modalOpen = isEventModalOpen || Boolean(editingEvent) || Boolean(photoManagerEventId);
+    if (!modalOpen) return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousRootOverflow = document.documentElement.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousRootOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
+    };
+  }, [isEventModalOpen, editingEvent, photoManagerEventId]);
 
   const handleLogout = async () => {
     if (isLoggingOutLocal) return;
@@ -221,8 +266,8 @@ export default function AdminDashboard() {
   // Handle Event Submit
   const handleEventSubmit = async (e) => {
     e.preventDefault();
-    if (!eventForm.title.trim() || !eventForm.description.trim()) {
-      showNotification("Please fill in event title and description.", "error");
+    if (!eventForm.title.trim()) {
+      showNotification("Please enter an event title.", "error");
       return;
     }
 
@@ -260,6 +305,164 @@ export default function AdminDashboard() {
     setEventPage(1);
   };
 
+  const photoManagerEvent = events.find((event) => event.id === photoManagerEventId) || null;
+
+  const handleEditEvent = (event) => {
+    setEditingEvent(event);
+    setEditEventForm({
+      title: event.title || "",
+      category: event.category || "WORKSHOP",
+      date: event.date || "",
+      month: String(event.month || MONTHS[new Date().getMonth()]).toUpperCase(),
+      year: event.year || String(new Date().getFullYear()),
+      time: event.time || "",
+      venue: event.venue || "",
+      description: event.description || "",
+      registration_url: event.registration_url || "",
+      parent_event_id: event.parent_event_id || "",
+      status: event.status || "upcoming",
+      recap: event.recap || "",
+    });
+  };
+
+  const handleSaveEditedEvent = async (e) => {
+    e.preventDefault();
+    if (!editingEvent || !editEventForm) return;
+    if (!editEventForm.title.trim()) {
+      showNotification("Event title cannot be empty.", "error");
+      return;
+    }
+    if (!editEventForm.date.trim() || !editEventForm.month || !String(editEventForm.year).trim()) {
+      showNotification("Please provide the event date.", "error");
+      return;
+    }
+    if (editEventForm.parent_event_id === editingEvent.id) {
+      showNotification("An event cannot be its own parent.", "error");
+      return;
+    }
+    setIsSavingEvent(true);
+    const result = await updateEvent(editingEvent.id, {
+      ...editEventForm,
+      title: editEventForm.title.trim(),
+      description: editEventForm.description.trim(),
+      date: editEventForm.date.trim(),
+      month: editEventForm.month.toUpperCase(),
+      year: String(editEventForm.year).trim(),
+      time: editEventForm.time.trim(),
+      venue: editEventForm.venue.trim(),
+      registration_url: editEventForm.registration_url.trim(),
+      parent_event_id: editEventForm.parent_event_id || null,
+      recap: editEventForm.recap.trim(),
+    });
+    setIsSavingEvent(false);
+    if (!result?.success) {
+      showNotification(result?.message || "Could not update event.", "error");
+      return;
+    }
+    setEditingEvent(null);
+    setEditEventForm(null);
+    showNotification("Event details updated successfully.");
+  };
+
+  const handleToggleEventStatus = (event) => {
+    const nextStatus = event.status === "completed" ? "upcoming" : "completed";
+    setOpenEventMenuId(null);
+    setConfirmation({
+      type: "status",
+      event,
+      nextStatus,
+      title: nextStatus === "completed" ? "Mark event as completed?" : "Reopen this event?",
+      message: nextStatus === "completed"
+        ? `“${event.title}” will move to Completed. You can still edit its details and gallery.`
+        : `“${event.title}” will move back to Upcoming.`,
+      confirmLabel: nextStatus === "completed" ? "Mark completed" : "Reopen event",
+      tone: "primary",
+    });
+  };
+
+
+  const handleEventPhotoUpload = async (event) => {
+    const selectedFiles = event.target.files;
+    if (selectedFiles?.length) await uploadPhotoFiles(selectedFiles);
+    event.target.value = "";
+  };
+
+  const uploadPhotoFiles = async (files) => {
+    if (!files?.length || !photoManagerEventId) return;
+    setIsUploadingPhotos(true);
+    const result = await uploadEventPhotos(photoManagerEventId, files);
+    setIsUploadingPhotos(false);
+    if (!result?.success) {
+      showNotification(result?.message || "Photo upload failed.", "error");
+      return;
+    }
+    showNotification(`${files.length} photo${files.length === 1 ? "" : "s"} uploaded successfully.`);
+  };
+
+  const handleDeleteEventPhoto = (photo) => {
+    setConfirmation({
+      type: "photo",
+      photo,
+      title: "Delete this photo?",
+      message: "This image will be permanently removed from the event gallery.",
+      confirmLabel: "Delete photo",
+      tone: "danger",
+    });
+  };
+
+  const handleReorderEventPhotos = async (sourceId, targetId) => {
+    if (!sourceId || !targetId || sourceId === targetId || !photoManagerEvent) return;
+    const current = [...(photoManagerEvent.photoRecords || [])];
+    const from = current.findIndex((photo) => String(photo.id) === String(sourceId));
+    const to = current.findIndex((photo) => String(photo.id) === String(targetId));
+    if (from < 0 || to < 0) return;
+    const [moved] = current.splice(from, 1);
+    current.splice(to, 0, moved);
+    const result = await reorderEventPhotos(photoManagerEventId, current.map((photo) => photo.id));
+    if (!result?.success) {
+      showNotification(result?.message || "Could not reorder photos.", "error");
+      return;
+    }
+    showNotification("Gallery order updated.");
+  };
+
+  const runConfirmation = async () => {
+    if (!confirmation) return;
+    const action = confirmation;
+    setConfirmation(null);
+    if (action.type === "status") {
+      const result = await setEventStatus(action.event.id, action.nextStatus);
+      if (!result?.success) {
+        showNotification(result?.message || "Could not update event status.", "error");
+        return;
+      }
+      showNotification(`Event marked as ${action.nextStatus}.`);
+    } else if (action.type === "delete") {
+      const result = await removeEvent(action.id);
+      if (result?.success === false) {
+        showNotification(result.message || `Could not delete “${action.eventTitle}”.`, "error");
+        return;
+      }
+      showNotification(`“${action.eventTitle}” has been deleted.`);
+    } else if (action.type === "photo") {
+      const result = await removeEventPhoto(photoManagerEventId, action.photo.id);
+      if (!result?.success) {
+        showNotification(result?.message || "Could not delete photo.", "error");
+        return;
+      }
+      showNotification("Photo deleted.");
+    }
+  };
+
+  const handleSetCoverPhoto = async (photo) => {
+    const result = await setEventCoverPhoto(photoManagerEventId, photo.id);
+    if (!result?.success) {
+      showNotification(result?.message || "Could not set cover photo.", "error");
+      return;
+    }
+    showNotification("Cover photo updated.");
+  };
+
   // Handle Member Submit
   const handleMemberSubmit = async (e) => {
     e.preventDefault();
@@ -286,15 +489,17 @@ export default function AdminDashboard() {
   };
 
   // Handle Event Delete
-  const handleDeleteEvent = async (id, title) => {
-    if (window.confirm(`Are you sure you want to delete the event "${title}"?`)) {
-      const result = await removeEvent(id);
-      if (result?.success === false) {
-        showNotification(result.message || `Could not delete "${title}".`, "error");
-        return;
-      }
-      showNotification(`Event "${title}" and its nested items have been deleted.`);
-    }
+  const handleDeleteEvent = (id, title) => {
+    setOpenEventMenuId(null);
+    setConfirmation({
+      type: "delete",
+      id,
+      title: "Delete event?",
+      eventTitle: title,
+      message: `“${title}” will be permanently deleted. This action cannot be undone.`,
+      confirmLabel: "Delete event",
+      tone: "danger",
+    });
   };
 
   // Handle ExeCom Member Delete
@@ -319,7 +524,7 @@ export default function AdminDashboard() {
       : children;
 
     return (
-      <div key={event.id} className={`overflow-hidden rounded-xl border bg-white transition hover:border-[#A8D8EF] ${depth === 0 ? "border-[#DCE6EF] shadow-sm" : "border-slate-200"}`}>
+      <div key={event.id} className={`relative rounded-xl border bg-white transition hover:border-[#A8D8EF] ${openEventMenuId === event.id ? "z-40" : "z-0"} ${depth === 0 ? "border-[#DCE6EF] shadow-sm" : "border-slate-200"}`}>
         <div className="flex items-center gap-3 px-3 py-3 sm:px-4">
           <div className="flex h-14 w-16 min-w-16 shrink-0 flex-col items-center justify-center rounded-lg border border-[#B8DCEC] bg-[#E6F4FB] text-[#10243A]">
             <span className="whitespace-nowrap text-sm font-bold leading-tight">
@@ -333,16 +538,69 @@ export default function AdminDashboard() {
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="rounded-full bg-[#E6F4FB] px-2 py-0.5 text-[9px] font-bold tracking-wide text-[#00629B]">{event.category}</span>
               <span className="text-[11px] text-slate-400">{event.year}</span>
+              <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase ${event.status === "completed" ? "bg-slate-100 text-slate-600" : "bg-emerald-50 text-emerald-700"}`}>{event.status || "upcoming"}</span>
               {children.length > 0 && <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-semibold text-emerald-700">{children.length} nested</span>}
             </div>
             <h4 className="mt-1 truncate text-sm font-semibold text-[#10243A]">{event.title}</h4>
             <p className="mt-0.5 truncate text-[11px] text-slate-500">{event.time || "Time not set"} · {event.venue || "Venue not set"}</p>
           </div>
-          <div className="flex shrink-0 items-center gap-1.5">
-            <button type="button" onClick={() => handleDeleteEvent(event.id, event.title)} className="inline-flex items-center gap-1 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[11px] font-medium text-rose-700 transition hover:bg-rose-50" title={children.length ? "Delete event and nested items" : "Delete event"}>
-              <Trash2 size={12} /><span className="hidden sm:inline">Delete</span>
+          <div className="flex shrink-0 items-center justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => handleEditEvent(event)}
+              title="Edit event details"
+              aria-label={`Edit ${event.title}`}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#D6E2EA] bg-white text-[#526477] transition hover:border-[#8CCDEB] hover:bg-[#F0F8FC] hover:text-[#00629B] focus:outline-none focus:ring-2 focus:ring-[#0096CC]/30"
+            >
+              <Pencil size={16} />
             </button>
-
+            <button
+              type="button"
+              onClick={() => setPhotoManagerEventId(event.id)}
+              title={`Manage event photos (${event.photos?.length || 0})`}
+              aria-label={`Manage photos for ${event.title}`}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#B8DCEC] bg-[#F0F8FC] text-[#00629B] transition hover:bg-[#E0F1FA] focus:outline-none focus:ring-2 focus:ring-[#0096CC]/30"
+            >
+              <Images size={17} />
+            </button>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setOpenEventMenuId((current) => current === event.id ? null : event.id)}
+                title="More event actions"
+                aria-label={`More actions for ${event.title}`}
+                aria-haspopup="menu"
+                aria-expanded={openEventMenuId === event.id}
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border transition focus:outline-none focus:ring-2 focus:ring-[#0096CC]/30 ${openEventMenuId === event.id ? "border-[#8CCDEB] bg-[#E6F4FB] text-[#00629B]" : "border-[#D6E2EA] bg-white text-[#526477] hover:bg-slate-50"}`}
+              >
+                <MoreHorizontal size={19} />
+              </button>
+              {openEventMenuId === event.id && (
+                <>
+                  <button type="button" aria-label="Close event actions" className="fixed inset-0 z-20 cursor-default" onClick={() => setOpenEventMenuId(null)} />
+                  <div role="menu" className="absolute right-0 top-11 z-50 w-56 overflow-hidden rounded-xl border border-[#DCE6EF] bg-white p-1.5 shadow-xl shadow-[#10243A]/15">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => handleToggleEventStatus(event)}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-[#10243A] transition hover:bg-[#F0F8FC]"
+                    >
+                      {event.status === "completed" ? <RotateCcw size={16} className="text-[#00629B]" /> : <CheckCircle2 size={16} className="text-emerald-600" />}
+                      {event.status === "completed" ? "Reopen event" : "Mark as completed"}
+                    </button>
+                    <div className="my-1 border-t border-slate-100" />
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => handleDeleteEvent(event.id, event.title)}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-rose-600 transition hover:bg-rose-50"
+                    >
+                      <Trash2 size={16} /> Delete event
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
         {children.length > 0 && (
@@ -567,17 +825,17 @@ export default function AdminDashboard() {
             )}
 
             {isEventModalOpen && (
-              <div className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm sm:items-center">
-                <div className="my-4 w-full max-w-2xl rounded-3xl border border-[#DCE6EF] bg-white shadow-2xl">
-                  <div className="flex items-start justify-between border-b border-[#E6EDF3] px-6 py-5">
+              <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-hidden bg-slate-950/45 px-3 pb-3 pt-[120px] backdrop-blur-sm sm:px-5 sm:pt-[122px]">
+                <div className="flex max-h-[calc(100dvh-132px)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-[#DCE6EF] bg-white shadow-2xl sm:max-h-[calc(100dvh-138px)]">
+                  <div className="flex shrink-0 items-start justify-between border-b border-[#E6EDF3] px-5 py-4">
                     <div>
                       <h3 className="text-lg font-bold text-[#10243A]">Create Event</h3>
                       <p className="mt-1 text-xs text-slate-500">Add a main event or place it under an existing event.</p>
                     </div>
                     <button type="button" onClick={() => setIsEventModalOpen(false)} className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800" aria-label="Close create event form"><X size={19} /></button>
                   </div>
-                  <div className="max-h-[calc(100vh-170px)] overflow-y-auto p-6">
-                <form onSubmit={handleEventSubmit} className="mt-6 space-y-4">
+                  <div className="min-h-0 flex-1 overflow-y-auto p-5">
+                <form onSubmit={handleEventSubmit} className="space-y-3.5">
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
                       Event Title *
@@ -697,8 +955,8 @@ export default function AdminDashboard() {
                       </label>
                       <input
                         type="number"
-                        min="2024"
-                        max="2035"
+                        min="2000"
+                        max="2100"
                         required
                         value={eventForm.year}
                         onChange={(e) =>
@@ -726,10 +984,9 @@ export default function AdminDashboard() {
 
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-                      Description *
+                      Short Description (Optional)
                     </label>
                     <textarea
-                      required
                       rows={3}
                       placeholder="Provide brief details about the workshop or hackathon..."
                       value={eventForm.description}
@@ -1054,6 +1311,163 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {editingEvent && editEventForm && (
+          <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-hidden bg-slate-950/45 px-3 pb-3 pt-[120px] backdrop-blur-sm sm:px-5 sm:pt-[122px]" onClick={() => { if (!isSavingEvent) { setEditingEvent(null); setEditEventForm(null); } }}>
+            <section className="flex max-h-[calc(100dvh-132px)] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-[#DCE6EF] bg-white shadow-2xl sm:max-h-[calc(100dvh-138px)]" onClick={(e) => e.stopPropagation()}>
+              <header className="flex shrink-0 items-start justify-between gap-4 border-b border-[#E6EDF3] bg-white px-5 py-4 sm:px-6">
+                <div>
+                  <h3 className="text-lg font-bold text-[#10243A]">Edit Event</h3>
+                  <p className="mt-1 text-xs text-slate-500">Update event details, registration and post-event content.</p>
+                </div>
+                <button type="button" onClick={() => { setEditingEvent(null); setEditEventForm(null); }} disabled={isSavingEvent} className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 disabled:opacity-50" aria-label="Close edit event"><X size={19}/></button>
+              </header>
+              <form onSubmit={handleSaveEditedEvent} className="min-h-0 overflow-y-auto">
+                <div className="space-y-3.5 bg-white p-5">
+                  <section>
+                    <div className="mb-3 flex items-center gap-2"><span className="h-6 w-1 rounded-full bg-[#00A0D6]"/><h4 className="text-sm font-bold text-[#10243A]">Basic information</h4></div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="sm:col-span-2"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Event title *</span><input required value={editEventForm.title} onChange={(e)=>setEditEventForm({...editEventForm,title:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none transition focus:border-[#0096CC] focus:ring-4 focus:ring-[#0096CC]/10" placeholder="Enter event title"/></label>
+                      <label><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Category</span><select value={editEventForm.category} onChange={(e)=>setEditEventForm({...editEventForm,category:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]">{CATEGORIES.map((cat)=><option key={cat} value={cat}>{cat}</option>)}</select></label>
+                      <label><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Event status</span><select value={editEventForm.status} onChange={(e)=>setEditEventForm({...editEventForm,status:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"><option value="upcoming">Upcoming</option><option value="completed">Completed</option></select></label>
+                      <label className="sm:col-span-2"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Parent event / group</span><select value={editEventForm.parent_event_id} onChange={(e)=>setEditEventForm({...editEventForm,parent_event_id:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"><option value="">Standalone / main event</option>{events.filter((item)=>item.id!==editingEvent.id).map((parent)=><option key={parent.id} value={parent.id}>{getEventPathLabel(parent)}</option>)}</select></label>
+                    </div>
+                  </section>
+                  <section>
+                    <div className="mb-3 flex items-center gap-2"><span className="h-6 w-1 rounded-full bg-[#00A0D6]"/><h4 className="text-sm font-bold text-[#10243A]">Date, time & venue</h4></div>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      <label><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Date *</span><input required value={editEventForm.date} onChange={(e)=>setEditEventForm({...editEventForm,date:e.target.value})} placeholder="08-09" className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3 py-3 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"/></label>
+                      <label><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Month *</span><select value={editEventForm.month} onChange={(e)=>setEditEventForm({...editEventForm,month:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-2 py-3 text-sm text-[#10243A] outline-none focus:border-[#0096CC]">{MONTHS.map((m)=><option key={m}>{m}</option>)}</select></label>
+                      <label><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Year *</span><input required type="number" min="2000" max="2100" value={editEventForm.year} onChange={(e)=>setEditEventForm({...editEventForm,year:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3 py-3 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"/></label>
+                      <label><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Time</span><input value={editEventForm.time} onChange={(e)=>setEditEventForm({...editEventForm,time:e.target.value})} placeholder="10:00 AM" className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3 py-3 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"/></label>
+                      <label className="col-span-2 sm:col-span-4"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Venue</span><input value={editEventForm.venue} onChange={(e)=>setEditEventForm({...editEventForm,venue:e.target.value})} placeholder="RNSIT Campus" className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"/></label>
+                    </div>
+                  </section>
+                  <section>
+                    <div className="mb-3 flex items-center gap-2"><span className="h-6 w-1 rounded-full bg-[#00A0D6]"/><h4 className="text-sm font-bold text-[#10243A]">Description & registration</h4></div>
+                    <div className="space-y-4">
+                      <label className="block"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Event description</span><textarea rows={4} value={editEventForm.description} onChange={(e)=>setEditEventForm({...editEventForm,description:e.target.value})} placeholder="Describe the event, its purpose and what participants can expect..." className="w-full resize-y rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm leading-6 text-[#10243A] outline-none focus:border-[#0096CC] focus:ring-4 focus:ring-[#0096CC]/10"/></label>
+                      <label className="block"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Registration URL</span><input type="url" value={editEventForm.registration_url} onChange={(e)=>setEditEventForm({...editEventForm,registration_url:e.target.value})} placeholder="https://forms.gle/..." className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"/></label>
+                    </div>
+                  </section>
+                  <section>
+                    <div className="mb-3 flex items-center gap-2"><span className="h-6 w-1 rounded-full bg-[#00A0D6]"/><h4 className="text-sm font-bold text-[#10243A]">Post-event recap & photos</h4></div>
+                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Event recap (optional)</span><textarea rows={4} value={editEventForm.recap} onChange={(e)=>setEditEventForm({...editEventForm,recap:e.target.value})} placeholder="Share highlights, outcomes, speakers and key moments..." className="w-full resize-y rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm leading-6 text-[#10243A] outline-none focus:border-[#0096CC]"/></label>
+                    <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-[#CDE5F1] bg-[#EFF8FC] p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div><p className="text-sm font-bold text-[#10243A]">Event photo gallery</p><p className="mt-1 text-xs text-slate-600">{editingEvent.photos?.length || 0} photos currently available. Upload, remove or choose the cover image.</p></div>
+                      <button type="button" onClick={()=>setPhotoManagerEventId(editingEvent.id)} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#00629B] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#10243A]"><Camera size={15}/> Manage photos</button>
+                    </div>
+                  </section>
+                </div>
+                <footer className="sticky bottom-0 flex shrink-0 flex-col-reverse gap-2 border-t border-[#DCE6EF] bg-white/95 px-4 py-3 backdrop-blur sm:flex-row sm:justify-end sm:px-5">
+                  <button type="button" disabled={isSavingEvent} onClick={()=>{setEditingEvent(null);setEditEventForm(null);}} className="rounded-xl border border-[#D6E2EA] px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</button>
+                  <button type="submit" disabled={isSavingEvent} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00629B] to-[#008CCB] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#00629B]/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60">{isSavingEvent ? "Saving changes..." : "Save event changes"}</button>
+                </footer>
+              </form>
+            </section>
+          </div>
+        )}
+
+        {photoManagerEvent && (
+          <div className="fixed inset-0 z-[110] flex items-start justify-center overflow-hidden bg-slate-950/60 px-3 pb-3 pt-[120px] backdrop-blur-sm sm:px-6 sm:pt-[122px]" onClick={() => setPhotoManagerEventId(null)}>
+            <section className="flex max-h-[calc(100dvh-132px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[#DCE6EF] bg-white shadow-2xl sm:max-h-[calc(100dvh-138px)]" onClick={(e) => e.stopPropagation()}>
+              <header className="flex items-start justify-between gap-4 border-b border-[#DCE6EF] px-5 py-4">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#00629B]">Event gallery</p>
+                  <h3 className="mt-1 text-lg font-bold text-[#10243A]">{photoManagerEvent.title}</h3>
+                  <p className="mt-1 text-xs text-slate-500">JPG, PNG, or WEBP · Maximum 10 MB per image</p>
+                </div>
+                <button type="button" onClick={() => setPhotoManagerEventId(null)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" aria-label="Close gallery manager"><X size={18} /></button>
+              </header>
+              <div
+                className="overflow-y-auto p-5"
+                onDragOver={(e) => { e.preventDefault(); setIsPhotoDropActive(true); }}
+                onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setIsPhotoDropActive(false); }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsPhotoDropActive(false);
+                  if (e.dataTransfer.files?.length) uploadPhotoFiles(e.dataTransfer.files);
+                }}
+              >
+                <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden" onChange={handleEventPhotoUpload} />
+                <button
+                  type="button"
+                  disabled={isUploadingPhotos}
+                  onClick={() => photoInputRef.current?.click()}
+                  className={`flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-4 py-7 text-sm font-semibold transition disabled:opacity-50 ${isPhotoDropActive ? "border-[#00629B] bg-[#E6F4FB]" : "border-[#8CCDEB] bg-[#F4FAFD] hover:bg-[#EAF6FC]"}`}
+                >
+                  <Upload size={22} />
+                  <span>{isUploadingPhotos ? "Uploading photos..." : "Drop images here or browse files"}</span>
+                  <span className="text-xs font-normal text-slate-500">JPG, PNG or WEBP · Up to 10 MB each · Multiple images supported</span>
+                </button>
+                {photoManagerEvent.photoRecords?.length ? (
+                  <>
+                    <div className="mt-5 flex items-center justify-between gap-3">
+                      <p className="text-sm font-semibold text-[#10243A]">Gallery photos</p>
+                      <p className="text-xs text-slate-500">Drag cards to change their order</p>
+                    </div>
+                    <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {photoManagerEvent.photoRecords.map((photo) => (
+                        <article
+                          key={photo.id}
+                          draggable
+                          onDragStart={() => setDraggedPhotoId(String(photo.id))}
+                          onDragEnd={() => setDraggedPhotoId(null)}
+                          onDragOver={(e) => e.preventDefault()}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            handleReorderEventPhotos(draggedPhotoId, String(photo.id));
+                            setDraggedPhotoId(null);
+                          }}
+                          className={`group relative overflow-hidden rounded-xl border bg-white transition ${draggedPhotoId === String(photo.id) ? "border-[#00629B] opacity-50" : "border-[#DCE6EF] hover:border-[#8CCDEB]"}`}
+                        >
+                          <div className="relative">
+                            <img src={photo.public_url} alt={photo.file_name || "Event photo"} className="h-36 w-full object-cover" />
+                            <span className="absolute left-2 top-2 rounded-full bg-slate-950/65 p-1.5 text-white"><GripVertical size={14} /></span>
+                            <button type="button" onClick={() => handleDeleteEventPhoto(photo)} title="Delete photo" aria-label={`Delete ${photo.file_name || "photo"}`} className="absolute right-2 top-2 rounded-full bg-white/95 p-1.5 text-rose-600 shadow transition hover:scale-105 hover:bg-rose-50">
+                              <X size={15} />
+                            </button>
+                          </div>
+                          <div className="space-y-2 p-2.5">
+                            {photo.is_cover ? (
+                              <span className="inline-flex rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-700">Cover photo</span>
+                            ) : (
+                              <button type="button" onClick={() => handleSetCoverPhoto(photo)} className="text-[11px] font-semibold text-[#00629B] hover:underline">Set as cover</button>
+                            )}
+                            <p className="truncate text-[11px] text-slate-500">{photo.file_name}</p>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <p className="py-10 text-center text-sm text-slate-500">No photos have been added to this event yet.</p>
+                )}
+              </div>
+              <footer className="flex justify-end border-t border-[#DCE6EF] px-5 py-3">
+                <button type="button" onClick={() => setPhotoManagerEventId(null)} className="rounded-lg bg-[#10243A] px-4 py-2 text-sm font-semibold text-white hover:bg-[#00629B]">Done</button>
+              </footer>
+            </section>
+          </div>
+        )}
+
+        {confirmation && (
+          <div className="fixed inset-0 z-[140] flex items-center justify-center bg-[#10243A]/55 px-4 py-6 backdrop-blur-sm" onClick={() => setConfirmation(null)}>
+            <section role="alertdialog" aria-modal="true" aria-labelledby="event-confirm-title" aria-describedby="event-confirm-description" className="w-full max-w-md overflow-hidden rounded-2xl border border-[#DCE6EF] bg-white shadow-[0_24px_80px_rgba(16,36,58,0.28)]" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${confirmation.tone === "danger" ? "bg-rose-50 text-rose-600" : "bg-[#E6F4FB] text-[#00629B]"}`}>
+                  {confirmation.tone === "danger" ? <Trash2 size={20} /> : <CheckCircle2 size={21} />}
+                </div>
+                <h3 id="event-confirm-title" className="mt-4 text-lg font-bold text-[#10243A]">{confirmation.title}</h3>
+                <p id="event-confirm-description" className="mt-2 text-sm leading-6 text-[#526477]">{confirmation.message}</p>
+              </div>
+              <footer className="flex justify-end gap-2 border-t border-[#E8EEF3] bg-[#F8FAFC] px-6 py-4">
+                <button type="button" onClick={() => setConfirmation(null)} className="rounded-xl border border-[#D6E2EA] bg-white px-4 py-2.5 text-sm font-semibold text-[#526477] transition hover:bg-slate-50">Cancel</button>
+                <button type="button" onClick={runConfirmation} className={`rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition ${confirmation.tone === "danger" ? "bg-rose-600 hover:bg-rose-700" : "bg-[#00629B] hover:bg-[#004F7D]"}`}>{confirmation.confirmLabel}</button>
+              </footer>
+            </section>
           </div>
         )}
 

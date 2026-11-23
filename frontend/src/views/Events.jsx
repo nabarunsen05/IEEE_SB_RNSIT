@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   CalendarDays,
@@ -10,8 +11,6 @@ import {
   Filter,
   X,
   Layers,
-  ChevronDown,
-  ChevronUp,
   Camera,
   ChevronLeft,
   ChevronRight,
@@ -49,17 +48,9 @@ function getDateRangeLabel(date = "") {
 // Supports a single day ("17") or a range ("08-09" / "08–09").
 // An event is past only after the final day has ended in the event's local date.
 function isPastEvent(event) {
-  const monthNumbers = {
-    JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
-    JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11,
-  };
-  const monthIndex = monthNumbers[String(event.month || "").toUpperCase().slice(0, 3)];
-  const year = Number(event.year);
-  const days = String(event.date || "").match(/\d+/g);
-  if (monthIndex === undefined || !year || !days?.length) return false;
-  const finalDay = Number(days[days.length - 1]);
-  const endOfEvent = new Date(year, monthIndex, finalDay, 23, 59, 59, 999);
-  return endOfEvent < new Date();
+  // The admin-controlled lifecycle status is authoritative.
+  // Legacy rows without a status remain upcoming until reviewed by an admin.
+  return event.status === "completed";
 }
 
 function getDescendantCount(events, eventId, visited = new Set()) {
@@ -97,14 +88,17 @@ function EventTreeNode({ event, events, depth = 0, onOpenGallery }) {
   return (
     <div className={`${depth === 0 ? "" : "border-l-2 border-[#B8DCEC] pl-4 sm:pl-5"} ${depth > 0 ? "mt-4" : ""}`}>
       <article className={`rounded-2xl border p-5 ${isStructuralGroup ? "border-[#B8DCEC] bg-[#F0F8FC]" : "border-[#DCE5EC] bg-white"}`}>
-        {event.image_url && (
-          <img src={event.image_url} alt={`${event.title} event photo`} loading="lazy" className="mb-4 max-h-72 w-full rounded-xl border border-[#DCE5EC] object-cover" />
+        {(event.cover_image_url || event.image_url) && (
+          <img src={event.cover_image_url || event.image_url} alt={`${event.title} event photo`} loading="lazy" className="mb-4 max-h-72 w-full rounded-xl border border-[#DCE5EC] object-cover" />
         )}
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full border border-[#B8DCEC] bg-[#E6F4FB] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#00629B]">
                 {isStructuralGroup ? "EVENT CATEGORY" : event.category || "EVENT"}
+              </span>
+              <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${isPast ? "bg-slate-100 text-slate-600" : "bg-emerald-50 text-emerald-700"}`}>
+                {isPast ? "Completed" : "Upcoming"}
               </span>
               {event.date && event.month && event.year && (
                 <span className="text-xs text-slate-500">{getDateRangeLabel(event.date)} {event.month} {event.year}</span>
@@ -114,21 +108,18 @@ function EventTreeNode({ event, events, depth = 0, onOpenGallery }) {
             {event.description && (
               <p className="mt-2 text-sm leading-6 text-[#526477]">{event.description}</p>
             )}
+            {isPast && event.recap && (
+              <div className="mt-4 rounded-xl border border-[#DCE5EC] bg-[#F8FAFC] p-4">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#00629B]">Event recap</p>
+                <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-[#526477]">{event.recap}</p>
+              </div>
+            )}
             <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-500">
               {event.time && <span className="inline-flex items-center gap-1.5"><Clock size={13} className="text-[#00629B]" />{event.time}</span>}
               {event.venue && <span className="inline-flex items-center gap-1.5"><MapPin size={13} className="text-[#00629B]" />{event.venue}</span>}
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-            {hasPhotos && (
-              <button
-                type="button"
-                onClick={() => onOpenGallery && onOpenGallery(event)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-[#00629B] to-[#0284C7] px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition hover:opacity-95"
-              >
-                <Camera size={14} /> Photos ({event.photos.length})
-              </button>
-            )}
             {isGroup ? (
               <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#E6F4FB] px-3 py-1.5 text-xs font-semibold text-[#00629B]">
                 <Layers size={13} /> {getDescendantCount(events, event.id)} nested item{getDescendantCount(events, event.id) === 1 ? "" : "s"}
@@ -161,7 +152,6 @@ function Events() {
   const { events } = useAdmin();
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedEventId, setSelectedEventId] = useState(null);
   const [galleryEvent, setGalleryEvent] = useState(null);
   const [currentPhotoIdx, setCurrentPhotoIdx] = useState(0);
 
@@ -220,27 +210,17 @@ function Events() {
     });
   }, [mainEvents, events, selectedCategory, searchQuery]);
 
-  const selectedEvent = mainEvents.find((event) => event.id === selectedEventId);
-  const selectedChildren = selectedEvent ? getChildren(events, selectedEvent.id) : [];
+  const router = useRouter();
 
   const handleViewAll = () => {
     setSelectedCategory("ALL");
     setSearchQuery("");
-    setSelectedEventId(null);
     document.getElementById("events-grid")?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleExplore = (event) => {
-    const hasChildren = getChildren(events, event.id).length > 0;
-    if (!hasChildren) {
-      if (event.registration_url) window.open(event.registration_url, "_blank", "noopener,noreferrer");
-      else window.alert("Registration link is not available yet.");
-      return;
-    }
-    setSelectedEventId((current) => current === event.id ? null : event.id);
-    if (selectedEventId !== event.id) {
-      window.setTimeout(() => document.getElementById("event-details")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
-    }
+    if (!event?.id) return;
+    router.push(`/events/${encodeURIComponent(event.id)}`);
   };
 
   return (
@@ -298,13 +278,12 @@ function Events() {
             <div className="mt-8 grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredEvents.map((event) => {
                 const nestedCount = getDescendantCount(events, event.id);
-                const isExpanded = selectedEventId === event.id;
                 const isPast = isPastEvent(event);
                 return (
                   <article key={event.id} className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_8px_24px_rgba(16,36,58,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/35 hover:shadow-[0_20px_40px_rgba(0,98,155,0.14)]">
                     <div className={`relative h-40 shrink-0 overflow-hidden bg-gradient-to-br ${getEventHeaderGradient(event.category)} p-5`}>
-                      {event.image_url && <img src={event.image_url} alt={`${event.title} event photo`} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
-                      {event.image_url && <div className="absolute inset-0 bg-slate-950/35" />}
+                      {(event.cover_image_url || event.image_url) && <img src={event.cover_image_url || event.image_url} alt={`${event.title} event photo`} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
+                      {(event.cover_image_url || event.image_url) && <div className="absolute inset-0 bg-slate-950/35" />}
                       <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full border border-white/20 animate-float-slow" />
                       <div className="absolute -bottom-16 -left-8 h-44 w-44 rounded-full border border-white/15 animate-float-reverse" />
                       <div className="relative z-10 flex items-center justify-between gap-2">
@@ -312,17 +291,9 @@ function Events() {
                           <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />
                           <span>{event.category}</span>
                         </div>
-                        {event.photos?.length > 0 && (
-                          <button
-                            type="button"
-                            onClick={(e) => { e.stopPropagation(); handleOpenGallery(event); }}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/40 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md shadow-sm transition hover:bg-black/60"
-                            title="View Photos"
-                          >
-                            <Camera size={13} className="text-[#29A9E0]" />
-                            <span>{event.photos.length} Photo{event.photos.length === 1 ? "" : "s"}</span>
-                          </button>
-                        )}
+                        <span className={`rounded-full border border-white/25 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md ${isPast ? "bg-slate-900/45" : "bg-emerald-700/45"}`}>
+                          {isPast ? "Completed" : "Upcoming"}
+                        </span>
                       </div>
                       <div className="absolute bottom-4 left-5 z-10 flex items-center gap-3">
                         <div className="flex h-14 min-w-[4.25rem] flex-col items-center justify-center rounded-2xl border border-white/40 bg-white/95 px-2 text-[#10243A] shadow-md backdrop-blur-md">
@@ -343,31 +314,19 @@ function Events() {
                       </div>
 
                       <div className="mt-4 flex flex-col gap-2">
-                        {event.photos?.length > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => handleOpenGallery(event)}
-                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0284C7] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:scale-[1.01] hover:brightness-110"
-                          >
-                            <Camera size={16} />
-                            <span>View Event Photos ({event.photos.length})</span>
-                          </button>
-                        )}
-
-                        {nestedCount > 0 ? (
-                          <button type="button" onClick={() => handleExplore(event)} className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]">
-                            {isExpanded ? "Hide Event Details" : "Explore Event"}
-                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                          </button>
-                        ) : !isPast && event.registration_url ? (
-                          <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]">
+                        <button
+                          type="button"
+                          onClick={() => handleExplore(event)}
+                          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#10243A] via-[#1A3856] to-[#10243A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-[#00629B] hover:via-[#0074B5] hover:to-[#0086CE]"
+                        >
+                          View Event Details <ArrowRight size={16} />
+                        </button>
+                        {!isPast && event.registration_url && (
+                          <a href={event.registration_url} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#B8DCEC] bg-[#E6F4FB] px-4 py-2.5 text-sm font-semibold text-[#00629B] transition hover:bg-[#D6EFFB]">
                             Register for Event <ArrowRight size={16} />
                           </a>
-                        ) : isPast && (!event.photos || event.photos.length === 0) ? (
-                          <p className="py-2 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">Event completed</p>
-                        ) : isPast && event.photos?.length > 0 ? (
-                          <p className="text-center text-[11px] font-medium uppercase tracking-wider text-slate-400">Event completed</p>
-                        ) : null}
+                        )}
+                        {isPast && <p className="text-center text-[11px] font-medium uppercase tracking-wider text-slate-400">Event completed</p>}
                       </div>
                     </div>
                   </article>
@@ -377,29 +336,7 @@ function Events() {
           )}
         </div>
 
-        {selectedEvent && selectedChildren.length > 0 && (
-          <section id="event-details" className="mt-12 scroll-mt-28 rounded-3xl border border-[#DCE5EC] bg-white p-6 shadow-[0_12px_36px_rgba(16,36,58,0.07)] sm:p-8">
-            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#00629B]">Event overview and activities</p>
-                <h3 className="mt-2 text-2xl font-extrabold text-[#10243A]">{selectedEvent.title}</h3>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-[#526477]">Explore the flagship event, event groups, departments and competitions conducted as part of this event.</p>
-              </div>
-              <button type="button" onClick={() => setSelectedEventId(null)} className="inline-flex items-center gap-2 self-start rounded-lg border border-[#DCE5EC] px-3 py-2 text-xs font-semibold text-[#526477] hover:bg-slate-50"><X size={14} /> Close</button>
-            </div>
-            <div className="mt-6 space-y-5">
-              {selectedChildren.map((child) => (
-                <EventTreeNode
-                  key={child.id}
-                  event={child}
-                  events={events}
-                  depth={0}
-                  onOpenGallery={handleOpenGallery}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+
 
         {/* Event Photos Lightbox Modal */}
         {galleryEvent && Array.isArray(galleryEvent.photos) && galleryEvent.photos.length > 0 && (

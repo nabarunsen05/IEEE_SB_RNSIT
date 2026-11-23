@@ -206,17 +206,31 @@ export function AdminProvider({ children }) {
     try {
       const errors = [];
 
-      // 1. Events
-      const { data: eventsData, error: eventsError } = await supabase
-        .from("events")
-        .select("*")
-        .order("created_at", { ascending: false });
+      // 1. Events and their gallery metadata
+      const [{ data: eventsData, error: eventsError }, { data: photoRows, error: photosError }] =
+        await Promise.all([
+          supabase.from("events").select("*").order("created_at", { ascending: false }),
+          supabase.from("event_photos").select("*").order("display_order", { ascending: true }),
+        ]);
 
       if (eventsError) {
         errors.push(`Events: ${eventsError.message}`);
       } else if (eventsData) {
-        setEvents(eventsData);
+        const photosByEvent = new Map();
+        (photoRows || []).forEach((photo) => {
+          const list = photosByEvent.get(photo.event_id) || [];
+          list.push(photo);
+          photosByEvent.set(photo.event_id, list);
+        });
+        setEvents(eventsData.map((event) => ({
+          ...event,
+          status: event.status || "upcoming",
+          photos: (photosByEvent.get(event.id) || []).map((photo) => photo.public_url).filter(Boolean),
+          photoRecords: photosByEvent.get(event.id) || [],
+          cover_image_url: event.cover_image_url || event.image_url || null,
+        })));
       }
+      if (photosError) errors.push(`Event photos: ${photosError.message}`);
 
       // 2. Executive Committee
       const { data: execomData, error: execomError } = await supabase
@@ -660,88 +674,276 @@ export function AdminProvider({ children }) {
   const addEvent = async (newEvent) => {
     const eventItem = {
       ...newEvent,
-      id: "event-" + Date.now(),
+      id: `event-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      status: "upcoming",
+      recap: null,
+      cover_image_url: null,
       parent_event_id: newEvent.parent_event_id || null,
     };
 
     if (supabase) {
-      try {
-        const { error } = await supabase.from("events").insert([eventItem]);
-        if (error) throw error;
-      } catch (err) {
-        console.error("Supabase insert event error:", err);
-        return {
-          success: false,
-          message: err.message || "Could not save the event to Supabase.",
-        };
+      const { error } = await supabase.from("events").insert([eventItem]);
+      if (error) {
+        console.error("Supabase insert event error:", error);
+        return { success: false, message: error.message || "Could not save the event." };
+      }
+    }
+    setEvents((prev) => [eventItem, ...prev]);
+    return { success: true, data: eventItem };
+  };
+
+  const updateEvent = async (eventId, updates) => {
+    const allowed = {
+      title: updates.title,
+      description: updates.description,
+      date: updates.date,
+      month: updates.month,
+      year: updates.year,
+      time: updates.time,
+      venue: updates.venue,
+      category: updates.category,
+      registration_url: updates.registration_url || null,
+      parent_event_id: updates.parent_event_id || null,
+      status: updates.status,
+      recap: updates.recap,
+    };
+    Object.keys(allowed).forEach((key) => allowed[key] === undefined && delete allowed[key]);
+
+    if (supabase) {
+      const { error } = await supabase.from("events").update(allowed).eq("id", eventId);
+      if (error) return { success: false, message: error.message };
+    }
+    setEvents((prev) => prev.map((event) => event.id === eventId ? { ...event, ...allowed } : event));
+    return { success: true };
+  };
+
+  const setEventStatus = async (eventId, status) => {
+    if (!["upcoming", "completed"].includes(status)) {
+      return { success: false, message: "Invalid event status." };
+    }
+    return updateEvent(eventId, { status });
+  };
+
+  const updateEventRecap = async (eventId, recap) => updateEvent(eventId, { recap });
+
+  const uploadEventPhotos = async (eventId, files) => {
+    if (!supabase) return { success: false, message: "Supabase is not configured." };
+    const selectedFiles = Array.from(files || []);
+    if (!selectedFiles.length) return { success: false, message: "Choose at least one image." };
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    const maxSize = 10 * 1024 * 1024;
+    for (const file of selectedFiles) {
+      if (!allowedTypes.includes(file.type)) {
+        return { success: false, message: `${file.name}: use JPG, PNG, or WEBP.` };
+      }
+      if (file.size > maxSize) {
+        return { success: false, message: `${file.name}: maximum file size is 10 MB.` };
       }
     }
 
-    setEvents((prev) => [eventItem, ...prev]);
-    return eventItem;
+    const uploadedPaths = [];
+    const insertedRows = [];
+    try {
+      const { data: currentRows, error: listError } = await supabase
+        .from("event_photos").select("id, storage_path, public_url, is_cover, display_order")
+        .eq("event_id", eventId).order("display_order", { ascending: true });
+      if (listError) throw listError;
+
+      for (const [index, file] of selectedFiles.entries()) {
+        const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").slice(-80);
+        const path = `${eventId}/${Date.now()}-${index}-${crypto.randomUUID()}.${extension}`;
+        const { error: uploadError } = await supabase.storage.from("event-photos").upload(path, file, {
+          cacheControl: "31536000",
+          upsert: false,
+          contentType: file.type,
+        });
+        if (uploadError) throw uploadError;
+        uploadedPaths.push(path);
+
+        const { data: urlData } = supabase.storage.from("event-photos").getPublicUrl(path);
+        insertedRows.push({
+          event_id: eventId,
+          storage_path: path,
+          public_url: urlData.publicUrl,
+          file_name: safeName,
+          is_cover: !currentRows?.length && index === 0,
+          display_order: (currentRows?.length || 0) + index,
+        });
+      }
+
+      const { data: savedRows, error: insertError } = await supabase
+        .from("event_photos").insert(insertedRows).select("*");
+      if (insertError) throw insertError;
+
+      const { data: allRows, error: reloadError } = await supabase
+        .from("event_photos").select("*").eq("event_id", eventId).order("display_order", { ascending: true });
+      if (reloadError) throw reloadError;
+      const cover = allRows.find((row) => row.is_cover) || allRows[0];
+      if (cover) {
+        const { error: coverError } = await supabase.from("events")
+          .update({ cover_image_url: cover.public_url }).eq("id", eventId);
+        if (coverError) throw coverError;
+      }
+      setEvents((prev) => prev.map((event) => event.id === eventId ? {
+        ...event,
+        photos: allRows.map((row) => row.public_url),
+        photoRecords: allRows,
+        cover_image_url: cover?.public_url || null,
+      } : event));
+      return { success: true, data: savedRows };
+    } catch (error) {
+      // Roll back metadata and uploaded objects if a later step fails.
+      if (uploadedPaths.length) {
+        await supabase.from("event_photos").delete().in("storage_path", uploadedPaths);
+        await supabase.storage.from("event-photos").remove(uploadedPaths);
+      }
+      console.error("Event photo upload failed:", error);
+      return { success: false, message: error.message || "Photo upload failed." };
+    }
+  };
+
+  const removeEventPhoto = async (eventId, photoId) => {
+    if (!supabase) return { success: false, message: "Supabase is not configured." };
+    const { data: photo, error: readError } = await supabase
+      .from("event_photos").select("*").eq("id", photoId).eq("event_id", eventId).single();
+    if (readError) return { success: false, message: readError.message };
+
+    const { error: storageError } = await supabase.storage.from("event-photos").remove([photo.storage_path]);
+    if (storageError) return { success: false, message: storageError.message };
+
+    const { error: deleteError } = await supabase.from("event_photos").delete().eq("id", photoId);
+    if (deleteError) return { success: false, message: deleteError.message };
+
+    const { data: remaining, error: remainingError } = await supabase
+      .from("event_photos").select("*").eq("event_id", eventId).order("display_order", { ascending: true });
+    if (remainingError) return { success: false, message: remainingError.message };
+    const cover = remaining.find((row) => row.is_cover) || remaining[0] || null;
+    if (cover && !cover.is_cover) {
+      const { error: coverError } = await supabase.from("event_photos").update({ is_cover: true }).eq("id", cover.id);
+      if (coverError) return { success: false, message: coverError.message };
+    }
+    const { error: eventError } = await supabase.from("events")
+      .update({ cover_image_url: cover?.public_url || null }).eq("id", eventId);
+    if (eventError) return { success: false, message: eventError.message };
+
+    setEvents((prev) => prev.map((event) => event.id === eventId ? {
+      ...event,
+      photos: remaining.map((row) => row.public_url),
+      photoRecords: remaining.map((row) => row.id === cover?.id ? { ...row, is_cover: true } : row),
+      cover_image_url: cover?.public_url || null,
+    } : event));
+    return { success: true };
+  };
+
+  const setEventCoverPhoto = async (eventId, photoId) => {
+    if (!supabase) return { success: false, message: "Supabase is not configured." };
+    const { data: photo, error: photoError } = await supabase
+      .from("event_photos").select("public_url").eq("id", photoId).eq("event_id", eventId).single();
+    if (photoError) return { success: false, message: photoError.message };
+
+    // Clear the previous cover first; the partial unique index allows only one.
+    const { error: clearError } = await supabase.from("event_photos")
+      .update({ is_cover: false }).eq("event_id", eventId).eq("is_cover", true);
+    if (clearError) return { success: false, message: clearError.message };
+
+    const { error: setError } = await supabase.from("event_photos")
+      .update({ is_cover: true }).eq("id", photoId).eq("event_id", eventId);
+    if (setError) return { success: false, message: setError.message };
+
+    const { error: eventError } = await supabase.from("events")
+      .update({ cover_image_url: photo.public_url }).eq("id", eventId);
+    if (eventError) return { success: false, message: eventError.message };
+
+    setEvents((prev) => prev.map((event) => event.id === eventId ? {
+      ...event,
+      cover_image_url: photo.public_url,
+      photoRecords: (event.photoRecords || []).map((row) => ({ ...row, is_cover: row.id === photoId })),
+    } : event));
+    return { success: true };
+  };
+
+  const reorderEventPhotos = async (eventId, orderedPhotoIds) => {
+    if (!supabase) return { success: false, message: "Supabase is not configured." };
+    if (!Array.isArray(orderedPhotoIds) || !orderedPhotoIds.length) {
+      return { success: false, message: "No photo order was provided." };
+    }
+
+    const updates = await Promise.all(
+      orderedPhotoIds.map((photoId, display_order) =>
+        supabase.from("event_photos")
+          .update({ display_order })
+          .eq("id", photoId)
+          .eq("event_id", eventId)
+      )
+    );
+    const failed = updates.find((result) => result.error);
+    if (failed?.error) return { success: false, message: failed.error.message };
+
+    const { data: rows, error } = await supabase.from("event_photos")
+      .select("*")
+      .eq("event_id", eventId)
+      .order("display_order", { ascending: true });
+    if (error) return { success: false, message: error.message };
+
+    setEvents((prev) => prev.map((event) => event.id === eventId ? {
+      ...event,
+      photoRecords: rows || [],
+      photos: (rows || []).map((row) => row.public_url).filter(Boolean),
+    } : event));
+    return { success: true };
   };
 
   const removeEvent = async (id) => {
-    // Collect every descendant recursively so local state mirrors the database
-    // ON DELETE CASCADE behaviour for arbitrarily nested event groups.
-    setEvents((prev) => {
-      const idsToRemove = new Set([id]);
-      let changed = true;
-      while (changed) {
-        changed = false;
-        for (const event of prev) {
-          if (event.parent_event_id && idsToRemove.has(event.parent_event_id) && !idsToRemove.has(event.id)) {
-            idsToRemove.add(event.id);
-            changed = true;
-          }
-        }
-      }
-      return prev.filter((event) => !idsToRemove.has(event.id));
-    });
-
     if (supabase) {
       try {
-        const { error } = await supabase.from("events").delete().eq("id", id);
-        if (error) throw error;
+        const { data: descendants, error: descendantsError } = await supabase
+          .from("events").select("id, parent_event_id");
+        if (descendantsError) throw descendantsError;
+        const ids = new Set([id]);
+        let changed = true;
+        while (changed) {
+          changed = false;
+          (descendants || []).forEach((event) => {
+            if (event.parent_event_id && ids.has(event.parent_event_id) && !ids.has(event.id)) {
+              ids.add(event.id);
+              changed = true;
+            }
+          });
+        }
+        const { data: photoRows, error: photoError } = await supabase
+          .from("event_photos").select("storage_path").in("event_id", [...ids]);
+        if (photoError) throw photoError;
+        const paths = (photoRows || []).map((row) => row.storage_path).filter(Boolean);
+        if (paths.length) {
+          const { error: storageError } = await supabase.storage.from("event-photos").remove(paths);
+          if (storageError) throw storageError;
+        }
+        const { error: deleteError } = await supabase.from("events").delete().eq("id", id);
+        if (deleteError) throw deleteError;
+        setEvents((prev) => prev.filter((event) => !ids.has(event.id)));
+        return { success: true };
       } catch (err) {
         console.error("Supabase delete event error:", err);
-        // Refresh to restore the authoritative database state if deletion failed.
         await fetchDataFromSupabase();
         return { success: false, message: err.message || "Could not delete event." };
       }
     }
-    return { success: true };
-  };
 
-  const updateEventPhotos = async (eventId, photos) => {
     setEvents((prev) => {
-      const updated = prev.map((ev) =>
-        ev.id === eventId ? { ...ev, photos } : ev
-      );
-      if (typeof window !== "undefined") {
-        try {
-          localStorage.setItem("ieee_events_data", JSON.stringify(updated));
-        } catch (e) {
-          console.warn("Could not save to localStorage:", e);
-        }
+      const ids = new Set([id]);
+      let changed = true;
+      while (changed) {
+        changed = false;
+        prev.forEach((event) => {
+          if (event.parent_event_id && ids.has(event.parent_event_id) && !ids.has(event.id)) {
+            ids.add(event.id); changed = true;
+          }
+        });
       }
-      return updated;
+      return prev.filter((event) => !ids.has(event.id));
     });
-
-    if (supabase) {
-      try {
-        const { error } = await supabase
-          .from("events")
-          .update({ photos })
-          .eq("id", eventId);
-        if (error) {
-          console.warn("Could not update photos in Supabase events table:", error);
-        }
-      } catch (err) {
-        console.warn("Supabase photo update error:", err);
-      }
-    }
-
     return { success: true };
   };
 
@@ -917,7 +1119,13 @@ export function AdminProvider({ children }) {
         events,
         addEvent,
         removeEvent,
-        updateEventPhotos,
+        updateEvent,
+        setEventStatus,
+        updateEventRecap,
+        uploadEventPhotos,
+        removeEventPhoto,
+        setEventCoverPhoto,
+        reorderEventPhotos,
         // ExeCom
         executiveCommittee,
         addExecomMember,

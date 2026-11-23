@@ -21,15 +21,63 @@ CREATE INDEX IF NOT EXISTS idx_admin_users_is_active ON public.admin_users(is_ac
 CREATE TABLE IF NOT EXISTS public.events (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   title TEXT NOT NULL,
-  description TEXT NOT NULL,
+  description TEXT,
   date TEXT NOT NULL,
   month TEXT NOT NULL,
   year TEXT NOT NULL,
   time TEXT NOT NULL,
   venue TEXT NOT NULL,
   category TEXT NOT NULL DEFAULT 'WORKSHOP',
+  registration_url TEXT,
+  parent_event_id TEXT,
+  status TEXT NOT NULL DEFAULT 'upcoming' CHECK (status IN ('upcoming', 'completed')),
+  recap TEXT,
+  cover_image_url TEXT,
   created_at TIMESTAMPTZ DEFAULT pg_catalog.now()
 );
+
+
+-- Ensure existing installations receive the same event columns as fresh installs.
+ALTER TABLE public.events
+  ADD COLUMN IF NOT EXISTS registration_url TEXT,
+  ADD COLUMN IF NOT EXISTS parent_event_id TEXT,
+  ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'upcoming',
+  ADD COLUMN IF NOT EXISTS recap TEXT,
+  ADD COLUMN IF NOT EXISTS cover_image_url TEXT;
+
+ALTER TABLE public.events ALTER COLUMN description DROP NOT NULL;
+ALTER TABLE public.events ALTER COLUMN status SET DEFAULT 'upcoming';
+UPDATE public.events SET status = 'upcoming' WHERE status IS NULL OR status = '';
+ALTER TABLE public.events ALTER COLUMN status SET NOT NULL;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'public.events'::regclass
+      AND conname = 'events_status_check'
+  ) THEN
+    ALTER TABLE public.events
+      ADD CONSTRAINT events_status_check CHECK (status IN ('upcoming', 'completed'));
+  END IF;
+END $$;
+
+-- 2A. Event photo metadata (binary files live in Supabase Storage)
+CREATE TABLE IF NOT EXISTS public.event_photos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_id TEXT NOT NULL REFERENCES public.events(id) ON DELETE CASCADE,
+  storage_path TEXT NOT NULL UNIQUE,
+  public_url TEXT NOT NULL,
+  file_name TEXT,
+  is_cover BOOLEAN NOT NULL DEFAULT false,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT pg_catalog.now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_photos_event_id ON public.event_photos(event_id);
+CREATE INDEX IF NOT EXISTS idx_event_photos_order ON public.event_photos(event_id, display_order);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_event_photos_single_cover
+  ON public.event_photos(event_id) WHERE is_cover = true;
 
 -- 3. Create Executive Committee Table
 CREATE TABLE IF NOT EXISTS public.executive_committee (
@@ -70,6 +118,7 @@ CREATE TABLE IF NOT EXISTS public.registrations (
 -- Enable Row Level Security (RLS)
 ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.event_photos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.executive_committee ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.domains ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.registrations ENABLE ROW LEVEL SECURITY;
@@ -202,6 +251,15 @@ CREATE POLICY "Admins and editors can manage events"
   WITH CHECK (public.is_admin());
 
 
+-- Event photos
+DROP POLICY IF EXISTS "Public can view event photos" ON public.event_photos;
+CREATE POLICY "Public can view event photos"
+  ON public.event_photos FOR SELECT TO anon, authenticated USING (true);
+DROP POLICY IF EXISTS "Admins manage event photos" ON public.event_photos;
+CREATE POLICY "Admins manage event photos"
+  ON public.event_photos FOR ALL TO authenticated
+  USING (public.is_admin()) WITH CHECK (public.is_admin());
+
 -- Executive Committee
 DROP POLICY IF EXISTS "Public can view executive committee" ON public.executive_committee;
 
@@ -322,6 +380,8 @@ GRANT SELECT ON TABLE public.executive_committee TO anon, authenticated;
 GRANT SELECT ON TABLE public.domains TO anon, authenticated;
 
 GRANT INSERT, UPDATE, DELETE ON TABLE public.events TO authenticated;
+GRANT SELECT ON TABLE public.event_photos TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON TABLE public.event_photos TO authenticated;
 GRANT INSERT, UPDATE, DELETE ON TABLE public.executive_committee TO authenticated;
 GRANT INSERT, UPDATE, DELETE ON TABLE public.domains TO authenticated;
 
@@ -335,6 +395,32 @@ REVOKE ALL ON TABLE public.admin_users FROM anon, public;
 REVOKE TRUNCATE, REFERENCES, TRIGGER ON TABLE public.admin_users FROM authenticated;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.admin_users TO authenticated;
+
+-- Public bucket for public event photos only
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('event-photos', 'event-photos', true)
+ON CONFLICT (id) DO NOTHING;
+
+DROP POLICY IF EXISTS "Public can view event photo objects" ON storage.objects;
+CREATE POLICY "Public can view event photo objects"
+  ON storage.objects FOR SELECT TO anon, authenticated
+  USING (bucket_id = 'event-photos');
+
+DROP POLICY IF EXISTS "Admins upload event photo objects" ON storage.objects;
+CREATE POLICY "Admins upload event photo objects"
+  ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'event-photos' AND public.is_admin());
+
+DROP POLICY IF EXISTS "Admins update event photo objects" ON storage.objects;
+CREATE POLICY "Admins update event photo objects"
+  ON storage.objects FOR UPDATE TO authenticated
+  USING (bucket_id = 'event-photos' AND public.is_admin())
+  WITH CHECK (bucket_id = 'event-photos' AND public.is_admin());
+
+DROP POLICY IF EXISTS "Admins delete event photo objects" ON storage.objects;
+CREATE POLICY "Admins delete event photo objects"
+  ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'event-photos' AND public.is_admin());
 
 -- ========================================================
 -- Seed Initial Content Data
