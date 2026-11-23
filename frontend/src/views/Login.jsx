@@ -18,8 +18,12 @@ export default function Login({ initialError, initialEmail }) {
 
   const getFriendlyError = (err) => {
     if (!err) return "";
-    if (err === "oauth_error") {
+    const lower = err.toLowerCase();
+    if (lower === "oauth_error") {
       return "Google sign-in was interrupted or failed. Please try again with your authorized Google account.";
+    }
+    if (lower.includes("unsupported provider") || lower.includes("provider is not enabled")) {
+      return "Google OAuth provider is not enabled in your Supabase project. In Supabase Dashboard, go to Authentication → Providers → Google and enable it with your Google Cloud Client ID and Client Secret.";
     }
     return err;
   };
@@ -35,7 +39,13 @@ export default function Login({ initialError, initialEmail }) {
       const res = await signInWithGoogle("/admin");
 
       if (!res?.success) {
-        setError(res?.message || "Failed to connect to Google sign-in.");
+        const msg = res?.message || "";
+        const lower = msg.toLowerCase();
+        if (lower.includes("unsupported provider") || lower.includes("provider is not enabled")) {
+          setError("Google OAuth provider is not enabled in your Supabase project. In Supabase Dashboard, go to Authentication → Providers → Google and enable it with your Google Cloud Client ID and Client Secret.");
+        } else {
+          setError(msg || "Failed to connect to Google sign-in.");
+        }
         setIsSigningIn(false);
       } else if (res?.url) {
         window.location.href = res.url;
