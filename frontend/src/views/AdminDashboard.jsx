@@ -19,7 +19,9 @@ import {
   ShieldCheck,
   Camera,
   Upload,
+  Search,
   X,
+  ChevronDown,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
@@ -53,7 +55,6 @@ export default function AdminDashboard() {
     events,
     addEvent,
     removeEvent,
-    updateEventPhotos,
     executiveCommittee,
     addExecomMember,
     removeExecomMember,
@@ -63,6 +64,12 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("events"); // "events" | "committee" | "administrators"
   const [notification, setNotification] = useState(null);
   const [isLoggingOutLocal, setIsLoggingOutLocal] = useState(false);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [eventSearch, setEventSearch] = useState("");
+  const [eventCategoryFilter, setEventCategoryFilter] = useState("ALL");
+  const [eventSort, setEventSort] = useState("DATE_DESC");
+  const [eventPage, setEventPage] = useState(1);
+  const EVENTS_PER_PAGE = 10;
 
   const handleLogout = async () => {
     if (isLoggingOutLocal) return;
@@ -74,76 +81,6 @@ export default function AdminDashboard() {
       console.error("Logout failed:", err);
       showNotification("Failed to log out. Please try again.", "error");
       setIsLoggingOutLocal(false);
-    }
-  };
-
-  // Event Photo Management State
-  const [photoModalEvent, setPhotoModalEvent] = useState(null);
-  const [photoInputUrl, setPhotoInputUrl] = useState("");
-  const [eventPhotosList, setEventPhotosList] = useState([]);
-  const [isSavingPhotos, setIsSavingPhotos] = useState(false);
-
-  const openPhotoModal = (event) => {
-    setPhotoModalEvent(event);
-    setEventPhotosList(Array.isArray(event.photos) ? [...event.photos] : []);
-    setPhotoInputUrl("");
-  };
-
-  const closePhotoModal = () => {
-    setPhotoModalEvent(null);
-    setEventPhotosList([]);
-    setPhotoInputUrl("");
-  };
-
-  const handleAddPhotoUrl = (e) => {
-    if (e) e.preventDefault();
-    const url = photoInputUrl.trim();
-    if (!url) return;
-    if (eventPhotosList.includes(url)) {
-      showNotification("This photo is already added to the list.", "error");
-      return;
-    }
-    setEventPhotosList((prev) => [...prev, url]);
-    setPhotoInputUrl("");
-  };
-
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
-
-    files.forEach((file) => {
-      if (!file.type.startsWith("image/")) {
-        showNotification("Please select valid image files.", "error");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (uploadEvent) => {
-        const dataUrl = uploadEvent.target?.result;
-        if (dataUrl) {
-          setEventPhotosList((prev) => [...prev, String(dataUrl)]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-    e.target.value = "";
-  };
-
-  const handleRemovePhoto = (indexToRemove) => {
-    setEventPhotosList((prev) => prev.filter((_, idx) => idx !== indexToRemove));
-  };
-
-  const handleSavePhotos = async () => {
-    if (!photoModalEvent) return;
-    setIsSavingPhotos(true);
-    try {
-      await updateEventPhotos(photoModalEvent.id, eventPhotosList);
-      showNotification(`Event photos saved successfully for "${photoModalEvent.title}".`);
-      closePhotoModal();
-    } catch (err) {
-      console.error("Save photos error:", err);
-      showNotification("Failed to save photos.", "error");
-    } finally {
-      setIsSavingPhotos(false);
     }
   };
 
@@ -178,6 +115,34 @@ export default function AdminDashboard() {
   };
 
   const rootEvents = events.filter((event) => !event.parent_event_id);
+
+  const eventMatchesSearch = (event, query) => {
+    const ownMatch = [event.title, event.category, event.description, event.year]
+      .some((value) => String(value || "").toLowerCase().includes(query));
+    const childMatch = events
+      .filter((item) => item.parent_event_id === event.id)
+      .some((child) => eventMatchesSearch(child, query));
+    return ownMatch || childMatch;
+  };
+
+  const filteredRootEvents = rootEvents.filter((event) => {
+    const query = eventSearch.trim().toLowerCase();
+    const matchesSearch = !query || eventMatchesSearch(event, query);
+    const matchesCategory = eventCategoryFilter === "ALL" || event.category === eventCategoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+
+  const sortedRootEvents = [...filteredRootEvents].sort((a, b) => {
+    if (eventSort === "TITLE_ASC") return String(a.title || "").localeCompare(String(b.title || ""));
+    const dateValue = (event) => (Number(event.year) || 0) * 10000 + (MONTHS.indexOf(event.month) + 1) * 100 + (Number(event.date) || 0);
+    return dateValue(b) - dateValue(a);
+  });
+
+  const totalEventPages = Math.max(1, Math.ceil(sortedRootEvents.length / EVENTS_PER_PAGE));
+  const paginatedRootEvents = sortedRootEvents.slice(
+    (eventPage - 1) * EVENTS_PER_PAGE,
+    eventPage * EVENTS_PER_PAGE
+  );
 
   // ExeCom Form State
   const [memberForm, setMemberForm] = useState({
@@ -289,6 +254,10 @@ export default function AdminDashboard() {
       registration_url: "",
       parent_event_id: "",
     });
+    setIsEventModalOpen(false);
+    setEventSearch("");
+    setEventCategoryFilter("ALL");
+    setEventPage(1);
   };
 
   // Handle Member Submit
@@ -341,69 +310,51 @@ export default function AdminDashboard() {
     return null;
   }
 
-  // Render the complete event hierarchy in the admin list.
+  // Compact event rows with collapsed nested items to keep long lists manageable.
   const renderEventNode = (event, depth = 0) => {
     const children = events.filter((item) => item.parent_event_id === event.id);
+    const query = eventSearch.trim().toLowerCase();
+    const visibleChildren = query
+      ? children.filter((child) => eventMatchesSearch(child, query))
+      : children;
+
     return (
-      <div
-        key={event.id}
-        className={`rounded-2xl border bg-white p-4 transition hover:border-[#A8D8EF] ${depth === 0 ? "border-[#DCE6EF]" : "border-slate-200"}`}
-        style={{ marginLeft: depth > 0 ? `${Math.min(depth, 4) * 12}px` : 0 }}
-      >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex min-w-0 gap-3">
-            <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl border border-[#B8DCEC] bg-[#E6F4FB] text-[#10243A]">
-              <span className="text-base font-bold leading-none">{event.date}</span>
-              <span className="mt-1 text-[10px] font-bold tracking-wider text-[#00629B]">{event.month}</span>
-            </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full border border-[#B8DCEC] bg-[#E6F4FB] px-2.5 py-0.5 text-[10px] font-bold text-[#00629B]">{event.category}</span>
-                <span className="text-xs text-slate-500">{event.year}</span>
-                {children.length > 0 && (
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700">
-                    {children.length} direct item{children.length === 1 ? "" : "s"}
-                  </span>
-                )}
-                {event.photos?.length > 0 && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-[10px] font-semibold text-[#00629B]">
-                    <Camera size={10} />
-                    <span>{event.photos.length} photo{event.photos.length === 1 ? "" : "s"}</span>
-                  </span>
-                )}
-              </div>
-              <h4 className="mt-1.5 break-words text-sm font-bold text-[#10243A]">{event.title}</h4>
-              <p className="mt-1 line-clamp-2 text-xs text-slate-600">{event.description}</p>
-              <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-slate-500">
-                <span className="inline-flex items-center gap-1"><Clock size={12} className="text-[#00629B]" />{event.time}</span>
-                <span className="inline-flex items-center gap-1"><MapPin size={12} className="text-[#00629B]" />{event.venue}</span>
-              </div>
-            </div>
+      <div key={event.id} className={`overflow-hidden rounded-xl border bg-white transition hover:border-[#A8D8EF] ${depth === 0 ? "border-[#DCE6EF] shadow-sm" : "border-slate-200"}`}>
+        <div className="flex items-center gap-3 px-3 py-3 sm:px-4">
+          <div className="flex h-14 w-16 min-w-16 shrink-0 flex-col items-center justify-center rounded-lg border border-[#B8DCEC] bg-[#E6F4FB] text-[#10243A]">
+            <span className="whitespace-nowrap text-sm font-bold leading-tight">
+              {event.date}
+            </span>
+            <span className="mt-0.5 text-[10px] font-bold tracking-wider text-[#00629B]">
+              {event.month}
+            </span>
           </div>
-          <div className="flex shrink-0 items-center gap-2 self-end sm:self-start">
-            <button
-              type="button"
-              onClick={() => openPhotoModal(event)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-[#00629B] transition hover:bg-sky-100"
-              title="Add or manage photos for this event"
-            >
-              <Camera size={13} />
-              <span>{event.photos?.length ? `Photos (${event.photos.length})` : "Add Photos"}</span>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="rounded-full bg-[#E6F4FB] px-2 py-0.5 text-[9px] font-bold tracking-wide text-[#00629B]">{event.category}</span>
+              <span className="text-[11px] text-slate-400">{event.year}</span>
+              {children.length > 0 && <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-semibold text-emerald-700">{children.length} nested</span>}
+            </div>
+            <h4 className="mt-1 truncate text-sm font-semibold text-[#10243A]">{event.title}</h4>
+            <p className="mt-0.5 truncate text-[11px] text-slate-500">{event.time || "Time not set"} · {event.venue || "Venue not set"}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button type="button" onClick={() => handleDeleteEvent(event.id, event.title)} className="inline-flex items-center gap-1 rounded-lg border border-rose-200 px-2.5 py-1.5 text-[11px] font-medium text-rose-700 transition hover:bg-rose-50" title={children.length ? "Delete event and nested items" : "Delete event"}>
+              <Trash2 size={12} /><span className="hidden sm:inline">Delete</span>
             </button>
-            <button
-              type="button"
-              onClick={() => handleDeleteEvent(event.id, event.title)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-100"
-              title={children.length ? "Remove this item and all nested items" : "Remove this event"}
-            >
-              <Trash2 size={13} /><span>Remove</span>
-            </button>
+
           </div>
         </div>
         {children.length > 0 && (
-          <div className="mt-4 space-y-3 border-l-2 border-[#B8DCEC] pl-3 sm:pl-4">
-            {children.map((child) => renderEventNode(child, depth + 1))}
-          </div>
+          <details className="group border-t border-[#EEF2F6]" open={Boolean(query)}>
+            <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-2 text-[11px] font-medium text-[#00629B] hover:bg-[#F8FAFC]">
+              <ChevronDown size={13} className="transition group-open:rotate-180" />
+              {query ? `${visibleChildren.length} matching nested item(s)` : `Show ${children.length} nested item(s)`}
+            </summary>
+            <div className="space-y-2 bg-[#FAFCFE] p-3 sm:pl-6">
+              {visibleChildren.map((child) => renderEventNode(child, depth + 1))}
+            </div>
+          </details>
         )}
       </div>
     );
@@ -416,161 +367,6 @@ export default function AdminDashboard() {
       <div className="pointer-events-none absolute -right-40 bottom-32 h-96 w-96 rounded-full bg-[#F0F8FC] blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* =========================================
-            EVENT PHOTOS MANAGEMENT MODAL
-        ========================================== */}
-        {photoModalEvent && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm">
-            <div className="relative w-full max-w-2xl rounded-3xl border border-[#DCE6EF] bg-white p-6 shadow-2xl sm:p-8">
-              {/* Header */}
-              <div className="flex items-start justify-between border-b border-slate-100 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-50 text-[#00629B] border border-sky-100">
-                    <Camera size={22} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-[#10243A]">
-                      Event Photos Gallery
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      {photoModalEvent.title} · {photoModalEvent.date} {photoModalEvent.month} {photoModalEvent.year}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={closePhotoModal}
-                  className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
-                  aria-label="Close dialog"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              {/* Add Photo Controls */}
-              <div className="mt-5 space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                    Add Photo via URL
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="url"
-                      placeholder="Paste image URL (https://...)"
-                      value={photoInputUrl}
-                      onChange={(e) => setPhotoInputUrl(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleAddPhotoUrl();
-                        }
-                      }}
-                      className="flex-1 rounded-xl border border-[#DCE6EF] bg-slate-50/60 px-3.5 py-2 text-xs text-[#10243A] placeholder-slate-400 transition focus:border-[#00629B] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00629B]/10"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleAddPhotoUrl}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-[#00629B] px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-[#004F7D]"
-                    >
-                      <Plus size={14} />
-                      <span>Add URL</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="h-px flex-1 bg-slate-100" />
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">or</span>
-                  <div className="h-px flex-1 bg-slate-100" />
-                </div>
-
-                {/* Upload Local File */}
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                    Upload Photos from Computer
-                  </label>
-                  <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-sky-300 bg-sky-50/50 px-4 py-3 text-xs font-semibold text-[#00629B] transition hover:bg-sky-100/60">
-                    <Upload size={15} />
-                    <span>Select Image Files</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-
-                {/* Photo Previews */}
-                <div className="mt-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                      Photos ({eventPhotosList.length})
-                    </span>
-                    {eventPhotosList.length > 0 && (
-                      <span className="text-[11px] text-slate-400">
-                        These photos will appear inside the event button on the Events page
-                      </span>
-                    )}
-                  </div>
-
-                  {eventPhotosList.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 p-6 text-center">
-                      <Camera size={28} className="mx-auto text-slate-400" />
-                      <p className="mt-2 text-xs text-slate-500">
-                        No photos added yet. Add URLs or upload photos above.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid max-h-56 grid-cols-3 gap-3 overflow-y-auto p-1 sm:grid-cols-4">
-                      {eventPhotosList.map((url, idx) => (
-                        <div
-                          key={idx}
-                          className="group relative aspect-video overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-2xs"
-                        >
-                          <img
-                            src={url}
-                            alt={`Event photo ${idx + 1}`}
-                            className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleRemovePhoto(idx)}
-                            className="absolute right-1 top-1 rounded-md bg-rose-600/90 p-1 text-white opacity-0 transition group-hover:opacity-100 hover:bg-rose-700"
-                            title="Remove photo"
-                          >
-                            <Trash2 size={12} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
-                <button
-                  type="button"
-                  onClick={closePhotoModal}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  disabled={isSavingPhotos}
-                  onClick={handleSavePhotos}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#00629B] to-[#0077B8] px-5 py-2 text-xs font-semibold text-white shadow-sm transition hover:scale-[1.02] disabled:opacity-50"
-                >
-                  {isSavingPhotos ? "Saving..." : "Save Photos"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Floating Notification */}
         {notification && (
           <div
@@ -692,18 +488,95 @@ export default function AdminDashboard() {
             TAB 1: UPCOMING EVENTS
         ========================================== */}
         {activeTab === "events" && (
-          <div className="mt-8 grid gap-8 lg:grid-cols-12">
-            {/* Left: Add Event Form */}
-            <div className="lg:col-span-5">
-              <div className="sticky top-28 rounded-3xl border border-[#DCE6EF] bg-white p-6 shadow-[0_10px_30px_rgba(16,36,58,0.05)]">
-                <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#00629B]">
-                  <Plus size={18} />
-                  <span>Add Upcoming Event</span>
-                </div>
-                <p className="mt-1 text-xs text-slate-600">
-                  New events immediately reflect on the public Events page and sync to the database.
-                </p>
+          <section className="mt-8 space-y-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-[#10243A]">Manage Events</h2>
+                <p className="mt-1 text-sm text-slate-500">Search, filter and manage your event hierarchy.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEventModalOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#00629B] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#004F7D]"
+              >
+                <Plus size={17} /> Create Event
+              </button>
+            </div>
 
+            <div className="rounded-2xl border border-[#DCE6EF] bg-white p-4 shadow-sm">
+              <div className="flex flex-col gap-3 md:flex-row">
+                <div className="relative min-w-0 flex-1">
+                  <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="search"
+                    value={eventSearch}
+                    onChange={(e) => { setEventSearch(e.target.value); setEventPage(1); }}
+                    placeholder="Search event or nested competition..."
+                    className="w-full rounded-xl border border-[#DCE6EF] bg-[#F8FAFC] py-2.5 pl-10 pr-4 text-sm text-[#10243A] outline-none transition focus:border-[#29A9E0] focus:ring-2 focus:ring-[#29A9E0]/15"
+                  />
+                </div>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <select
+                    value={eventCategoryFilter}
+                    onChange={(e) => { setEventCategoryFilter(e.target.value); setEventPage(1); }}
+                    className="rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#29A9E0]"
+                    aria-label="Filter events by category"
+                  >
+                    <option value="ALL">All categories</option>
+                    {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
+                  </select>
+                  <select
+                    value={eventSort}
+                    onChange={(e) => { setEventSort(e.target.value); setEventPage(1); }}
+                    className="rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#29A9E0]"
+                    aria-label="Sort events"
+                  >
+                    <option value="DATE_DESC">Date: newest first</option>
+                    <option value="TITLE_ASC">Title: A to Z</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                <span>Showing {filteredRootEvents.length === 0 ? 0 : (eventPage - 1) * EVENTS_PER_PAGE + 1}–{Math.min(eventPage * EVENTS_PER_PAGE, filteredRootEvents.length)} of {filteredRootEvents.length} main events · {events.length} total including nested events</span>
+                {(eventSearch || eventCategoryFilter !== "ALL") && (
+                  <button type="button" onClick={() => { setEventSearch(""); setEventCategoryFilter("ALL"); setEventSort("DATE_DESC"); setEventPage(1); }} className="font-semibold text-[#00629B] hover:underline">Clear filters</button>
+                )}
+              </div>
+            </div>
+
+            {paginatedRootEvents.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-[#DCE6EF] bg-white px-6 py-14 text-center">
+                <CalendarDays className="mx-auto text-slate-400" size={36} />
+                <p className="mt-3 text-sm font-semibold text-[#10243A]">No matching events</p>
+                <p className="mt-1 text-xs text-slate-500">Try another search or create a new event.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {paginatedRootEvents.map((event) => renderEventNode(event))}
+              </div>
+            )}
+
+            {totalEventPages > 1 && (
+              <div className="flex items-center justify-between rounded-xl border border-[#DCE6EF] bg-white px-4 py-3">
+                <span className="text-xs text-slate-500">Page {eventPage} of {totalEventPages}</span>
+                <div className="flex gap-2">
+                  <button type="button" disabled={eventPage === 1} onClick={() => setEventPage((page) => page - 1)} className="rounded-lg border border-[#DCE6EF] px-3 py-1.5 text-xs font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
+                  <button type="button" disabled={eventPage === totalEventPages} onClick={() => setEventPage((page) => page + 1)} className="rounded-lg border border-[#DCE6EF] px-3 py-1.5 text-xs font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-40">Next</button>
+                </div>
+              </div>
+            )}
+
+            {isEventModalOpen && (
+              <div className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm sm:items-center">
+                <div className="my-4 w-full max-w-2xl rounded-3xl border border-[#DCE6EF] bg-white shadow-2xl">
+                  <div className="flex items-start justify-between border-b border-[#E6EDF3] px-6 py-5">
+                    <div>
+                      <h3 className="text-lg font-bold text-[#10243A]">Create Event</h3>
+                      <p className="mt-1 text-xs text-slate-500">Add a main event or place it under an existing event.</p>
+                    </div>
+                    <button type="button" onClick={() => setIsEventModalOpen(false)} className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800" aria-label="Close create event form"><X size={19} /></button>
+                  </div>
+                  <div className="max-h-[calc(100vh-170px)] overflow-y-auto p-6">
                 <form onSubmit={handleEventSubmit} className="mt-6 space-y-4">
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
@@ -899,30 +772,11 @@ export default function AdminDashboard() {
                     <span>Publish Event</span>
                   </button>
                 </form>
-              </div>
-            </div>
-
-            {/* Right: Existing Events List, recursively grouped */}
-            <div className="lg:col-span-7">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-[#10243A]">
-                  Active Main Events ({rootEvents.length})
-                </h3>
-                <span className="text-xs text-slate-500">Nested items appear under their parent groups</span>
-              </div>
-              {rootEvents.length === 0 ? (
-                <div className="rounded-3xl border border-dashed border-[#DCE6EF] p-12 text-center">
-                  <CalendarDays className="mx-auto text-slate-500" size={40} />
-                  <p className="mt-3 text-sm text-slate-500">No events currently scheduled.</p>
-                  <p className="text-xs text-slate-500">Use the form on the left to add your first main event.</p>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {rootEvents.map((event) => renderEventNode(event))}
-                </div>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
+          </section>
         )}
 
         {/* =========================================
