@@ -1,7 +1,7 @@
 "use client";
+
 import AdminManagement from "../components/admin/AdminManagement";
 import { useState, useRef } from "react";
-import Link from "next/link";
 import {
   CalendarDays,
   Clock,
@@ -13,29 +13,10 @@ import {
   LogOut,
   ExternalLink,
   CheckCircle,
-  RotateCcw,
   UserCheck,
   UserRound,
   Mail,
-  Shield,
-  Layers,
-  BrainCircuit,
-  Cloud,
-  Code2,
-  Cpu,
-  FlaskConical,
   ShieldCheck,
-  Globe,
-  Zap,
-  Database,
-  Terminal,
-  Bot,
-  Radio,
-  Server,
-  Workflow,
-  RefreshCw,
-  UserPlus,
-  Phone,
   Camera,
   Upload,
   X,
@@ -59,40 +40,9 @@ const MONTHS = [
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
 ];
 
-const DOMAIN_ICON_OPTIONS = [
-  { value: "BrainCircuit", label: "AI / Machine Learning (Brain)" },
-  { value: "Code2", label: "Web / Software Dev (Code)" },
-  { value: "Cpu", label: "Robotics / IoT / Embedded (CPU)" },
-  { value: "ShieldCheck", label: "Cybersecurity (Shield)" },
-  { value: "Cloud", label: "Cloud & DevOps (Cloud)" },
-  { value: "FlaskConical", label: "Research & Innovation (Flask)" },
-  { value: "Globe", label: "Web3 / Internet (Globe)" },
-  { value: "Zap", label: "Electrical / Energy (Lightning)" },
-  { value: "Database", label: "Data Science & DB (Database)" },
-  { value: "Terminal", label: "Systems & CLI (Terminal)" },
-  { value: "Bot", label: "Automation & AI Bots (Bot)" },
-  { value: "Radio", label: "Telecom & Signal (Radio)" },
-  { value: "Server", label: "Backend & Systems (Server)" },
-  { value: "Workflow", label: "Workflows & Automation (Workflow)" },
-];
 
-const DOMAIN_ICONS_MAP = {
-  BrainCircuit,
-  Code2,
-  Cpu,
-  ShieldCheck,
-  Cloud,
-  FlaskConical,
-  Globe,
-  Zap,
-  Database,
-  Terminal,
-  Bot,
-  Layers,
-  Radio,
-  Server,
-  Workflow,
-};
+
+
 
 
 export default function AdminDashboard() {
@@ -107,20 +57,11 @@ export default function AdminDashboard() {
     executiveCommittee,
     addExecomMember,
     removeExecomMember,
-    domains,
-    addDomain,
-    removeDomain,
-    registrations,
-    removeRegistration,
-    refreshData,
-    resetToDefaults,
-    isUsingSupabase,
     isLoading,
   } = useAdmin();
 
-  const [activeTab, setActiveTab] = useState("events"); // "events" | "execom" | "domains" | "registrations"
+  const [activeTab, setActiveTab] = useState("events"); // "events" | "committee" | "administrators"
   const [notification, setNotification] = useState(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoggingOutLocal, setIsLoggingOutLocal] = useState(false);
 
   const handleLogout = async () => {
@@ -305,27 +246,11 @@ export default function AdminDashboard() {
     }
   };
 
-  // Domain Form State
-  const [domainForm, setDomainForm] = useState({
-    title: "",
-    shortTitle: "",
-    iconName: "BrainCircuit",
-    description: "",
-  });
-
   const showNotification = (message, type = "success") => {
     setNotification({ message, type });
     setTimeout(() => {
       setNotification(null);
     }, 3500);
-  };
-
-  // Handle Refresh
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    await refreshData();
-    setIsRefreshing(false);
-    showNotification("Synchronized with database.");
   };
 
   // Handle Event Submit
@@ -391,30 +316,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Handle Domain Submit
-  const handleDomainSubmit = async (e) => {
-    e.preventDefault();
-    if (!domainForm.title.trim() || !domainForm.description.trim()) {
-      showNotification("Please fill in domain title and description.", "error");
-      return;
-    }
-
-    const shortTitle = domainForm.shortTitle.trim() || domainForm.title.trim().slice(0, 15);
-    await addDomain({
-      ...domainForm,
-      shortTitle,
-    });
-    showNotification(`Technical domain "${domainForm.title}" successfully saved!`);
-
-    // Reset form
-    setDomainForm({
-      title: "",
-      shortTitle: "",
-      iconName: "BrainCircuit",
-      description: "",
-    });
-  };
-
   // Handle Event Delete
   const handleDeleteEvent = async (id, title) => {
     if (window.confirm(`Are you sure you want to delete the event "${title}"?`)) {
@@ -435,29 +336,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Handle Domain Delete
-  const handleDeleteDomain = async (id, title) => {
-    if (window.confirm(`Are you sure you want to remove domain "${title}"?`)) {
-      await removeDomain(id);
-      showNotification(`Domain "${title}" has been removed.`);
-    }
-  };
-
-  // Handle Registration Delete
-  const handleDeleteRegistration = async (id, name) => {
-    if (window.confirm(`Dismiss application for ${name}?`)) {
-      await removeRegistration(id);
-      showNotification(`Application for ${name} removed.`);
-    }
-  };
-
-  // Handle Reset
-  const handleReset = () => {
-    if (window.confirm("Reset all events, committee members, and domains to initial default values?")) {
-      resetToDefaults();
-      showNotification("Data reset to default values.");
-    }
-  };
 
   if (!isAuthenticated && !isLoading) {
     return null;
@@ -711,91 +589,21 @@ export default function AdminDashboard() {
             ADMIN TOP BAR
         ========================================== */}
         <div className="rounded-3xl border border-[#DCE6EF] bg-white p-6 shadow-[0_12px_40px_rgba(16,36,58,0.06)] sm:p-8">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#B8DCEC] bg-[#E6F4FB] px-3 py-1 text-xs font-semibold text-[#00629B]">
-                  <Shield size={13} />
-                  <span>Admin Session Active</span>
-                </span>
-
-                {isUsingSupabase ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    <Database size={13} className="text-emerald-600" />
-                    <span>Supabase Connected</span>
-                  </span>
-                ) : (
-                  <span
-                    className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700"
-                    title="Add your Supabase credentials in .env.local to activate cloud database"
-                  >
-                    <Database size={13} className="text-amber-600" />
-                    <span>Local Cache (Add .env.local)</span>
-                  </span>
-                )}
-              </div>
-              <h1 className="mt-3 text-3xl font-extrabold text-[#10243A] sm:text-4xl">
+              <h1 className="text-3xl font-extrabold text-[#10243A] sm:text-4xl">
                 IEEE SB Management{" "}
                 <span className="bg-gradient-to-r from-[#29A9E0] to-cyan-300 bg-clip-text text-transparent">
                   Dashboard
                 </span>
               </h1>
               <p className="mt-1.5 text-sm text-slate-600">
-                Manage upcoming branch events, executive leadership, domains, and student registrations.
+                Manage events, committees, and administrators.
               </p>
             </div>
 
-            {/* Quick Actions */}
-            <div className="flex flex-wrap items-center gap-2.5">
-              <button
-                onClick={handleRefresh}
-                disabled={isRefreshing || isLoading}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2 text-xs font-medium text-slate-700 transition hover:bg-[#F1F5F9] hover:text-[#00629B] disabled:opacity-50"
-                title="Sync and refresh data"
-              >
-                <RefreshCw size={13} className={isRefreshing || isLoading ? "animate-spin" : ""} />
-                <span>Sync</span>
-              </button>
-
-              <Link
-                href="/events"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2 text-xs font-medium text-slate-700 transition hover:bg-[#F1F5F9] hover:text-[#00629B]"
-              >
-                <span>Live Events</span>
-                <ExternalLink size={13} />
-              </Link>
-
-              <Link
-                href="/team"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2 text-xs font-medium text-slate-700 transition hover:bg-[#F1F5F9] hover:text-[#00629B]"
-              >
-                <span>Live Team</span>
-                <ExternalLink size={13} />
-              </Link>
-
-              <Link
-                href="/societies"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2 text-xs font-medium text-slate-700 transition hover:bg-[#F1F5F9] hover:text-[#00629B]"
-              >
-                <span>Live Societies</span>
-                <ExternalLink size={13} />
-              </Link>
-
-              <button
-                onClick={handleReset}
-                title="Reset to default initial data"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2 text-xs font-medium text-slate-600 transition hover:bg-[#F1F5F9] hover:text-amber-700"
-              >
-                <RotateCcw size={13} />
-                <span>Reset Demo</span>
-              </button>
-
+            {/* Logout */}
+            <div className="flex shrink-0 items-center">
               <button
                 type="button"
                 onClick={handleLogout}
@@ -809,7 +617,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Quick Metrics */}
-          <div className="mt-8 grid grid-cols-2 gap-4 border-t border-[#DCE6EF] pt-6 sm:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-4 border-t border-[#DCE6EF] pt-6 sm:grid-cols-2">
             <div className="flex items-center gap-4 rounded-2xl border border-[#E6EDF3] bg-[#F8FAFC] p-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#B8DCEC] bg-[#E6F4FB] text-[#00629B]">
                 <Calendar size={24} />
@@ -830,32 +638,9 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 rounded-2xl border border-[#E6EDF3] bg-[#F8FAFC] p-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-sky-200 bg-sky-50 text-sky-700">
-                <Layers size={24} />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-slate-500">Domains</p>
-                <p className="text-2xl font-bold text-[#10243A]">{domains.length}</p>
-              </div>
-            </div>
 
-            {["admin", "super_admin"].includes(adminProfile?.role) &&
-              adminProfile?.is_active === true && (
-                <div className="flex items-center gap-4 rounded-2xl border border-[#E6EDF3] bg-[#F8FAFC] p-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700">
-                    <UserPlus size={24} />
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-wider text-slate-500">
-                      Registrations
-                    </p>
-                    <p className="text-2xl font-bold text-[#10243A]">
-                      {registrations.length}
-                    </p>
-                  </div>
-                </div>
-              )}
+
+
           </div>
         </div>
 
@@ -876,43 +661,16 @@ export default function AdminDashboard() {
           </button>
 
           <button
-            onClick={() => setActiveTab("execom")}
+            onClick={() => setActiveTab("committee")}
             className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
-              activeTab === "execom"
+              activeTab === "committee"
                 ? "border border-[#A8D8EF] bg-[#E6F4FB] text-[#00629B] shadow-[0_0_20px_rgba(41,169,224,0.25)]"
                 : "text-slate-500 hover:bg-white hover:text-[#10243A]"
             }`}
           >
             <UserCheck size={18} />
-            <span>Manage Committee ({executiveCommittee.length})</span>
+            <span>Manage Committee</span>
           </button>
-
-          <button
-            onClick={() => setActiveTab("domains")}
-            className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
-              activeTab === "domains"
-                ? "border border-[#A8D8EF] bg-[#E6F4FB] text-[#00629B] shadow-[0_0_20px_rgba(41,169,224,0.25)]"
-                : "text-slate-500 hover:bg-white hover:text-[#10243A]"
-            }`}
-          >
-            <Layers size={18} />
-            <span>Manage Domains ({domains.length})</span>
-          </button>
-
-          {["admin", "super_admin"].includes(adminProfile?.role) &&
-            adminProfile?.is_active === true && (
-              <button
-                onClick={() => setActiveTab("registrations")}
-                className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
-                  activeTab === "registrations"
-                    ? "border border-emerald-400/40 bg-emerald-50 text-emerald-700"
-                    : "text-slate-500 hover:bg-white hover:text-[#10243A]"
-                }`}
-              >
-                <UserPlus size={18} />
-                <span>Student Registrations ({registrations.length})</span>
-              </button>
-            )}
 
           {adminProfile?.role === "super_admin" &&
             adminProfile?.is_active === true && (
@@ -1170,7 +928,7 @@ export default function AdminDashboard() {
         {/* =========================================
             TAB 2: EXECUTIVE COMMITTEE MEMBERS
         ========================================== */}
-        {activeTab === "execom" && (
+        {activeTab === "committee" && (
           <div className="mt-8 grid gap-8 lg:grid-cols-12">
             {/* Left: Add ExeCom Member Form */}
             <div className="lg:col-span-5">
@@ -1445,296 +1203,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* =========================================
-            TAB 3: TECHNICAL DOMAINS
-        ========================================== */}
-        {activeTab === "domains" && (
-          <div className="mt-8 grid gap-8 lg:grid-cols-12">
-            {/* Left: Add Domain Form */}
-            <div className="lg:col-span-5">
-              <div className="sticky top-28 rounded-3xl border border-[#DCE6EF] bg-white p-6 shadow-[0_10px_30px_rgba(16,36,58,0.05)]">
-                <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#00629B]">
-                  <Plus size={18} />
-                  <span>Add Technical Domain</span>
-                </div>
-                <p className="mt-1 text-xs text-slate-600">
-                  New domains immediately reflect on the public Domains track page and sync to the database.
-                </p>
-
-                <form onSubmit={handleDomainSubmit} className="mt-6 space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-                      Domain Title *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Artificial Intelligence & Data Science"
-                      value={domainForm.title}
-                      onChange={(e) =>
-                        setDomainForm({ ...domainForm, title: e.target.value })
-                      }
-                      className="w-full rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2.5 text-sm text-[#10243A] placeholder-slate-400 focus:border-[#29A9E0] focus:outline-none focus:ring-1 focus:ring-[#29A9E0]"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-                        Short Tag / Badge
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. AI / ML"
-                        value={domainForm.shortTitle}
-                        onChange={(e) =>
-                          setDomainForm({ ...domainForm, shortTitle: e.target.value })
-                        }
-                        className="w-full rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2.5 text-sm text-[#10243A] placeholder-slate-400 focus:border-[#29A9E0] focus:outline-none focus:ring-1 focus:ring-[#29A9E0]"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-                        Domain Icon
-                      </label>
-                      <select
-                        value={domainForm.iconName}
-                        onChange={(e) =>
-                          setDomainForm({ ...domainForm, iconName: e.target.value })
-                        }
-                        className="w-full rounded-xl border border-[#DCE6EF] bg-white px-3 py-2.5 text-sm text-[#10243A] focus:border-[#29A9E0] focus:outline-none"
-                      >
-                        {DOMAIN_ICON_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-                      Description *
-                    </label>
-                    <textarea
-                      required
-                      rows={3}
-                      placeholder="Describe what students learn and build in this technical domain..."
-                      value={domainForm.description}
-                      onChange={(e) =>
-                        setDomainForm({ ...domainForm, description: e.target.value })
-                      }
-                      className="w-full rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2.5 text-sm text-[#10243A] placeholder-slate-400 focus:border-[#29A9E0] focus:outline-none focus:ring-1 focus:ring-[#29A9E0]"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00629B] to-[#0077B8] px-4 py-3 font-semibold text-white shadow-lg shadow-[#00629B]/30 transition hover:shadow-cyan-500/25 hover:scale-[1.01] active:scale-[0.99]"
-                  >
-                    <Plus size={18} />
-                    <span>Add Technical Domain</span>
-                  </button>
-                </form>
-              </div>
-            </div>
-
-            {/* Right: Existing Domains List */}
-            <div className="lg:col-span-7">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-[#10243A]">
-                  Active Domains ({domains.length})
-                </h3>
-                <span className="text-xs text-slate-500">
-                  Visible live on Domains page
-                </span>
-              </div>
-
-              {domains.length === 0 ? (
-                <div className="rounded-3xl border border-dashed border-[#DCE6EF] p-12 text-center">
-                  <Layers className="mx-auto text-slate-500" size={40} />
-                  <p className="mt-3 text-sm text-slate-500">No domains added yet.</p>
-                  <p className="text-xs text-slate-500">Create a technical track using the form on the left.</p>
-                </div>
-              ) : (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {domains.map((dom) => {
-                    const IconComponent = DOMAIN_ICONS_MAP[dom.iconName] || BrainCircuit;
-
-                    return (
-                      <div
-                        key={dom.id || dom.number}
-                        className="group relative flex flex-col justify-between rounded-2xl border border-[#DCE6EF] bg-white p-5 backdrop-blur-xl transition hover:border-[#A8D8EF] hover:bg-white"
-                      >
-                        <div>
-                          {/* Domain Header */}
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex items-center gap-3">
-                              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#B8DCEC] bg-[#E6F4FB] text-[#00629B]">
-                                <IconComponent size={22} />
-                              </div>
-                              <div>
-                                <span className="font-mono text-[10px] font-bold text-[#00629B]/70">
-                                  TRACK {dom.number}
-                                </span>
-                                <h4 className="font-bold text-[#10243A] group-hover:text-[#00629B] transition-colors leading-tight">
-                                  {dom.title}
-                                </h4>
-                              </div>
-                            </div>
-
-                            {/* Remove Button */}
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteDomain(dom.id, dom.title)}
-                              className="rounded-lg border border-rose-200 bg-rose-50 p-2 text-rose-700 transition hover:bg-rose-100 hover:text-[#10243A]"
-                              title="Remove Domain"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-
-                          <div className="mt-2.5">
-                            <span className="inline-block rounded-full bg-[#E6F4FB] px-2.5 py-0.5 text-[10px] font-bold text-[#00629B] border border-[#B8DCEC]">
-                              {dom.shortTitle}
-                            </span>
-                          </div>
-
-                          {/* Description */}
-                          <p className="mt-3 text-xs leading-5 text-slate-600">
-                            {dom.description}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* =========================================
-            TAB 4: STUDENT REGISTRATIONS
-        ========================================== */}
-        {activeTab === "registrations" &&
-          ["admin", "super_admin"].includes(adminProfile?.role) &&
-          adminProfile?.is_active === true && (
-          <div className="mt-8">
-            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-[#10243A]">
-                  Student Membership Applications ({registrations.length})
-                </h3>
-                <p className="text-xs text-slate-600">
-                  New member applications submitted from the Join page.
-                </p>
-              </div>
-
-              <span className="text-xs text-emerald-600 flex items-center gap-1.5">
-                <Database size={13} />
-                <span>{isUsingSupabase ? "Saved in Supabase Cloud DB" : "Saved in Local Storage Cache"}</span>
-              </span>
-            </div>
-
-            {registrations.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-[#DCE6EF] p-16 text-center">
-                <UserPlus className="mx-auto text-slate-500" size={48} />
-                <h4 className="mt-4 text-lg font-bold text-[#10243A]">No Membership Applications Yet</h4>
-                <p className="mt-1 text-sm text-slate-500">
-                  When students fill out the form on the Join page, their details will appear here.
-                </p>
-                <Link
-                  href="/join"
-                  target="_blank"
-                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#00629B] to-[#0077B8] px-5 py-2.5 text-xs font-semibold text-white shadow-md hover:shadow-cyan-500/20"
-                >
-                  <span>Open Join Page</span>
-                  <ExternalLink size={13} />
-                </Link>
-              </div>
-            ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {registrations.map((reg) => (
-                  <div
-                    key={reg.id}
-                    className="group relative flex flex-col justify-between rounded-2xl border border-[#DCE6EF] bg-white p-5 backdrop-blur-xl transition hover:border-[#A8D8EF] hover:bg-white"
-                  >
-                    <div>
-                      {/* Card Header */}
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700">
-                            <UserRound size={20} />
-                          </div>
-                          <div>
-                            <h4 className="font-bold text-[#10243A] group-hover:text-[#00629B] transition-colors">
-                              {reg.name}
-                            </h4>
-                            <span className="inline-block rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-700 uppercase">
-                              {reg.status || "Pending"}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Dismiss Button */}
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteRegistration(reg.id, reg.name)}
-                          className="rounded-lg border border-rose-200 bg-rose-50 p-2 text-rose-700 transition hover:bg-rose-100 hover:text-[#10243A]"
-                          title="Dismiss / Delete Application"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-
-                      {/* Details */}
-                      <div className="mt-4 space-y-2 text-xs text-slate-600">
-                        <div className="flex items-center gap-2">
-                          <span className="text-slate-500">Academic:</span>
-                          <span className="font-semibold text-[#10243A]">{reg.branch}</span>
-                          <span className="text-slate-500">•</span>
-                          <span>{reg.year}</span>
-                        </div>
-
-                        <div className="flex items-start gap-2">
-                          <span className="text-slate-500 shrink-0">Domain:</span>
-                          <span className="font-medium text-[#00629B]">{reg.domain}</span>
-                        </div>
-
-                        {reg.phone && (
-                          <div className="flex items-center gap-2">
-                            <Phone size={12} className="text-[#00629B]" />
-                            <a href={`tel:${reg.phone}`} className="text-slate-700 hover:underline">
-                              {reg.phone}
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Footer Contact */}
-                    <div className="mt-5 flex items-center justify-between border-t border-[#DCE6EF] pt-3 text-xs">
-                      <a
-                        href={`mailto:${reg.email}?subject=IEEE%20SB%20RNSIT%20Membership%20Application`}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#00629B] hover:underline"
-                      >
-                        <Mail size={13} />
-                        <span className="truncate max-w-[170px]">{reg.email}</span>
-                      </a>
-
-                      <span className="text-[10px] text-slate-500">
-                        {reg.created_at ? new Date(reg.created_at).toLocaleDateString() : "Recent"}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
         {activeTab === "administrators" &&
               adminProfile?.role === "super_admin" &&
               adminProfile?.is_active === true && (
