@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ArrowRight,
   ExternalLink,
   Mail,
   UserRound,
@@ -9,30 +8,21 @@ import {
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
-const operationsTeam = [
+const studentCommittees = [
   {
-    division: "Technical Division",
-    head: "Technical Lead",
+    name: "Technical",
     members: [],
   },
   {
-    division: "Coordination & Professional",
-    head: "Coordination Lead",
+    name: "Media, Editing & Design",
     members: [],
   },
   {
-    division: "Content & Documentation",
-    head: "Editorial Lead",
+    name: "Content & Documentation",
     members: [],
   },
   {
-    division: "Media, Editing & Design",
-    head: "Creative Lead",
-    members: [],
-  },
-  {
-    division: "Event Management",
-    head: "Activities Lead",
+    name: "Coordination & Professional Activities",
     members: [],
   },
 ];
@@ -141,7 +131,7 @@ function Team() {
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#00629B]/20 to-[#10243A]/15" />
 
             <h3 className="text-xs font-bold tracking-[0.2em] text-[#00629B]">
-              EXECUTIVE COMMITTEE ({executiveCommittee.length})
+              OFFICE BEARERS
             </h3>
 
             <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#00629B]/20 to-[#10243A]/15" />
@@ -150,9 +140,9 @@ function Team() {
           {executiveCommittee.length === 0 ? (
             <div className="rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
               <Users className="mx-auto text-[#00629B]" size={48} />
-              <h3 className="mt-4 text-xl font-bold text-[#10243A]">No Executive Committee Members Listed</h3>
+              <h3 className="mt-4 text-xl font-bold text-[#10243A]">No Office Bearers Listed</h3>
               <p className="mt-2 text-sm text-[#526477]">
-                The administrator will update the new executive committee shortly.
+                Office bearer details will be updated soon.
               </p>
             </div>
           ) : (
@@ -255,63 +245,41 @@ function Team() {
 
 
         {/* =========================
-            OPERATIONS TEAM
+            STUDENT ACTIVITIES COMMITTEE
         ========================== */}
         <div className="mt-20">
-
           <div className="mb-8 flex items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#00629B]/20 to-[#10243A]/15" />
-
             <h3 className="text-xs font-bold tracking-[0.2em] text-[#00629B]">
-              OPERATIONS & CHAPTER HEADS
+              STUDENT ACTIVITIES COMMITTEE (SAC)
             </h3>
-
             <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#00629B]/20 to-[#10243A]/15" />
           </div>
 
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-
-            {operationsTeam.map((division) => (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {studentCommittees.map((committee) => (
               <article
-                key={division.division}
+                key={committee.name}
                 className="group rounded-3xl border border-[#DCE5EC] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/30 hover:shadow-[0_12px_28px_rgba(16,36,58,0.09)]"
               >
                 <div className="flex items-center gap-3 border-b border-[#DCE5EC] pb-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-blue-200/50 bg-gradient-to-br from-blue-50 to-sky-100 text-[#00629B] transition-all duration-300 group-hover:bg-[#00629B] group-hover:text-white group-hover:shadow-[0_0_15px_rgba(0,98,155,0.25)]">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-blue-200/50 bg-gradient-to-br from-blue-50 to-sky-100 text-[#00629B] transition-all duration-300 group-hover:bg-[#00629B] group-hover:text-white">
                     <Users size={22} />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="truncate text-base font-bold text-[#10243A] group-hover:text-[#00629B] transition-colors">
-                      {division.division}
+                    <h4 className="text-base font-bold text-[#10243A] transition-colors group-hover:text-[#00629B]">
+                      {committee.name}
                     </h4>
-                    <span className="text-xs font-medium text-[#647588]">
-                      {division.members.length + 1} {division.members.length + 1 === 1 ? "person" : "people"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#00629B]">
-                    Division Head
-                  </p>
-                  <div className="mt-2 flex items-center gap-3 rounded-xl bg-[#F4F7FA] p-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00629B] text-white">
-                      <UserRound size={17} />
-                    </div>
-                    <p className="truncate text-sm font-bold text-[#10243A]">
-                      {division.head}
-                    </p>
                   </div>
                 </div>
 
                 <div className="mt-4">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#647588]">
-                    Members
+                    Committee Members
                   </p>
-                  <div className="mt-2 space-y-2">
-                    {division.members.length > 0 ? (
-                      division.members.map((member) => (
+                  <div className="mt-3 space-y-2">
+                    {committee.members.length > 0 ? (
+                      committee.members.map((member) => (
                         <div
                           key={member.id || member.name}
                           className="flex items-center gap-3 rounded-xl border border-[#DCE5EC] p-2.5"
@@ -325,56 +293,18 @@ function Team() {
                         </div>
                       ))
                     ) : (
-                      <p className="rounded-xl border border-dashed border-[#DCE5EC] px-3 py-2.5 text-xs text-[#8291A0]">
-                        Members can be added to this division.
+                      <p className="rounded-xl border border-dashed border-[#DCE5EC] px-3 py-3 text-xs text-[#8291A0]">
+                        Committee members will be announced soon.
                       </p>
                     )}
                   </div>
                 </div>
               </article>
             ))}
-
           </div>
-
         </div>
 
 
-        {/* =========================
-            JOIN TEAM GLASS CTA
-        ========================== */}
-        <div className="relative mt-20 overflow-hidden rounded-3xl border border-[#DCE5EC] bg-gradient-to-br from-white via-[#F0F7FC] to-[#FFF8F3] p-8 text-center shadow-[0_16px_36px_rgba(16,36,58,0.08)] sm:p-14">
-
-          {/* Top hairline with IEEE color combination */}
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00629B] via-[#29A9E0] to-[#F26522]" />
-
-          {/* Decorative floating rings */}
-          <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full border border-blue-200/50 animate-float-slow" />
-          <div className="pointer-events-none absolute -bottom-32 -left-16 h-72 w-72 rounded-full border border-orange-200/40 animate-float-reverse" />
-
-          <div className="relative z-10 mx-auto max-w-2xl">
-
-
-
-            <h3 className="mt-4 text-3xl font-bold text-[#10243A] sm:text-4xl">
-              Ready to create an impact?
-            </h3>
-
-            <p className="mt-4 leading-7 text-[#526477]">
-              Join the IEEE RNSIT family to collaborate on breakthrough engineering projects,
-              participate in global student conferences, and expand your professional network.
-            </p>
-
-            <a
-              href="/join"
-              className="mt-8 inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-8 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/25 transition-all duration-300 hover:scale-105 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg active:scale-95"
-            >
-              <span>Join IEEE Student Branch</span>
-              <ArrowRight size={18} />
-            </a>
-
-          </div>
-
-        </div>
 
       </div>
     </section>
