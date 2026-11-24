@@ -355,7 +355,9 @@ function Join() {
                 <p className="text-center text-xs text-[#647588] pt-2">
                   Have questions? Connect directly with us at{" "}
                   <a
-                    href="mailto:ieeestudentbranchrnsit@gmail.com"
+                    href="https://mail.google.com/mail/?view=cm&fs=1&to=ieeestudentbranchrnsit@gmail.com"
+                    target="_blank"
+                    rel="noreferrer"
                     className="font-semibold text-[#00629B] hover:underline"
                   >
                     ieeestudentbranchrnsit@gmail.com

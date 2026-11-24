@@ -119,10 +119,12 @@ export default function Footer() {
 
                 {/* Official Email */}
                 <a
-                  href="mailto:ieeestudentbranchrnsit@gmail.com"
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=ieeestudentbranchrnsit@gmail.com"
+                  target="_blank"
+                  rel="noreferrer"
                   aria-label="Email IEEE SB RNSIT"
                   className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-cyan-400/50 hover:bg-[#00629B]/30 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
-                  title="Email IEEE SB RNSIT directly"
+                  title="Compose email to ieeestudentbranchrnsit@gmail.com"
                 >
                   <Mail size={18} className="transition-transform group-hover:scale-110" />
                 </a>
@@ -182,28 +184,11 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/societies"
-                  className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
-                >
-                  <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
-                  <span>IEEE Societies</span>
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/team"
                   className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
                 >
                   <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
                   <span>Executive Committee (ExeCom)</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/join"
-                  className="group inline-flex items-center gap-1.5 font-semibold text-cyan-300 transition-colors hover:text-white"
-                >
-                  <span>Join Student Branch 2026</span>
                 </Link>
               </li>
             </ul>
@@ -229,51 +214,6 @@ export default function Footer() {
                   <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Society Chapters at RNSIT</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Department-wise chapters</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Faculty advisors</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Explore the societies</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Join IEEE SB RNSIT</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -290,23 +230,19 @@ export default function Footer() {
             <div className="space-y-4 text-sm text-slate-400">
               {/* Phone Numbers */}
               <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[#29A9E0]">
+                <a
+                  href="tel:+919606592647"
+                  className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[#29A9E0] transition-all hover:bg-[#00629B]/30 hover:border-cyan-400/50 hover:text-cyan-300"
+                  title="Call SB Chair"
+                  aria-label="Call SB Chair"
+                >
                   <Phone size={13} />
-                </div>
+                </a>
                 <div>
-                  <p className="font-semibold text-slate-300">Contact Numbers</p>
+                  <p className="font-semibold text-slate-300">Contact Number</p>
                   <p className="mt-0.5">
-                    <a href="tel:+918028611880" className="hover:text-[#29A9E0] transition-colors">
-                      +91 80 2861 1880
-                    </a>{" "}
-                    /{" "}
-                    <a href="tel:+918028611881" className="hover:text-[#29A9E0] transition-colors">
-                      1881
-                    </a>
-                  </p>
-                  <p className="mt-0.5">
-                    <a href="tel:+919845012345" className="hover:text-[#29A9E0] transition-colors text-cyan-300">
-                      +91 98450 12345 (SB Chair)
+                    <a href="tel:+919606592647" className="hover:text-[#29A9E0] transition-colors text-cyan-300">
+                      +91 96065 92647 (SB CHAIR)
                     </a>
                   </p>
                 </div>
@@ -320,7 +256,12 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold text-slate-300">Official Email</p>
                   <p className="mt-0.5">
-                    <a href="mailto:ieeestudentbranchrnsit@gmail.com" className="hover:text-[#29A9E0] transition-colors break-all">
+                    <a
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=ieeestudentbranchrnsit@gmail.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-[#29A9E0] transition-colors break-all"
+                    >
                       ieeestudentbranchrnsit@gmail.com
                     </a>
                   </p>
