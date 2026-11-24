@@ -184,28 +184,11 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/societies"
-                  className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
-                >
-                  <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
-                  <span>IEEE Societies</span>
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/team"
                   className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
                 >
                   <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
                   <span>Executive Committee (ExeCom)</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/join"
-                  className="group inline-flex items-center gap-1.5 font-semibold text-cyan-300 transition-colors hover:text-white"
-                >
-                  <span>Join Student Branch 2026</span>
                 </Link>
               </li>
             </ul>
@@ -228,51 +211,6 @@ export default function Footer() {
                   className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
                 >
                   <span>View all IEEE Societies</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Society Chapters at RNSIT</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Department-wise chapters</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Faculty advisors</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Explore the societies</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>Join IEEE SB RNSIT</span>
                   <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               </li>
