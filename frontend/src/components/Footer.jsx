@@ -119,10 +119,12 @@ export default function Footer() {
 
                 {/* Official Email */}
                 <a
-                  href="mailto:ieeestudentbranchrnsit@gmail.com"
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=ieeestudentbranchrnsit@gmail.com"
+                  target="_blank"
+                  rel="noreferrer"
                   aria-label="Email IEEE SB RNSIT"
                   className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-cyan-400/50 hover:bg-[#00629B]/30 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
-                  title="Email IEEE SB RNSIT directly"
+                  title="Compose email to ieeestudentbranchrnsit@gmail.com"
                 >
                   <Mail size={18} className="transition-transform group-hover:scale-110" />
                 </a>
@@ -320,7 +322,12 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold text-slate-300">Official Email</p>
                   <p className="mt-0.5">
-                    <a href="mailto:ieeestudentbranchrnsit@gmail.com" className="hover:text-[#29A9E0] transition-colors break-all">
+                    <a
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=ieeestudentbranchrnsit@gmail.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-[#29A9E0] transition-colors break-all"
+                    >
                       ieeestudentbranchrnsit@gmail.com
                     </a>
                   </p>
