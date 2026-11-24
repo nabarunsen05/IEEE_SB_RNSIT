@@ -5,7 +5,7 @@ import {
   Trophy,
   Compass,
   GraduationCap,
-  Globe,
+  CalendarDays,
   Award,
   BookOpen,
   Network,
@@ -55,10 +55,10 @@ const statistics = [
     textHover: "group-hover:text-[#F26522]",
   },
   {
-    value: "450k+",
-    label: "Global Member Network",
-    subtext: "Across 190+ countries worldwide",
-    icon: Globe,
+    value: "30+",
+    label: "Events & Workshops",
+    subtext: "Flagship symposiums, hackathons & talks",
+    icon: CalendarDays,
     gradient: "from-emerald-600 to-teal-500",
     shadow: "shadow-emerald-500/20",
     borderHover: "group-hover:border-emerald-400/50",
@@ -241,11 +241,7 @@ function About() {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           {/* Left Column */}
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
-              <span>IEEE Student Branch RNSIT</span>
-            </div>
-
-            <h1 className="mt-4 text-4xl font-extrabold leading-tight tracking-tight text-[#10243A] sm:text-5xl lg:text-5xl">
+            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-[#10243A] sm:text-5xl lg:text-5xl">
               More than just a membership:{" "}
               <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
                 your gateway to endless possibilities.
