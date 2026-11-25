@@ -24,7 +24,6 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200 bg-white shadow-sm">
-
       {/* Top accent */}
       <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#00629B]/40 via-[#29A9E0]/35 to-[#F26522]/30" />
 
@@ -40,7 +39,7 @@ export default function Navbar() {
           <img
             src="/assets/ieee-rnsit-sb-logo-black.png"
             alt="IEEE RNSIT Student Branch"
-            className="h-auto w-[120px] sm:w-[155px] lg:w-[185px] xl:w-[210px] object-contain"
+            className="h-auto w-[135px] sm:w-[155px] lg:w-[185px] xl:w-[210px] object-contain"
           />
 
           {/* Vertical Divider */}
@@ -50,13 +49,12 @@ export default function Navbar() {
           <img
             src="/assets/rnsit-logo.png"
             alt="RNS Institute of Technology"
-            className="h-auto w-[85px] sm:w-[110px] lg:w-[130px] xl:w-[145px] object-contain transition-transform duration-200"
+            className="h-auto w-[95px] sm:w-[110px] lg:w-[130px] xl:w-[145px] object-contain transition-transform duration-200"
           />
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-3 xl:flex">
-
           <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1.5">
             {navLinks.map((link) => {
               const active = pathname === link.href;
@@ -97,7 +95,6 @@ export default function Navbar() {
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-
       </nav>
 
       {/* Mobile Navigation */}
@@ -107,7 +104,6 @@ export default function Navbar() {
           className="absolute left-0 right-0 top-full z-[55] max-h-[calc(100dvh-78px)] overflow-y-auto border-t border-slate-200 bg-white px-6 py-5 shadow-xl xl:hidden"
         >
           <div className="flex flex-col gap-2">
-
             {navLinks.map((link) => {
               const active = pathname === link.href;
 
@@ -135,11 +131,9 @@ export default function Navbar() {
             >
               Join IEEE
             </Link>
-
           </div>
         </div>
       )}
-
     </header>
   );
 }

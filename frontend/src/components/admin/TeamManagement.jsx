@@ -195,6 +195,43 @@ function StatCard({ icon: Icon, label, value, tone = "blue" }) {
   );
 }
 
+function EditModal({ title, description, onClose, children }) {
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-[2px]"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="team-edit-modal-title"
+        className="my-auto max-h-[min(90dvh,760px)] w-full max-w-lg overflow-y-auto rounded-2xl border border-[#DCE6EF] bg-white shadow-2xl"
+      >
+        <header className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-[#E7EEF4] bg-white px-5 py-4">
+          <div>
+            <h3 id="team-edit-modal-title" className="text-base font-bold text-[#10243A]">{title}</h3>
+            <p className="mt-1 text-xs text-slate-500">{description}</p>
+          </div>
+          <button type="button" onClick={onClose} className={iconButton} aria-label="Close dialog">
+            <X size={16} />
+          </button>
+        </header>
+        <div className="p-5">{children}</div>
+      </section>
+    </div>
+  );
+}
+
 export default function TeamManagement() {
   const {
     adminProfile,
@@ -225,6 +262,7 @@ export default function TeamManagement() {
   const [busy, setBusy] = useState(false);
   const [officeForm, setOfficeForm] = useState(emptyMember);
   const [editingOfficeId, setEditingOfficeId] = useState(null);
+  const [officeEditOpen, setOfficeEditOpen] = useState(false);
   const [draggedOfficeId, setDraggedOfficeId] = useState(null);
   const [counsellorForm, setCounsellorForm] = useState({
     name: "",
@@ -236,6 +274,7 @@ export default function TeamManagement() {
   const [selectedCommittee, setSelectedCommittee] = useState("");
   const [sacMember, setSacMember] = useState({ name: "", image: "" });
   const [editingSacMember, setEditingSacMember] = useState(null);
+  const [sacEditOpen, setSacEditOpen] = useState(false);
   const [committeeEdits, setCommitteeEdits] = useState({});
 
   useEffect(() => {
@@ -295,20 +334,26 @@ export default function TeamManagement() {
     }
   };
 
-  const submitOfficeBearer = async (event) => {
+  const submitNewOfficeBearer = async (event) => {
     event.preventDefault();
-    const result = await run(
-      () =>
-        editingOfficeId
-          ? updateExecomMember(editingOfficeId, officeForm)
-          : addExecomMember(officeForm),
-      editingOfficeId ? "Office Bearer updated." : "Office Bearer added."
-    );
-
+    const result = await run(() => addExecomMember(officeForm), "Office Bearer added.");
     if (result.success) {
       setOfficeForm(emptyMember);
-      setEditingOfficeId(null);
       if (officePhotoRef.current) officePhotoRef.current.value = "";
+    }
+  };
+
+  const submitOfficeBearerEdit = async (event) => {
+    event.preventDefault();
+    if (!editingOfficeId) return;
+    const result = await run(
+      () => updateExecomMember(editingOfficeId, officeForm),
+      "Office Bearer updated."
+    );
+    if (result.success) {
+      setOfficeEditOpen(false);
+      setEditingOfficeId(null);
+      setOfficeForm(emptyMember);
     }
   };
 
@@ -321,7 +366,7 @@ export default function TeamManagement() {
       image: member.image || "",
     });
     setEditingOfficeId(member.id);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setOfficeEditOpen(true);
   };
 
   const submitCounsellor = async (event) => {
@@ -356,6 +401,7 @@ export default function TeamManagement() {
     if (result.success) {
       setSacMember({ name: "", image: "" });
       setEditingSacMember(null);
+      setSacEditOpen(false);
       if (sacPhotoRef.current) sacPhotoRef.current.value = "";
     }
   };
@@ -364,7 +410,7 @@ export default function TeamManagement() {
     setSelectedCommittee(String(committee.id));
     setSacMember({ name: member.name || "", image: member.image || "" });
     setEditingSacMember(member.id);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setSacEditOpen(true);
   };
 
   const removeOfficeBearer = async (member) => {
@@ -411,6 +457,64 @@ export default function TeamManagement() {
 
   return (
     <section className="mt-7 space-y-6">
+      {officeEditOpen && (
+        <EditModal
+          title="Edit Office Bearer"
+          description="Update the profile details shown on the public Team page."
+          onClose={() => {
+            if (busy) return;
+            setOfficeEditOpen(false);
+            setEditingOfficeId(null);
+            setOfficeForm(emptyMember);
+          }}
+        >
+          <form onSubmit={submitOfficeBearerEdit} className="space-y-4">
+            <PhotoPicker value={officeForm.image} onChange={(image) => setOfficeForm((prev) => ({ ...prev, image }))} inputRef={officePhotoRef} />
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-slate-600">Full name *</label>
+              <input className={inputClass} value={officeForm.name} onChange={(event) => setOfficeForm((prev) => ({ ...prev, name: event.target.value }))} required />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-slate-600">Role / Position *</label>
+              <input className={inputClass} value={officeForm.role} onChange={(event) => setOfficeForm((prev) => ({ ...prev, role: event.target.value }))} required />
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <input type="email" className={inputClass} placeholder="Email (optional)" value={officeForm.email} onChange={(event) => setOfficeForm((prev) => ({ ...prev, email: event.target.value }))} />
+              <input type="url" className={inputClass} placeholder="LinkedIn URL (optional)" value={officeForm.linkedin} onChange={(event) => setOfficeForm((prev) => ({ ...prev, linkedin: event.target.value }))} />
+            </div>
+            <div className="flex justify-end gap-2 border-t border-[#EDF2F6] pt-4">
+              <button type="button" className={secondaryButton} disabled={busy} onClick={() => { setOfficeEditOpen(false); setEditingOfficeId(null); setOfficeForm(emptyMember); }}>Cancel</button>
+              <button className={primaryButton} disabled={busy}><Save size={15} /> Save Changes</button>
+            </div>
+          </form>
+        </EditModal>
+      )}
+
+      {sacEditOpen && (
+        <EditModal
+          title="Edit SAC Member"
+          description="Update this member's name and profile photo."
+          onClose={() => {
+            if (busy) return;
+            setSacEditOpen(false);
+            setEditingSacMember(null);
+            setSacMember({ name: "", image: "" });
+          }}
+        >
+          <form onSubmit={submitSacMember} className="space-y-4">
+            <PhotoPicker value={sacMember.image} onChange={(image) => setSacMember((prev) => ({ ...prev, image }))} inputRef={sacPhotoRef} />
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wide text-slate-600">Member name *</label>
+              <input className={inputClass} value={sacMember.name} onChange={(event) => setSacMember((prev) => ({ ...prev, name: event.target.value }))} required />
+            </div>
+            <div className="flex justify-end gap-2 border-t border-[#EDF2F6] pt-4">
+              <button type="button" className={secondaryButton} disabled={busy} onClick={() => { setSacEditOpen(false); setEditingSacMember(null); setSacMember({ name: "", image: "" }); }}>Cancel</button>
+              <button className={primaryButton} disabled={busy}><Save size={15} /> Save Changes</button>
+            </div>
+          </form>
+        </EditModal>
+      )}
+
       <header className="flex flex-col gap-3 rounded-2xl border border-[#DCE6EF] bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <div>
           <div className="flex items-center gap-2">
@@ -460,11 +564,11 @@ export default function TeamManagement() {
 
       <div className="grid items-stretch gap-4 xl:grid-cols-3">
         <FormCard
-          title={editingOfficeId ? "Edit Office Bearer" : "Add Office Bearer"}
+          title="Add Office Bearer"
           description="Add a student leader with their photo, name and position."
           icon={UserCheck}
         >
-          <form onSubmit={submitOfficeBearer} className="space-y-3.5">
+          <form onSubmit={submitNewOfficeBearer} className="space-y-3.5">
             <PhotoPicker
               value={officeForm.image}
               onChange={(image) => setOfficeForm((prev) => ({ ...prev, image }))}
@@ -512,21 +616,8 @@ export default function TeamManagement() {
             </div>
             <div className="flex gap-2 pt-1">
               <button className={`${primaryButton} flex-1`} disabled={busy}>
-                {editingOfficeId ? <Save size={16} /> : <Plus size={16} />}
-                {editingOfficeId ? "Save Changes" : "Add Office Bearer"}
+                <Plus size={16} /> Add Office Bearer
               </button>
-              {editingOfficeId && (
-                <button
-                  type="button"
-                  className={secondaryButton}
-                  onClick={() => {
-                    setEditingOfficeId(null);
-                    setOfficeForm(emptyMember);
-                  }}
-                >
-                  <X size={15} /> Cancel
-                </button>
-              )}
             </div>
           </form>
         </FormCard>
@@ -576,7 +667,7 @@ export default function TeamManagement() {
         </FormCard>
 
         <FormCard
-          title={editingSacMember ? "Edit SAC Member" : "Add SAC Member"}
+          title="Add SAC Member"
           description="Choose a committee, then add or update its member."
           icon={Users}
           accent="orange"
@@ -621,21 +712,8 @@ export default function TeamManagement() {
             </div>
             <div className="flex gap-2 pt-1">
               <button className={`${primaryButton} flex-1`} disabled={busy || !studentCommittees.length}>
-                {editingSacMember ? <Save size={16} /> : <Plus size={16} />}
-                {editingSacMember ? "Save Member" : "Add SAC Member"}
+                <Plus size={16} /> Add SAC Member
               </button>
-              {editingSacMember && (
-                <button
-                  type="button"
-                  className={secondaryButton}
-                  onClick={() => {
-                    setEditingSacMember(null);
-                    setSacMember({ name: "", image: "" });
-                  }}
-                >
-                  <X size={15} /> Cancel
-                </button>
-              )}
             </div>
             {!studentCommittees.length && (
               <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
