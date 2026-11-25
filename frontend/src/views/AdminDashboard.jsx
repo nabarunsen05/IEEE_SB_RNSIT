@@ -687,7 +687,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <p className="text-xs uppercase tracking-wider text-slate-500">Events</p>
-                <p className="text-2xl font-bold text-[#10243A]">{events.length}</p>
+                <p className="text-2xl font-bold text-[#10243A]">{rootEvents.length}</p>
               </div>
             </div>
 
@@ -720,7 +720,7 @@ export default function AdminDashboard() {
             }`}
           >
             <CalendarDays size={18} />
-            <span>Manage Events ({events.length})</span>
+            <span>Manage Events ({rootEvents.length})</span>
           </button>
 
           {adminProfile?.role === "super_admin" && adminProfile?.is_active === true && (
@@ -806,7 +806,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-                <span>Showing {filteredRootEvents.length === 0 ? 0 : (eventPage - 1) * EVENTS_PER_PAGE + 1}–{Math.min(eventPage * EVENTS_PER_PAGE, filteredRootEvents.length)} of {filteredRootEvents.length} main events · {events.length} total including nested events</span>
+                <span>Showing {filteredRootEvents.length === 0 ? 0 : (eventPage - 1) * EVENTS_PER_PAGE + 1}–{Math.min(eventPage * EVENTS_PER_PAGE, filteredRootEvents.length)} of {filteredRootEvents.length} main events</span>
                 {(eventSearch || eventCategoryFilter !== "ALL") && (
                   <button type="button" onClick={() => { setEventSearch(""); setEventCategoryFilter("ALL"); setEventSort("DATE_DESC"); setEventPage(1); }} className="font-semibold text-[#00629B] hover:underline">Clear filters</button>
                 )}
