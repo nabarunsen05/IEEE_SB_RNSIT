@@ -1,314 +1,218 @@
 "use client";
 
-import {
-  ExternalLink,
-  Mail,
-  UserRound,
-  Users,
-} from "lucide-react";
+import { ExternalLink, Mail, UserRound } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 
-const studentCommittees = [
-  {
-    name: "Technical",
-    members: [],
-  },
-  {
-    name: "Media, Editing & Design",
-    members: [],
-  },
-  {
-    name: "Content & Documentation",
-    members: [],
-  },
-  {
-    name: "Coordination & Professional Activities",
-    members: [],
-  },
-];
-
-const branchCounsellor = {
-  name: "Dr. Nirmalkumar Benni",
-  role: "Branch Counsellor",
-  image: "/assets/team/nirmalkumar-benni.png",
-};
-
-function ProfilePlaceholder() {
+function SectionHeading({ children }) {
   return (
-    <div className="relative flex h-24 w-24 items-center justify-center rounded-full border border-[#00629B]/20 bg-gradient-to-br from-[#00629B] via-[#0877AE] to-[#10243A] text-white shadow-lg transition-all duration-300 group-hover:border-[#29A9E0]/70 group-hover:scale-105 group-hover:shadow-[0_12px_28px_rgba(0,98,155,0.22)]">
-      <UserRound size={36} strokeWidth={1.5} className="text-[#BFEAFF]" />
-      <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-white bg-[#29A9E0]" />
+    <div className="mb-9 flex items-center gap-4">
+      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#00629B]/25 to-[#10243A]/15" />
+      <h3 className="text-center text-xs font-bold tracking-[0.2em] text-[#00629B]">
+        {children}
+      </h3>
+      <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#00629B]/25 to-[#10243A]/15" />
     </div>
   );
 }
 
-function MemberAvatar({ image, name }) {
-  if (image) {
-    return (
-      <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-2 border-[#00629B]/25 p-1 shadow-md transition-all duration-300 group-hover:border-[#00629B] group-hover:scale-105 group-hover:shadow-[0_12px_28px_rgba(0,98,155,0.18)]">
+/**
+ * Large photo-first profile card.
+ * The image fills the card; name and role sit over a bottom gradient.
+ */
+function PhotoProfileCard({
+  name,
+  role,
+  image,
+  linkedin,
+  email,
+  size = "office",
+}) {
+  const isSac = size === "sac";
+
+  return (
+    <article
+      className={[
+        "group relative isolate overflow-hidden rounded-[26px] border border-white/70 bg-[#DCEAF2]",
+        "shadow-[0_8px_24px_rgba(16,36,58,0.10)] transition-all duration-300",
+        "hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(0,98,155,0.20)]",
+        "aspect-[4/5] w-full",
+      ].join(" ")}
+    >
+      {image ? (
         <img
           src={image}
-          alt={name}
-          className="h-full w-full rounded-full object-cover"
+          alt={name || "Team member"}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          loading="lazy"
         />
-        <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-white bg-[#29A9E0]" />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#B9DCEC] via-[#DCEEF6] to-[#8CBFD9]">
+          <UserRound
+            className="text-[#00629B]/65"
+            size={isSac ? 58 : 72}
+            strokeWidth={1.1}
+          />
+        </div>
+      )}
+
+      {/* Always-on lower gradient keeps text readable over bright photos. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#071B32] via-[#071B32]/15 to-transparent opacity-95" />
+      <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+        <h4
+          className={[
+            "break-words font-bold leading-tight text-white drop-shadow",
+            isSac ? "text-base sm:text-lg" : "text-lg sm:text-xl",
+          ].join(" ")}
+        >
+          {name}
+        </h4>
+        {role && (
+          <p
+            className={[
+              "mt-2 font-semibold text-sky-100",
+              "text-xs sm:text-sm",
+            ].join(" ")}
+          >
+            {role}
+          </p>
+        )}
+
+        {(linkedin || email) && !isSac && (
+          <div className="mt-3 flex gap-2">
+            {linkedin && (
+              <a
+                href={linkedin}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${name} LinkedIn`}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 bg-white/15 text-white backdrop-blur transition hover:bg-white hover:text-[#00629B]"
+              >
+                <ExternalLink size={14} />
+              </a>
+            )}
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                aria-label={`${name} email`}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 bg-white/15 text-white backdrop-blur transition hover:bg-white hover:text-[#00629B]"
+              >
+                <Mail size={14} />
+              </a>
+            )}
+          </div>
+        )}
       </div>
-    );
-  }
-  return <ProfilePlaceholder />;
+    </article>
+  );
 }
 
-function Team() {
-  const { executiveCommittee } = useAdmin();
+export default function Team() {
+  const {
+    executiveCommittee = [],
+    branchCounsellor,
+    studentCommittees = [],
+  } = useAdmin();
+
+  const counsellor = branchCounsellor;
 
   return (
     <section
       id="team"
-      className="relative min-h-screen overflow-hidden bg-transparent pt-28 pb-24 sm:pt-32 sm:pb-28"
+      className="relative min-h-screen overflow-hidden bg-transparent pb-24 pt-28 sm:pt-32"
     >
-      {/* Background glowing decorations with gentle multi-color touch */}
-      <div className="pointer-events-none absolute -left-40 top-40 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.38)_0%,rgba(2,132,199,0.24)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
-      <div className="pointer-events-none absolute -right-40 bottom-40 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
+      <div className="pointer-events-none absolute -left-40 top-40 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.25)_0%,rgba(2,132,199,0.14)_40%,transparent_70%)] blur-[75px]" />
+      <div className="pointer-events-none absolute -right-40 bottom-40 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.18)_0%,rgba(249,115,22,0.1)_40%,transparent_70%)] blur-[75px]" />
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
-
-        {/* =========================
-            SECTION HEADER
-        ========================== */}
-        <div className="mx-auto max-w-3xl text-center">
-
-
-
-          <h2 className="text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl">
+        <header className="mx-auto max-w-none text-center">
+          <h2 className="text-3xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-4xl lg:whitespace-nowrap lg:text-[clamp(2.5rem,3.8vw,3.25rem)]">
             Meet the people behind
-            <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent"> IEEE SB.</span>
+            <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
+              {" "}IEEE RNSIT SB.
+            </span>
           </h2>
-
           <p className="mt-5 text-lg leading-8 text-[#526477]">
-            A dynamic council of student leaders, engineers, and visionaries dedicated to cultivating
-            innovation, technical excellence and collaborative community growth.
+            A dynamic council of student leaders, engineers, and visionaries
+            dedicated to cultivating innovation, technical excellence and
+            collaborative community growth.
           </p>
+        </header>
 
-        </div>
-
-        {/* =========================
-            BRANCH COUNSELLOR
-        ========================== */}
-        <div className="mt-16">
-          <div className="mb-8 flex items-center gap-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#00629B]/20 to-[#10243A]/15" />
-            <h3 className="text-xs font-bold tracking-[0.2em] text-[#00629B]">
-              BRANCH COUNSELLOR
-            </h3>
-            <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#00629B]/20 to-[#10243A]/15" />
-          </div>
-
-          <article className="group relative mx-auto max-w-sm overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-8 text-center shadow-[0_8px_24px_rgba(16,36,58,0.06)] transition-all duration-300 hover:-translate-y-2 hover:border-[#00629B]/35 hover:shadow-[0_20px_40px_rgba(0,98,155,0.14)]">
-            {/* Top delicate multi-color hairline */}
-            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00629B] via-[#F26522] to-[#29A9E0]" />
-
+        {/* Branch Counsellor */}
+        <section className="mt-16">
+          <SectionHeading>BRANCH COUNSELLOR</SectionHeading>
+          {counsellor ? (
             <div className="flex justify-center">
-              <MemberAvatar image={branchCounsellor.image} name={branchCounsellor.name} />
+              <div className="w-full max-w-[260px]">
+                <PhotoProfileCard
+                  name={counsellor.name}
+                  role="Branch Counsellor"
+                  image={counsellor.image}
+                  size="office"
+                />
+              </div>
             </div>
-            <h4 className="mt-6 text-xl font-bold text-[#10243A] transition-colors duration-200 group-hover:text-[#00629B]">
-              {branchCounsellor.name}
-            </h4>
-            <div className="mt-2">
-              <span className="inline-block rounded-full border border-amber-200/80 bg-gradient-to-r from-amber-50 to-orange-50 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.14em] text-amber-950 shadow-2xs">
-                {branchCounsellor.role}
-              </span>
-            </div>
-          </article>
-        </div>
+          ) : null}
+        </section>
 
-
-        {/* =========================
-            EXECUTIVE COMMITTEE
-        ========================== */}
-        <div className="mt-16">
-
-          <div className="mb-8 flex items-center gap-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#00629B]/20 to-[#10243A]/15" />
-
-            <h3 className="text-xs font-bold tracking-[0.2em] text-[#00629B]">
-              OFFICE BEARERS
-            </h3>
-
-            <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#00629B]/20 to-[#10243A]/15" />
-          </div>
-
-          {executiveCommittee.length === 0 ? (
-            <div className="rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
-              <Users className="mx-auto text-[#00629B]" size={48} />
-              <h3 className="mt-4 text-xl font-bold text-[#10243A]">No Office Bearers Listed</h3>
-              <p className="mt-2 text-sm text-[#526477]">
-                Office bearer details will be updated soon.
-              </p>
+        {/* Office Bearers */}
+        <section className="mt-20">
+          <SectionHeading>OFFICE BEARERS</SectionHeading>
+          {executiveCommittee.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {executiveCommittee.map((member) => (
+                <PhotoProfileCard
+                  key={member.id || member.role || member.name}
+                  name={member.name}
+                  role={member.role}
+                  image={member.image}
+                  linkedin={member.linkedin}
+                  email={member.email}
+                  size="office"
+                />
+              ))}
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-
-              {executiveCommittee.map((member) => (
-                <article
-                  key={member.id || member.role}
-                  className="group relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-6 text-center shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-2 hover:border-[#00629B]/35 hover:shadow-[0_20px_40px_rgba(0,98,155,0.12)]"
-                >
-                  {/* Subtle top accent on hover */}
-                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00629B] to-[#29A9E0] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                  {/* Profile */}
-                  <div className="flex justify-center">
-                    <MemberAvatar
-                      image={
-                        member.image ||
-                        member.name === "Bhadrinath G R"
-                          ? "/assets/team/bhadrinath-g-r.jpeg"
-                          : member.name === "Suhan Ganesh"
-                            ? "/assets/team/suhan-ganesh.jpeg"
-                            : member.name === "Nikhil Nayak"
-                              ? "/assets/team/nikhil-nayak.png"
-                              : member.name === "Poorvika Nagraj"
-                                ? "/assets/team/poorvika-nagraj.png"
-                            : undefined
-                      }
-                      name={member.name}
-                    />
-                  </div>
-
-                  {/* Name */}
-                  <h4 className="mt-6 text-lg font-bold text-[#10243A] transition-colors duration-200 group-hover:text-[#00629B]">
-                    {member.name}
-                  </h4>
-
-                  {/* Role pill */}
-                  <div className="mt-1.5">
-                    <span className="inline-block rounded-full border border-blue-200/70 bg-gradient-to-r from-[#E6F4FB] to-sky-50 px-2.5 py-0.5 text-xs font-semibold text-[#00629B]">
-                      {member.role}
-                    </span>
-                  </div>
-
-                  {/* Description */}
-                  <p className="mt-3 text-sm leading-6 text-[#526477] min-h-[72px]">
-                    {member.description}
-                  </p>
-
-                  {/* Social Buttons */}
-                  <div className="mt-5 flex justify-center gap-2 border-t border-[#DCE5EC] pt-4">
-
-                    {member.linkedin ? (
-                      <a
-                        href={member.linkedin}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`${member.name} LinkedIn`}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#DCE5EC] bg-[#F4F7FA] text-[#526477] transition-all duration-200 hover:border-[#00629B] hover:bg-[#00629B] hover:text-white hover:scale-105"
-                      >
-                        <ExternalLink size={14} />
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        aria-label={`${member.name} LinkedIn`}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#DCE5EC] bg-[#F4F7FA] text-[#526477] transition-all duration-200 hover:border-[#00629B] hover:bg-[#00629B] hover:text-white hover:scale-105"
-                      >
-                        <ExternalLink size={14} />
-                      </button>
-                    )}
-
-                    {member.email ? (
-                      <a
-                        href={`mailto:${member.email}`}
-                        aria-label={`${member.name} email`}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#DCE5EC] bg-[#F4F7FA] text-[#526477] transition-all duration-200 hover:border-[#00629B] hover:bg-[#00629B] hover:text-white hover:scale-105"
-                      >
-                        <Mail size={14} />
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        aria-label={`${member.name} email`}
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#DCE5EC] bg-[#F4F7FA] text-[#526477] transition-all duration-200 hover:border-[#00629B] hover:bg-[#00629B] hover:text-white hover:scale-105"
-                      >
-                        <Mail size={14} />
-                      </button>
-                    )}
-
-                  </div>
-
-                </article>
-              ))}
-
-            </div>
+            <p className="rounded-2xl border border-dashed border-[#DCE5EC] bg-white/80 p-8 text-center text-sm text-slate-500">
+              Office Bearers will be announced soon.
+            </p>
           )}
+        </section>
 
-        </div>
-
-
-        {/* =========================
-            STUDENT ACTIVITIES COMMITTEE
-        ========================== */}
-        <div className="mt-20">
-          <div className="mb-8 flex items-center gap-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#00629B]/20 to-[#10243A]/15" />
-            <h3 className="text-xs font-bold tracking-[0.2em] text-[#00629B]">
-              STUDENT ACTIVITIES COMMITTEE (SAC)
-            </h3>
-            <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[#00629B]/20 to-[#10243A]/15" />
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* SAC: each committee is a heading followed by photo-first member cards */}
+        <section className="mt-20">
+          <SectionHeading>STUDENT ACTIVITIES COMMITTEE (SAC)</SectionHeading>
+          <div className="space-y-12">
             {studentCommittees.map((committee) => (
-              <article
-                key={committee.name}
-                className="group rounded-3xl border border-[#DCE5EC] bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/30 hover:shadow-[0_12px_28px_rgba(16,36,58,0.09)]"
+              <section
+                key={committee.id || committee.name}
+                className="border-b border-[#DCE5EC]/90 pb-10 last:border-b-0"
               >
-                <div className="flex items-center gap-3 border-b border-[#DCE5EC] pb-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-blue-200/50 bg-gradient-to-br from-blue-50 to-sky-100 text-[#00629B] transition-all duration-300 group-hover:bg-[#00629B] group-hover:text-white">
-                    <Users size={22} />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-base font-bold text-[#10243A] transition-colors group-hover:text-[#00629B]">
-                      {committee.name}
-                    </h4>
-                  </div>
-                </div>
+                <h4 className="mb-6 text-xl font-bold tracking-wide text-[#10243A]">
+                  {committee.name}
+                </h4>
 
-                <div className="mt-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#647588]">
-                    Committee Members
-                  </p>
-                  <div className="mt-3 space-y-2">
-                    {committee.members.length > 0 ? (
-                      committee.members.map((member) => (
-                        <div
-                          key={member.id || member.name}
-                          className="flex items-center gap-3 rounded-xl border border-[#DCE5EC] p-2.5"
-                        >
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#E6F4FB] text-[#00629B]">
-                            <UserRound size={15} />
-                          </div>
-                          <span className="truncate text-sm font-medium text-[#526477]">
-                            {member.name}
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="rounded-xl border border-dashed border-[#DCE5EC] px-3 py-3 text-xs text-[#8291A0]">
-                        Committee members will be announced soon.
-                      </p>
-                    )}
+                {(committee.members || []).length > 0 ? (
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                    {committee.members.map((member) => (
+                      <PhotoProfileCard
+                        key={member.id || member.name}
+                        name={member.name}
+                        image={member.image}
+                        size="sac"
+                      />
+                    ))}
                   </div>
-                </div>
-              </article>
+                ) : (
+                  <p className="text-sm text-slate-400">
+                    Members will be announced soon.
+                  </p>
+                )}
+              </section>
             ))}
           </div>
-        </div>
-
-
-
+        </section>
       </div>
     </section>
   );
 }
-
-export default Team;

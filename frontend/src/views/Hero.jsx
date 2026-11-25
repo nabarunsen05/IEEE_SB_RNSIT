@@ -16,8 +16,6 @@ function Hero() {
 
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-96px)] w-full max-w-7xl items-center gap-12 px-6 py-16 sm:px-8 lg:grid-cols-2 lg:px-12">
         <div className="relative z-10">
-
-
           <h1 className="max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-[#10243A] sm:text-6xl lg:text-7xl">
             Innovate.<br />
             <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">Connect.</span><br />
@@ -49,7 +47,7 @@ function Hero() {
             </Link>
           </div>
 
-          {/* Feature Badges with light pastel color mixes */}
+          {/* Feature Badges */}
           <div className="mt-12 flex flex-wrap gap-3 border-t border-[#10243A]/10 pt-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/70 bg-gradient-to-r from-blue-50/80 to-cyan-50/50 px-3.5 py-2 text-xs font-semibold text-blue-900 shadow-xs">
               <Zap size={14} className="text-[#00629B]" />
@@ -66,9 +64,8 @@ function Hero() {
           </div>
         </div>
 
-        {/* Right Showcase with tasteful color accents */}
+        {/* Right Showcase */}
         <div className="relative hidden lg:block">
-          {/* Multi-color ambient background blur */}
           <div className="pointer-events-none absolute -inset-6 rounded-full bg-gradient-to-tr from-[#00629B]/15 via-[#29A9E0]/15 to-[#F26522]/10 blur-3xl" />
 
           <div className="relative flex h-[520px] items-center justify-center">
@@ -85,7 +82,6 @@ function Hero() {
 
             {/* Central Showcase Card */}
             <div className="glass-card-interactive relative z-10 w-full max-w-lg rounded-3xl p-8 shadow-[0_20px_50px_rgba(16,36,58,0.1)]">
-              {/* Top subtle multi-color accent hairline */}
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00629B] via-[#29A9E0] to-[#F26522]" />
 
               <div className="flex min-h-[290px] items-center justify-center rounded-2xl border border-[#DCE5EC] bg-gradient-to-b from-[#F8FAFC] to-[#F1F5F9] p-6 shadow-inner">
@@ -94,16 +90,6 @@ function Hero() {
                   alt="IEEE RNSIT Student Branch"
                   className="h-auto max-h-64 w-full object-contain filter drop-shadow-[0_4px_12px_rgba(0,98,155,0.08)]"
                 />
-              </div>
-
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#DCE5EC] pt-4 text-xs">
-                <span className="flex items-center gap-2 font-medium text-[#526477]">
-                  <span className="h-2 w-2 rounded-full bg-[#00629B]" />
-                  RNSIT Student Branch
-                </span>
-                <span className="rounded-full border border-blue-200/80 bg-gradient-to-r from-[#E6F4FB] to-sky-50 px-3 py-1 font-semibold text-[#00629B] shadow-2xs">
-                  Bangalore Section
-                </span>
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import AdminManagement from "../components/admin/AdminManagement";
+import TeamManagement from "../components/admin/TeamManagement";
 import { useState, useRef, useEffect } from "react";
 import {
   CalendarDays,
@@ -74,7 +75,7 @@ export default function AdminDashboard() {
     isLoading,
   } = useAdmin();
 
-  const [activeTab, setActiveTab] = useState("events"); // "events" | "committee" | "administrators"
+  const [activeTab, setActiveTab] = useState("events"); // "events" | "team" | "administrators"
   const [notification, setNotification] = useState(null);
   const [isLoggingOutLocal, setIsLoggingOutLocal] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -471,7 +472,11 @@ export default function AdminDashboard() {
       return;
     }
 
-    await addExecomMember(memberForm);
+    const result = await addExecomMember(memberForm);
+    if (!result?.success) {
+      showNotification(result?.message || "Could not save the Office Bearer.", "error");
+      return;
+    }
     showNotification(`Executive member "${memberForm.name}" successfully saved!`);
 
     // Reset form
@@ -505,7 +510,11 @@ export default function AdminDashboard() {
   // Handle ExeCom Member Delete
   const handleDeleteMember = async (id, name) => {
     if (window.confirm(`Are you sure you want to remove ${name} from Executive Committee?`)) {
-      await removeExecomMember(id);
+      const result = await removeExecomMember(id);
+      if (!result?.success) {
+        showNotification(result?.message || "Could not remove the Office Bearer.", "error");
+        return;
+      }
       showNotification(`${name} has been removed from Executive Committee.`);
     }
   };
@@ -714,17 +723,19 @@ export default function AdminDashboard() {
             <span>Manage Events ({events.length})</span>
           </button>
 
-          <button
-            onClick={() => setActiveTab("committee")}
-            className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
-              activeTab === "committee"
-                ? "border border-[#A8D8EF] bg-[#E6F4FB] text-[#00629B] shadow-[0_0_20px_rgba(41,169,224,0.25)]"
-                : "text-slate-500 hover:bg-white hover:text-[#10243A]"
-            }`}
-          >
-            <UserCheck size={18} />
-            <span>Manage Committee</span>
-          </button>
+          {adminProfile?.role === "super_admin" && adminProfile?.is_active === true && (
+            <button
+              onClick={() => setActiveTab("team")}
+              className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
+                activeTab === "team"
+                  ? "border border-[#A8D8EF] bg-[#E6F4FB] text-[#00629B] shadow-[0_0_20px_rgba(41,169,224,0.25)]"
+                  : "text-slate-500 hover:bg-white hover:text-[#10243A]"
+              }`}
+            >
+              <Users size={18} />
+              <span>Manage Team</span>
+            </button>
+          )}
 
           {adminProfile?.role === "super_admin" &&
             adminProfile?.is_active === true && (
@@ -1039,7 +1050,7 @@ export default function AdminDashboard() {
         {/* =========================================
             TAB 2: EXECUTIVE COMMITTEE MEMBERS
         ========================================== */}
-        {activeTab === "committee" && (
+        {activeTab === "committee" && adminProfile?.role === "super_admin" && adminProfile?.is_active === true && (
           <div className="mt-8 grid gap-8 lg:grid-cols-12">
             {/* Left: Add ExeCom Member Form */}
             <div className="lg:col-span-5">
@@ -1469,6 +1480,10 @@ export default function AdminDashboard() {
               </footer>
             </section>
           </div>
+        )}
+
+        {activeTab === "team" && adminProfile?.role === "super_admin" && adminProfile?.is_active === true && (
+          <TeamManagement />
         )}
 
         {activeTab === "administrators" &&
