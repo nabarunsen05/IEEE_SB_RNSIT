@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Plus, Pencil, Trash2, Save, X, Camera, UserRound, Users,
   UserCheck, CheckCircle2, AlertCircle, ShieldCheck, Layers3,
-  Image as ImageIcon, MoreHorizontal,
+  Image as ImageIcon, MoreHorizontal, GripVertical,
 } from "lucide-react";
 import { useAdmin } from "../../context/AdminContext";
 
@@ -202,6 +202,7 @@ export default function TeamManagement() {
     addExecomMember,
     updateExecomMember,
     removeExecomMember,
+    reorderExecomMembers,
     branchCounsellor,
     updateBranchCounsellor,
     studentCommittees = [],
@@ -224,6 +225,7 @@ export default function TeamManagement() {
   const [busy, setBusy] = useState(false);
   const [officeForm, setOfficeForm] = useState(emptyMember);
   const [editingOfficeId, setEditingOfficeId] = useState(null);
+  const [draggedOfficeId, setDraggedOfficeId] = useState(null);
   const [counsellorForm, setCounsellorForm] = useState({
     name: "",
     image: "",
@@ -368,6 +370,30 @@ export default function TeamManagement() {
   const removeOfficeBearer = async (member) => {
     if (!window.confirm(`Remove ${member.name} from Office Bearers?`)) return;
     await run(() => removeExecomMember(member.id), "Office Bearer removed.");
+  };
+
+  const handleOfficeBearerDrop = async (targetMemberId) => {
+    if (!draggedOfficeId || draggedOfficeId === targetMemberId || busy) {
+      setDraggedOfficeId(null);
+      return;
+    }
+
+    const ordered = [...executiveCommittee];
+    const fromIndex = ordered.findIndex((member) => String(member.id) === String(draggedOfficeId));
+    const toIndex = ordered.findIndex((member) => String(member.id) === String(targetMemberId));
+    if (fromIndex < 0 || toIndex < 0) {
+      setDraggedOfficeId(null);
+      return;
+    }
+
+    const [movedMember] = ordered.splice(fromIndex, 1);
+    ordered.splice(toIndex, 0, movedMember);
+    setDraggedOfficeId(null);
+
+    await run(
+      () => reorderExecomMembers(ordered.map((member) => member.id)),
+      "Office Bearer order saved."
+    );
   };
 
   const removeCommittee = async (committee) => {
@@ -626,7 +652,7 @@ export default function TeamManagement() {
             <h3 className="text-base font-bold text-[#10243A]">
               Current Office Bearers <span className="text-[#00629B]">({executiveCommittee.length})</span>
             </h3>
-            <p className="mt-1 text-xs text-slate-500">These profiles are visible on the public Team page.</p>
+            <p className="mt-1 text-xs text-slate-500">Drag the handle on a card to change its position on the public Team page.</p>
           </div>
         </div>
 
@@ -635,8 +661,29 @@ export default function TeamManagement() {
             {executiveCommittee.map((member) => (
               <article
                 key={member.id}
-                className="flex min-w-0 items-center gap-3 rounded-xl border border-[#E3ECF3] bg-white p-3 transition hover:border-[#B8DCEC] hover:shadow-sm"
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={() => handleOfficeBearerDrop(member.id)}
+                className={`flex min-w-0 items-center gap-3 rounded-xl border bg-white p-3 transition hover:border-[#B8DCEC] hover:shadow-sm ${
+                  draggedOfficeId === member.id
+                    ? "border-[#29A9E0] opacity-50"
+                    : "border-[#E3ECF3]"
+                }`}
               >
+                <button
+                  type="button"
+                  draggable={!busy}
+                  onDragStart={(event) => {
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData("text/plain", String(member.id));
+                    setDraggedOfficeId(member.id);
+                  }}
+                  onDragEnd={() => setDraggedOfficeId(null)}
+                  className="flex h-9 w-7 shrink-0 cursor-grab touch-none items-center justify-center rounded-lg text-slate-400 transition hover:bg-[#F1FAFE] hover:text-[#00629B] active:cursor-grabbing"
+                  title={`Drag to reorder ${member.name}`}
+                  aria-label={`Drag to reorder ${member.name}`}
+                >
+                  <GripVertical size={18} />
+                </button>
                 <ProfileAvatar image={member.image} name={member.name} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold text-[#10243A]">{member.name}</p>

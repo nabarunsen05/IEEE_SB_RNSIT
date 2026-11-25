@@ -238,6 +238,7 @@ export function AdminProvider({ children }) {
       const { data: execomData, error: execomError } = await supabase
         .from("executive_committee")
         .select("*")
+        .order("display_order", { ascending: true })
         .order("created_at", { ascending: true });
 
       if (execomError) {
@@ -992,6 +993,9 @@ export function AdminProvider({ children }) {
       email: newMember.email || null,
       linkedin: newMember.linkedin || null,
       image: newMember.image || null,
+      display_order: executiveCommittee.length
+        ? Math.max(...executiveCommittee.map((member) => Number(member.display_order) || 0)) + 1
+        : 0,
       id: `execom-${Date.now()}`,
     };
     if (!memberItem.name || !memberItem.role) {
@@ -1028,6 +1032,44 @@ export function AdminProvider({ children }) {
     const { error } = await supabase.from("executive_committee").delete().eq("id", id);
     if (error) return { success: false, message: error.message };
     setExecutiveCommittee((prev) => prev.filter((member) => member.id !== id));
+    return { success: true };
+  };
+
+  const reorderExecomMembers = async (orderedIds) => {
+    if (!requireSuperAdmin()) {
+      return { success: false, message: "Only an active Super Admin can reorder Office Bearers." };
+    }
+    if (!supabase) return { success: false, message: "Database not connected." };
+
+    const currentIds = executiveCommittee.map((member) => String(member.id));
+    const nextIds = (orderedIds || []).map(String);
+    if (
+      nextIds.length !== currentIds.length ||
+      new Set(nextIds).size !== currentIds.length ||
+      currentIds.some((id) => !nextIds.includes(id))
+    ) {
+      return { success: false, message: "The Office Bearer order is invalid. Refresh and try again." };
+    }
+
+    const updates = await Promise.all(
+      nextIds.map((id, display_order) =>
+        supabase
+          .from("executive_committee")
+          .update({ display_order })
+          .eq("id", id)
+      )
+    );
+    const failed = updates.find((result) => result.error);
+    if (failed?.error) {
+      await fetchDataFromSupabase();
+      return { success: false, message: failed.error.message };
+    }
+
+    const memberById = new Map(executiveCommittee.map((member) => [String(member.id), member]));
+    setExecutiveCommittee(nextIds.map((id, display_order) => ({
+      ...memberById.get(id),
+      display_order,
+    })));
     return { success: true };
   };
 
@@ -1265,6 +1307,7 @@ export function AdminProvider({ children }) {
         addExecomMember,
         updateExecomMember,
         removeExecomMember,
+        reorderExecomMembers,
         branchCounsellor,
         updateBranchCounsellor,
         studentCommittees,
