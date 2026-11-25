@@ -74,11 +74,6 @@ function Join() {
             HEADER
         ========================== */}
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-4 py-1.5 text-xs font-semibold text-[#00629B] shadow-2xs">
-            <Sparkles size={14} className="text-[#29A9E0]" />
-            <span>Official IEEE Membership</span>
-          </div>
-
           <h1 className="text-4xl font-bold tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">
             Join the IEEE{" "}
             <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
