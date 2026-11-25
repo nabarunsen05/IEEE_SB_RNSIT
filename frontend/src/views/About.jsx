@@ -3,7 +3,6 @@ import {
   ArrowRight,
   Users,
   Trophy,
-  Compass,
   GraduationCap,
   CalendarDays,
   Award,
@@ -15,7 +14,6 @@ import {
   ExternalLink,
   Layers,
   TrendingUp,
-  RefreshCw,
   Clock,
   CheckCircle2,
 } from "lucide-react";
@@ -297,11 +295,6 @@ function About() {
               />
 
               <div className="mb-6">
-                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#00629B]">
-                  <Compass size={16} className="text-[#29A9E0]" />
-                  <span>Branch DNA & Institutional Support</span>
-                </div>
-
                 <h3 className="mt-3 text-2xl font-bold text-[#10243A] sm:text-3xl">
                   Advancing Technology for Humanity
                 </h3>
@@ -341,12 +334,48 @@ function About() {
                 </div>
               </div>
 
-              {/* Membership validity note */}
-              <div className="mt-6 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-[#526477]">
-                <span className="font-semibold text-[#10243A]">Student Membership Includes:</span>
-                <span className="rounded bg-blue-100 px-2 py-0.5 font-medium text-blue-700">
-                  152 Tech Communities + 7 Councils + WIE & SIGHT
-                </span>
+              {/* Student membership inclusions */}
+              <div className="mt-6 overflow-hidden rounded-2xl border border-[#CFE3F2] bg-gradient-to-br from-[#F4FAFE] via-white to-[#FFF8F3] p-5 sm:p-6">
+                <div className="min-w-0">
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#00629B]">
+                    Your student membership
+                  </p>
+                  <h4 className="mt-1 text-lg font-bold leading-snug text-[#10243A]">
+                    A world of technical communities and opportunities
+                  </h4>
+                </div>
+
+                <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-3">
+                  <div className="flex min-w-0 min-h-[124px] flex-col items-center justify-center gap-3 rounded-xl border border-blue-100 bg-white/95 p-4 text-center shadow-sm">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#00629B]">
+                      <Layers size={21} />
+                    </div>
+                    <div className="w-full min-w-0">
+                      <p className="text-2xl font-extrabold leading-none text-[#10243A]">152</p>
+                      <p className="mt-2 break-words text-sm font-medium leading-snug text-[#526477]">Technical Communities</p>
+                    </div>
+                  </div>
+
+                  <div className="flex min-w-0 min-h-[124px] flex-col items-center justify-center gap-3 rounded-xl border border-cyan-100 bg-white/95 p-4 text-center shadow-sm">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
+                      <Network size={21} />
+                    </div>
+                    <div className="w-full min-w-0">
+                      <p className="text-2xl font-extrabold leading-none text-[#10243A]">7</p>
+                      <p className="mt-2 break-words text-sm font-medium leading-snug text-[#526477]">IEEE Councils</p>
+                    </div>
+                  </div>
+
+                  <div className="flex min-w-0 min-h-[124px] flex-col items-center justify-center gap-3 rounded-xl border border-orange-100 bg-white/95 p-4 text-center shadow-sm">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-[#D85A1A]">
+                      <Users size={21} />
+                    </div>
+                    <div className="w-full min-w-0">
+                      <p className="break-words text-base font-extrabold leading-tight text-[#10243A]">WIE & SIGHT</p>
+                      <p className="mt-2 break-words text-sm font-medium leading-snug text-[#526477]">Affinity groups & initiatives</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -442,20 +471,6 @@ function About() {
             })}
           </div>
 
-          {/* Repeat loop banner */}
-          <div className="mt-8 flex flex-col items-center justify-center rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 via-sky-50 to-indigo-50 p-6 text-center sm:flex-row sm:gap-4 sm:text-left">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#00629B] text-white shadow-md shadow-[#00629B]/20">
-              <RefreshCw size={22} />
-            </div>
-            <div>
-              <h4 className="text-base font-bold text-[#10243A]">
-                Repeat: Lifelong Evolution
-              </h4>
-              <p className="text-sm text-[#526477]">
-                Every step you take in IEEE brings you closer to a better you and a better world.
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* SECTION 4: HIERARCHY / SCOPE (From Campus to the World) */}
