@@ -731,10 +731,21 @@ export function AdminProvider({ children }) {
       venue: updates.venue,
       category: updates.category,
       registration_url: updates.registration_url || null,
-      parent_event_id: updates.parent_event_id || null,
       status: updates.status,
       recap: updates.recap,
+      registration_enabled: updates.registration_enabled,
+      registration_type: updates.registration_type,
+      min_team_size: updates.min_team_size,
+      max_team_size: updates.max_team_size,
+      registration_deadline: updates.registration_deadline || null,
+      payment_required: updates.payment_required,
+      payment_portal_url: updates.payment_portal_url || null,
+      payment_instructions: updates.payment_instructions || null,
+      registration_capacity: updates.registration_capacity === "" ? null : updates.registration_capacity,
     };
+    if (updates.parent_event_id !== undefined) {
+      allowed.parent_event_id = updates.parent_event_id || null;
+    }
     Object.keys(allowed).forEach((key) => allowed[key] === undefined && delete allowed[key]);
 
     if (supabase) {

@@ -29,8 +29,10 @@ import {
   GripVertical,
   CheckCircle2,
   RotateCcw,
+  Download,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
+import EventRegistrationSettings from "../components/events/EventRegistrationSettings";
 
 const CATEGORIES = [
   "WORKSHOP",
@@ -83,8 +85,30 @@ export default function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [editEventForm, setEditEventForm] = useState(null);
   const [isSavingEvent, setIsSavingEvent] = useState(false);
+  const [isAddingChildEvent, setIsAddingChildEvent] = useState(false);
+  const [isSavingChildEvent, setIsSavingChildEvent] = useState(false);
+  const [childEventForm, setChildEventForm] = useState({
+    title: "",
+    category: "COMPETITION",
+    date: new Date().getDate().toString(),
+    month: MONTHS[new Date().getMonth()],
+    year: new Date().getFullYear().toString(),
+    time: "10:00 AM",
+    venue: "RNSIT Campus",
+    description: "",
+    registration_enabled: false,
+    registration_type: "individual",
+    min_team_size: 1,
+    max_team_size: 1,
+    registration_deadline: "",
+    payment_required: false,
+    payment_portal_url: "",
+    payment_instructions: "",
+    registration_capacity: "",
+  });
   const [isUploadingPhotos, setIsUploadingPhotos] = useState(false);
   const [openEventMenuId, setOpenEventMenuId] = useState(null);
+  const [exportingEventId, setExportingEventId] = useState(null);
   const [confirmation, setConfirmation] = useState(null);
   const [draggedPhotoId, setDraggedPhotoId] = useState(null);
   const [isPhotoDropActive, setIsPhotoDropActive] = useState(false);
@@ -140,8 +164,15 @@ export default function AdminDashboard() {
     time: "10:00 AM",
     venue: "RNSIT Campus",
     description: "",
-    registration_url: "",
-    parent_event_id: "",
+    registration_enabled: false,
+    registration_type: "individual",
+    min_team_size: 1,
+    max_team_size: 1,
+    registration_deadline: "",
+    payment_required: false,
+    payment_portal_url: "",
+    payment_instructions: "",
+    registration_capacity: "",
   });
 
   // Any existing event can be a parent, enabling multi-level structures such as
@@ -272,20 +303,28 @@ export default function AdminDashboard() {
       return;
     }
 
-    const selectedParent = eventForm.parent_event_id;
+    if (eventForm.registration_enabled && eventForm.payment_required && !eventForm.payment_portal_url.trim()) {
+      showNotification("Enter the college payment portal URL or disable payment requirement.", "error");
+      return;
+    }
+    if (eventForm.registration_type === "team" && Number(eventForm.min_team_size) > Number(eventForm.max_team_size)) {
+      showNotification("Minimum team size cannot exceed maximum team size.", "error");
+      return;
+    }
     const result = await addEvent({
       ...eventForm,
-      parent_event_id: selectedParent || null,
+      min_team_size: eventForm.registration_type === "individual" ? 1 : Number(eventForm.min_team_size),
+      max_team_size: eventForm.registration_type === "individual" ? 1 : Number(eventForm.max_team_size),
+      registration_deadline: eventForm.registration_deadline ? new Date(eventForm.registration_deadline).toISOString() : null,
+      registration_capacity: eventForm.registration_capacity === "" ? null : Number(eventForm.registration_capacity),
+      payment_portal_url: eventForm.payment_required ? eventForm.payment_portal_url.trim() : null,
+      payment_instructions: eventForm.payment_required ? eventForm.payment_instructions.trim() : null,
     });
     if (result?.success === false) {
       showNotification(result.message || "Could not save the event.", "error");
       return;
     }
-    showNotification(
-      selectedParent
-        ? `"${eventForm.title}" added under its selected parent!`
-        : `Event "${eventForm.title}" successfully saved!`
-    );
+    showNotification(`Event "${eventForm.title}" successfully saved!`);
     
     // Reset form
     setEventForm({
@@ -297,8 +336,15 @@ export default function AdminDashboard() {
       time: "10:00 AM",
       venue: "RNSIT Campus",
       description: "",
-      registration_url: "",
-      parent_event_id: "",
+      registration_enabled: false,
+      registration_type: "individual",
+      min_team_size: 1,
+      max_team_size: 1,
+      registration_deadline: "",
+      payment_required: false,
+      payment_portal_url: "",
+      payment_instructions: "",
+      registration_capacity: "",
     });
     setIsEventModalOpen(false);
     setEventSearch("");
@@ -310,6 +356,26 @@ export default function AdminDashboard() {
 
   const handleEditEvent = (event) => {
     setEditingEvent(event);
+    setIsAddingChildEvent(false);
+    setChildEventForm({
+      title: "",
+      category: "COMPETITION",
+      date: new Date().getDate().toString(),
+      month: MONTHS[new Date().getMonth()],
+      year: new Date().getFullYear().toString(),
+      time: "10:00 AM",
+      venue: event.venue || "RNSIT Campus",
+      description: "",
+      registration_enabled: false,
+      registration_type: "individual",
+      min_team_size: 1,
+      max_team_size: 1,
+      registration_deadline: "",
+      payment_required: false,
+      payment_portal_url: "",
+      payment_instructions: "",
+      registration_capacity: "",
+    });
     setEditEventForm({
       title: event.title || "",
       category: event.category || "WORKSHOP",
@@ -319,11 +385,86 @@ export default function AdminDashboard() {
       time: event.time || "",
       venue: event.venue || "",
       description: event.description || "",
-      registration_url: event.registration_url || "",
-      parent_event_id: event.parent_event_id || "",
       status: event.status || "upcoming",
-      recap: event.recap || "",
+      registration_enabled: event.registration_enabled === true,
+      registration_type: event.registration_type || "individual",
+      min_team_size: Number(event.min_team_size || 1),
+      max_team_size: Number(event.max_team_size || 1),
+      registration_deadline: event.registration_deadline ? new Date(event.registration_deadline).toISOString().slice(0, 16) : "",
+      payment_required: event.payment_required === true,
+      payment_portal_url: event.payment_portal_url || "",
+      payment_instructions: event.payment_instructions || "",
+      registration_capacity: event.registration_capacity ?? "",
     });
+  };
+
+  const handleAddChildEvent = async () => {
+    if (!editingEvent || !childEventForm.title.trim()) {
+      showNotification("Please enter a child event title.", "error");
+      return;
+    }
+    if (!childEventForm.date.trim() || !childEventForm.month || !String(childEventForm.year).trim()) {
+      showNotification("Please provide the child event date.", "error");
+      return;
+    }
+    if (childEventForm.registration_enabled && childEventForm.payment_required && !childEventForm.payment_portal_url.trim()) {
+      showNotification("Enter the college payment portal URL or disable payment requirement for this child event.", "error");
+      return;
+    }
+    if (childEventForm.registration_type === "team" && Number(childEventForm.min_team_size) > Number(childEventForm.max_team_size)) {
+      showNotification("Minimum child-event team size cannot exceed maximum team size.", "error");
+      return;
+    }
+
+    setIsSavingChildEvent(true);
+    const result = await addEvent({
+      ...childEventForm,
+      title: childEventForm.title.trim(),
+      description: childEventForm.description.trim(),
+      date: childEventForm.date.trim(),
+      month: childEventForm.month.toUpperCase(),
+      year: String(childEventForm.year).trim(),
+      time: childEventForm.time.trim(),
+      venue: childEventForm.venue.trim(),
+      parent_event_id: editingEvent.id,
+      registration_enabled: childEventForm.registration_enabled,
+      registration_type: childEventForm.registration_type,
+      min_team_size: Number(childEventForm.registration_type === "individual" ? 1 : childEventForm.min_team_size),
+      max_team_size: Number(childEventForm.registration_type === "individual" ? 1 : childEventForm.max_team_size),
+      registration_deadline: childEventForm.registration_deadline ? new Date(childEventForm.registration_deadline).toISOString() : null,
+      payment_required: childEventForm.registration_enabled && childEventForm.payment_required,
+      payment_portal_url: childEventForm.registration_enabled && childEventForm.payment_required ? childEventForm.payment_portal_url.trim() : null,
+      payment_instructions: childEventForm.registration_enabled && childEventForm.payment_required ? childEventForm.payment_instructions.trim() : null,
+      registration_capacity: childEventForm.registration_capacity === "" ? null : Number(childEventForm.registration_capacity),
+    });
+    setIsSavingChildEvent(false);
+
+    if (!result?.success) {
+      showNotification(result?.message || "Could not add child event.", "error");
+      return;
+    }
+
+    setIsAddingChildEvent(false);
+    setChildEventForm({
+      title: "",
+      category: "COMPETITION",
+      date: new Date().getDate().toString(),
+      month: MONTHS[new Date().getMonth()],
+      year: new Date().getFullYear().toString(),
+      time: "10:00 AM",
+      venue: editingEvent.venue || "RNSIT Campus",
+      description: "",
+      registration_enabled: false,
+      registration_type: "individual",
+      min_team_size: 1,
+      max_team_size: 1,
+      registration_deadline: "",
+      payment_required: false,
+      payment_portal_url: "",
+      payment_instructions: "",
+      registration_capacity: "",
+    });
+    showNotification(`Child event "${childEventForm.title}" added under "${editingEvent.title}".`);
   };
 
   const handleSaveEditedEvent = async (e) => {
@@ -337,10 +478,6 @@ export default function AdminDashboard() {
       showNotification("Please provide the event date.", "error");
       return;
     }
-    if (editEventForm.parent_event_id === editingEvent.id) {
-      showNotification("An event cannot be its own parent.", "error");
-      return;
-    }
     setIsSavingEvent(true);
     const result = await updateEvent(editingEvent.id, {
       ...editEventForm,
@@ -351,9 +488,15 @@ export default function AdminDashboard() {
       year: String(editEventForm.year).trim(),
       time: editEventForm.time.trim(),
       venue: editEventForm.venue.trim(),
-      registration_url: editEventForm.registration_url.trim(),
-      parent_event_id: editEventForm.parent_event_id || null,
-      recap: editEventForm.recap.trim(),
+      registration_enabled: editEventForm.registration_enabled,
+      registration_type: editEventForm.registration_type,
+      min_team_size: Number(editEventForm.registration_type === "individual" ? 1 : editEventForm.min_team_size),
+      max_team_size: Number(editEventForm.registration_type === "individual" ? 1 : editEventForm.max_team_size),
+      registration_deadline: editEventForm.registration_deadline ? new Date(editEventForm.registration_deadline).toISOString() : null,
+      payment_required: editEventForm.payment_required,
+      payment_portal_url: editEventForm.payment_portal_url.trim(),
+      payment_instructions: editEventForm.payment_instructions.trim(),
+      registration_capacity: editEventForm.registration_capacity === "" ? null : Number(editEventForm.registration_capacity),
     });
     setIsSavingEvent(false);
     if (!result?.success) {
@@ -493,6 +636,53 @@ export default function AdminDashboard() {
     }
   };
 
+  // Export event participants as CSV (one row per participant).
+  const handleExportParticipants = async (event) => {
+    if (!event?.id || event.status === "completed" || exportingEventId !== null) {
+      return;
+    }
+
+    setExportingEventId(event.id);
+    setOpenEventMenuId(null);
+
+    try {
+      const response = await fetch(
+        `/api/events/${encodeURIComponent(event.id)}/registrations/export`,
+        {
+          method: "GET",
+          credentials: "same-origin",
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result.error || "Failed to export participants.");
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `${String(event.title || "event")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || "event"}-participants.csv`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
+
+      showNotification("Participant CSV downloaded successfully.");
+    } catch (error) {
+      console.error("Participant CSV export failed:", error);
+      showNotification(error.message || "Unable to export participants.", "error");
+    } finally {
+      setExportingEventId(null);
+    }
+  };
+
   // Handle Event Delete
   const handleDeleteEvent = (id, title) => {
     setOpenEventMenuId(null);
@@ -597,6 +787,23 @@ export default function AdminDashboard() {
                       {event.status === "completed" ? <RotateCcw size={16} className="text-[#00629B]" /> : <CheckCircle2 size={16} className="text-emerald-600" />}
                       {event.status === "completed" ? "Reopen event" : "Mark as completed"}
                     </button>
+                    <div className="my-1 border-t border-slate-100" />
+                    {event.status !== "completed" &&
+                      isAuthenticated &&
+                      adminProfile?.is_active === true && (
+                        <button
+                          type="button"
+                          role="menuitem"
+                          disabled={exportingEventId !== null}
+                          onClick={() => handleExportParticipants(event)}
+                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-[#00629B] transition hover:bg-[#F0F8FC] disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <Download size={16} />
+                          {exportingEventId === event.id
+                            ? "Preparing CSV..."
+                            : "Export Participants (CSV)"}
+                        </button>
+                      )}
                     <div className="my-1 border-t border-slate-100" />
                     <button
                       type="button"
@@ -863,29 +1070,6 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-600">
-                      Add Under Parent Event / Group (Optional)
-                    </label>
-                    <select
-                      value={eventForm.parent_event_id}
-                      onChange={(e) =>
-                        setEventForm({ ...eventForm, parent_event_id: e.target.value })
-                      }
-                      className="w-full rounded-xl border border-[#DCE6EF] bg-white px-3 py-2.5 text-sm text-[#10243A] focus:border-[#29A9E0] focus:outline-none"
-                    >
-                      <option value="">Create as a standalone / main event</option>
-                      {events.map((parent) => (
-                        <option key={parent.id} value={parent.id}>
-                          {getEventPathLabel(parent)}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="mt-1 text-[11px] text-slate-500">
-                      Select any existing event or group to create a nested item. Leave empty to create a standalone / main event. Choose EVENT GROUP for containers such as Department-wise Events.
-                    </p>
-                  </div>
-
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
@@ -1008,29 +1192,11 @@ export default function AdminDashboard() {
                     />
                   </div>
                    
-<div>
-  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-    Google Form Registration Link
-  </label>
 
-  <input
-    type="url"
-    placeholder="https://forms.gle/your-event-form"
-    value={eventForm.registration_url}
-    onChange={(e) =>
-      setEventForm({
-        ...eventForm,
-        registration_url: e.target.value,
-      })
-    }
-    className="w-full rounded-xl border border-[#DCE6EF] bg-white px-3.5 py-2.5 text-sm text-[#10243A] placeholder-slate-400 focus:border-[#29A9E0] focus:outline-none focus:ring-1 focus:ring-[#29A9E0]"
-  />
-
-  <p className="mt-1.5 text-[11px] text-slate-500">
-    Paste the Google Form link created specifically for this event.
-    Leave empty if registration is not open yet.
-  </p>
-</div>
+                  <EventRegistrationSettings
+                    value={eventForm}
+                    onChange={(patch) => setEventForm((current) => ({ ...current, ...patch }))}
+                  />
 
                   <button
                     type="submit"
@@ -1331,7 +1497,7 @@ export default function AdminDashboard() {
               <header className="flex shrink-0 items-start justify-between gap-4 border-b border-[#E6EDF3] bg-white px-5 py-4 sm:px-6">
                 <div>
                   <h3 className="text-lg font-bold text-[#10243A]">Edit Event</h3>
-                  <p className="mt-1 text-xs text-slate-500">Update event details, registration and post-event content.</p>
+                  <p className="mt-1 text-xs text-slate-500">Update event details, registration settings and event photos.</p>
                 </div>
                 <button type="button" onClick={() => { setEditingEvent(null); setEditEventForm(null); }} disabled={isSavingEvent} className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 disabled:opacity-50" aria-label="Close edit event"><X size={19}/></button>
               </header>
@@ -1343,8 +1509,45 @@ export default function AdminDashboard() {
                       <label className="sm:col-span-2"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Event title *</span><input required value={editEventForm.title} onChange={(e)=>setEditEventForm({...editEventForm,title:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none transition focus:border-[#0096CC] focus:ring-4 focus:ring-[#0096CC]/10" placeholder="Enter event title"/></label>
                       <label><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Category</span><select value={editEventForm.category} onChange={(e)=>setEditEventForm({...editEventForm,category:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]">{CATEGORIES.map((cat)=><option key={cat} value={cat}>{cat}</option>)}</select></label>
                       <label><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Event status</span><select value={editEventForm.status} onChange={(e)=>setEditEventForm({...editEventForm,status:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"><option value="upcoming">Upcoming</option><option value="completed">Completed</option></select></label>
-                      <label className="sm:col-span-2"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Parent event / group</span><select value={editEventForm.parent_event_id} onChange={(e)=>setEditEventForm({...editEventForm,parent_event_id:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"><option value="">Standalone / main event</option>{events.filter((item)=>item.id!==editingEvent.id).map((parent)=><option key={parent.id} value={parent.id}>{getEventPathLabel(parent)}</option>)}</select></label>
                     </div>
+                  </section>
+                  <section className="rounded-2xl border border-[#CDE5F1] bg-[#F3FAFE] p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <h4 className="text-sm font-bold text-[#10243A]">Child events</h4>
+                        <p className="mt-1 text-xs text-slate-600">Add an event or competition under {editingEvent.title}. Configure its registration, team size and payment separately.</p>
+                      </div>
+                      <button type="button" onClick={() => setIsAddingChildEvent((value) => !value)} className="inline-flex items-center gap-2 rounded-xl bg-[#00629B] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#004F7D]"><Plus size={15}/>{isAddingChildEvent ? "Cancel" : "Add child event"}</button>
+                    </div>
+                    {events.filter((item) => item.parent_event_id === editingEvent.id).length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {events.filter((item) => item.parent_event_id === editingEvent.id).map((child) => (
+                          <div key={child.id} className="flex items-center justify-between gap-3 rounded-xl border border-[#DCE6EF] bg-white px-3 py-2.5">
+                            <span className="min-w-0 truncate text-sm font-semibold text-[#10243A]">{child.title}</span>
+                            <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide text-slate-500">{child.category || "Event"}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {isAddingChildEvent && (
+                      <div className="mt-4 space-y-3 rounded-xl border border-[#DCE6EF] bg-white p-3">
+                        <label className="block"><span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Child event title *</span><input required value={childEventForm.title} onChange={(e)=>setChildEventForm({...childEventForm,title:e.target.value})} placeholder="e.g. Web Development Competition" className="w-full rounded-xl border border-[#D6E2EA] px-3 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"/></label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <label><span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Category</span><select value={childEventForm.category} onChange={(e)=>setChildEventForm({...childEventForm,category:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3 py-2.5 text-sm text-[#10243A]">{CATEGORIES.map((category)=><option key={category} value={category}>{category}</option>)}</select></label>
+                          <label><span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Time</span><input value={childEventForm.time} onChange={(e)=>setChildEventForm({...childEventForm,time:e.target.value})} placeholder="10:00 AM" className="w-full rounded-xl border border-[#D6E2EA] px-3 py-2.5 text-sm text-[#10243A]"/></label>
+                          <label><span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Date *</span><input required value={childEventForm.date} onChange={(e)=>setChildEventForm({...childEventForm,date:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] px-3 py-2.5 text-sm text-[#10243A]"/></label>
+                          <label><span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Month *</span><select value={childEventForm.month} onChange={(e)=>setChildEventForm({...childEventForm,month:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3 py-2.5 text-sm text-[#10243A]">{MONTHS.map((month)=><option key={month} value={month}>{month}</option>)}</select></label>
+                          <label><span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Year *</span><input required type="number" min="2000" max="2100" value={childEventForm.year} onChange={(e)=>setChildEventForm({...childEventForm,year:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] px-3 py-2.5 text-sm text-[#10243A]"/></label>
+                          <label><span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Venue</span><input value={childEventForm.venue} onChange={(e)=>setChildEventForm({...childEventForm,venue:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] px-3 py-2.5 text-sm text-[#10243A]"/></label>
+                        </div>
+                        <label className="block"><span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Description</span><textarea rows={3} value={childEventForm.description} onChange={(e)=>setChildEventForm({...childEventForm,description:e.target.value})} className="w-full rounded-xl border border-[#D6E2EA] px-3 py-2.5 text-sm text-[#10243A]" placeholder="Describe this child event..."/></label>
+                        <EventRegistrationSettings
+                          value={childEventForm}
+                          onChange={(patch) => setChildEventForm((current) => ({ ...current, ...patch }))}
+                        />
+                        <div className="flex justify-end"><button type="button" disabled={isSavingChildEvent} onClick={handleAddChildEvent} className="inline-flex items-center gap-2 rounded-xl bg-[#00629B] px-4 py-2.5 text-xs font-bold text-white disabled:opacity-60">{isSavingChildEvent ? "Adding..." : "Save child event"}</button></div>
+                      </div>
+                    )}
                   </section>
                   <section>
                     <div className="mb-3 flex items-center gap-2"><span className="h-6 w-1 rounded-full bg-[#00A0D6]"/><h4 className="text-sm font-bold text-[#10243A]">Date, time & venue</h4></div>
@@ -1357,15 +1560,17 @@ export default function AdminDashboard() {
                     </div>
                   </section>
                   <section>
-                    <div className="mb-3 flex items-center gap-2"><span className="h-6 w-1 rounded-full bg-[#00A0D6]"/><h4 className="text-sm font-bold text-[#10243A]">Description & registration</h4></div>
+                    <div className="mb-3 flex items-center gap-2"><span className="h-6 w-1 rounded-full bg-[#00A0D6]"/><h4 className="text-sm font-bold text-[#10243A]">Event description</h4></div>
                     <div className="space-y-4">
                       <label className="block"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Event description</span><textarea rows={4} value={editEventForm.description} onChange={(e)=>setEditEventForm({...editEventForm,description:e.target.value})} placeholder="Describe the event, its purpose and what participants can expect..." className="w-full resize-y rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm leading-6 text-[#10243A] outline-none focus:border-[#0096CC] focus:ring-4 focus:ring-[#0096CC]/10"/></label>
-                      <label className="block"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Registration URL</span><input type="url" value={editEventForm.registration_url} onChange={(e)=>setEditEventForm({...editEventForm,registration_url:e.target.value})} placeholder="https://forms.gle/..." className="w-full rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm text-[#10243A] outline-none focus:border-[#0096CC]"/></label>
                     </div>
                   </section>
+                  <EventRegistrationSettings
+                    value={editEventForm}
+                    onChange={(patch) => setEditEventForm((current) => ({ ...current, ...patch }))}
+                  />
                   <section>
-                    <div className="mb-3 flex items-center gap-2"><span className="h-6 w-1 rounded-full bg-[#00A0D6]"/><h4 className="text-sm font-bold text-[#10243A]">Post-event recap & photos</h4></div>
-                    <label className="block"><span className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-600">Event recap (optional)</span><textarea rows={4} value={editEventForm.recap} onChange={(e)=>setEditEventForm({...editEventForm,recap:e.target.value})} placeholder="Share highlights, outcomes, speakers and key moments..." className="w-full resize-y rounded-xl border border-[#D6E2EA] bg-white px-3.5 py-2.5 text-sm leading-6 text-[#10243A] outline-none focus:border-[#0096CC]"/></label>
+                    <div className="mb-3 flex items-center gap-2"><span className="h-6 w-1 rounded-full bg-[#00A0D6]"/><h4 className="text-sm font-bold text-[#10243A]">Event photos</h4></div>
                     <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-[#CDE5F1] bg-[#EFF8FC] p-4 sm:flex-row sm:items-center sm:justify-between">
                       <div><p className="text-sm font-bold text-[#10243A]">Event photo gallery</p><p className="mt-1 text-xs text-slate-600">{editingEvent.photos?.length || 0} photos currently available. Upload, remove or choose the cover image.</p></div>
                       <button type="button" onClick={()=>setPhotoManagerEventId(editingEvent.id)} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#00629B] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#10243A]"><Camera size={15}/> Manage photos</button>
