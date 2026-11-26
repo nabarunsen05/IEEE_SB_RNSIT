@@ -57,7 +57,7 @@ function getSearchableTreeText(events, event, visited = new Set()) {
 }
 
 function Events() {
-  const { events = [] } = useAdmin();
+  const { events = [], isLoading } = useAdmin();
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [galleryEvent, setGalleryEvent] = useState(null);
@@ -172,7 +172,11 @@ function Events() {
         </div>
 
         <div id="events-grid">
-          {filteredEvents.length === 0 ? (
+          {isLoading ? (
+            <div className="mt-12 rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
+              <p className="text-sm font-medium text-[#526477]">Loading events...</p>
+            </div>
+          ) : filteredEvents.length === 0 ? (
             <div className="mt-12 rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
               <Layers className="mx-auto text-[#00629B]" size={44} />
               <h3 className="mt-4 text-xl font-bold text-[#10243A]">No Matching Events Found</h3>

@@ -189,7 +189,7 @@ export function AdminProvider({ children }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Data States
-  const [events, setEvents] = useState(initialEvents);
+  const [events, setEvents] = useState([]);
   const [executiveCommittee, setExecutiveCommittee] = useState(initialExecom);
   const [branchCounsellor, setBranchCounsellor] = useState(null);
   const [studentCommittees, setStudentCommittees] = useState([]);
