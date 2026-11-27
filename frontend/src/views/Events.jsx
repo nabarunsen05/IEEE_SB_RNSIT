@@ -132,8 +132,8 @@ function Events() {
 
   return (
     <section id="events" className="relative min-h-screen overflow-hidden bg-transparent pt-28 pb-24 sm:pt-32 sm:pb-28" ref={revealRef}>
-      <div className="pointer-events-none absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.38)_0%,rgba(2,132,199,0.22)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
-      <div className="pointer-events-none absolute -right-40 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
+      <div className="pointer-events-none absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.38)_0%,rgba(2,132,199,0.22)_40%,transparent_70%)] blur-[75px]" />
+      <div className="pointer-events-none absolute -right-40 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px]" />
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         <div className="reveal flex flex-col justify-between gap-6 md:flex-row md:items-end">
@@ -173,7 +173,7 @@ function Events() {
           </div>
         </div>
 
-        <div id="events-grid">
+        <div id="events-grid" className="reveal mt-8" style={{ "--reveal-delay": "120ms" }}>
           {isLoading ? (
             <div className="mt-12 rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
               <p className="text-sm font-medium text-[#526477]">Loading events...</p>
@@ -183,20 +183,20 @@ function Events() {
               <Layers className="mx-auto text-[#00629B]" size={44} />
               <h3 className="mt-4 text-xl font-bold text-[#10243A]">No Matching Events Found</h3>
               <p className="mt-2 text-sm text-[#526477]">{searchQuery || selectedCategory !== "ALL" ? "No events match the selected filter or search keyword." : "Check back soon for new workshops, technical competitions, and hackathons."}</p>
-              {(searchQuery || selectedCategory !== "ALL") && <button type="button" onClick={handleViewAll} className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] to-[#0074B5] px-5 py-2.5 text-xs font-semibold text-white shadow-md transition hover:scale-105">Reset Filters & View All</button>}
+              {(searchQuery || selectedCategory !== "ALL") && <button type="button" onClick={handleViewAll} className="btn-animate mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] to-[#0074B5] px-5 py-2.5 text-xs font-semibold text-white shadow-md transition">Reset Filters & View All</button>}
             </div>
           ) : (
-            <div className="mt-8 grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredEvents.map((event) => {
                 const isPast = isPastEvent(event);
                 const coverImage = event.cover_image_url || event.image_url;
                 return (
                   <article key={event.id} className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_8px_24px_rgba(16,36,58,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/35 hover:shadow-[0_20px_40px_rgba(0,98,155,0.14)]">
                     <div className={`relative h-40 shrink-0 overflow-hidden bg-gradient-to-br ${getEventHeaderGradient(event.category)} p-5`}>
-                      {coverImage && <img src={coverImage} alt={`${event.title} event photo`} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />}
+                      {coverImage && <img src={coverImage} alt={`${event.title} event photo`} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />}
                       {coverImage && <div className="absolute inset-0 bg-slate-950/35" />}
-                      <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full border border-white/20 animate-float-slow" />
-                      <div className="absolute -bottom-16 -left-8 h-44 w-44 rounded-full border border-white/15 animate-float-reverse" />
+                      <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full border border-white/20" />
+                      <div className="absolute -bottom-16 -left-8 h-44 w-44 rounded-full border border-white/15" />
                       <div className="relative z-10 flex items-center justify-between gap-2">
                         <div className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/20 px-3.5 py-1 text-xs font-semibold tracking-wider text-white backdrop-blur-md shadow-sm">
                           <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />

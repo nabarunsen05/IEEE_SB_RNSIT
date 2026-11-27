@@ -38,7 +38,7 @@ function EventGallery({ event, onOpen }) {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {photos.map((photo, index) => (
           <button key={`${photo}-${index}`} type="button" onClick={() => onOpen(event, index)} className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-2xl bg-slate-100 text-left">
-            <img src={photo} alt={`${event.title} gallery image ${index + 1}`} loading="lazy" className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+            <img src={photo} alt={`${event.title} gallery image ${index + 1}`} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
             <span className="absolute inset-0 flex items-center justify-center bg-[#10243A]/0 text-white transition group-hover:bg-[#10243A]/25"><Camera className="opacity-0 drop-shadow transition group-hover:opacity-100" size={24} /></span>
           </button>
         ))}

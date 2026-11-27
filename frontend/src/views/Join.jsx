@@ -10,6 +10,7 @@ import {
   Zap,
   Sparkles,
 } from "lucide-react";
+import { useScrollReveal } from "../hooks/useScrollReveal";
 
 const IEEE_BENEFITS = [
   {
@@ -63,17 +64,19 @@ const IEEE_BENEFITS = [
 ];
 
 function Join() {
+  const revealRef = useScrollReveal();
+
   return (
-    <section className="relative min-h-screen overflow-hidden bg-transparent px-6 pt-28 pb-20 sm:px-8 sm:pt-32 lg:px-12">
+    <section ref={revealRef} className="relative min-h-screen overflow-hidden bg-transparent px-6 pt-28 pb-20 sm:px-8 sm:pt-32 lg:px-12">
       {/* Background glowing decorations with delicate color combinations */}
-      <div className="pointer-events-none absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.38)_0%,rgba(2,132,199,0.24)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
-      <div className="pointer-events-none absolute -right-40 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
+      <div className="pointer-events-none absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.38)_0%,rgba(2,132,199,0.24)_40%,transparent_70%)] blur-[75px]" />
+      <div className="pointer-events-none absolute -right-40 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px]" />
 
       <div className="relative mx-auto max-w-7xl">
         {/* =========================
             HEADER
         ========================== */}
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="reveal mx-auto max-w-3xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">
             Join the IEEE{" "}
             <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
@@ -91,7 +94,7 @@ function Join() {
         {/* =========================
             OFFICIAL PORTALS ACTION CARD
         ========================== */}
-        <div className="mt-12 overflow-hidden rounded-3xl border border-[#00629B]/25 bg-gradient-to-br from-[#10243A] via-[#0B3A60] to-[#00629B] p-6 text-white shadow-xl sm:p-10">
+        <div className="reveal mt-12 overflow-hidden rounded-3xl border border-[#00629B]/25 bg-gradient-to-br from-[#10243A] via-[#0B3A60] to-[#00629B] p-6 text-white shadow-xl sm:p-10" style={{ "--reveal-delay": "80ms" }}>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-md">
@@ -113,7 +116,7 @@ function Join() {
                 href="https://www.ieee.org/membership/join/index.html"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#F26522] via-[#FF7A38] to-[#F26522] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-orange-500/30 transition hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
+                className="btn-animate inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#F26522] via-[#FF7A38] to-[#F26522] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-orange-500/30 transition hover:brightness-110"
               >
                 <span>Join IEEE (ieee.org)</span>
                 <ExternalLink size={16} />
@@ -123,7 +126,7 @@ function Join() {
                 href="https://ieeebangalore.org/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-5 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/20 active:scale-[0.98]"
+                className="btn-animate inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-5 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/20"
               >
                 <span>IEEE Bangalore Section</span>
                 <ExternalLink size={15} />
@@ -135,7 +138,7 @@ function Join() {
         {/* =========================
             BENEFITS GRID
         ========================== */}
-        <div className="mt-16">
+        <div className="reveal mt-16" style={{ "--reveal-delay": "120ms" }}>
           <div className="text-center">
             <span className="text-xs font-bold uppercase tracking-wider text-[#00629B]">
               Member Privileges
@@ -160,7 +163,7 @@ function Join() {
                   <div>
                     <div className="flex items-center justify-between">
                       <div
-                        className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${benefit.color} text-white shadow-md transition-transform duration-300 group-hover:scale-105`}
+                        className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${benefit.color} text-white shadow-md transition-transform duration-300 group-hover:scale-[1.02]`}
                       >
                         <Icon size={22} />
                       </div>

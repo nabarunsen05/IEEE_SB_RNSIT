@@ -66,7 +66,7 @@ export default function Footer() {
               COLUMN 1: BRANDING & SOCIAL MEDIA
           ========================================== */}
           <div className="space-y-5">
-            <Link href="/" className="inline-block transition-transform duration-300 hover:scale-[1.02]">
+            <Link href="/" className="inline-block transition-transform duration-300 hover:scale-[1.01]">
               <img
                 src="/assets/ieee-bangalore-section.png"
                 alt="IEEE Bangalore Section - RNSIT SB"
@@ -99,10 +99,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="IEEE RNSIT SB Instagram"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-pink-500/50 hover:bg-gradient-to-tr hover:from-amber-500/20 hover:via-pink-500/20 hover:to-purple-500/20 hover:text-pink-400 hover:shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-105"
+                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-pink-500/50 hover:bg-gradient-to-tr hover:from-amber-500/20 hover:via-pink-500/20 hover:to-purple-500/20 hover:text-pink-400 hover:shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-[1.02]"
                   title="Follow IEEE RNSIT SB on Instagram"
                 >
-                  <InstagramIcon size={18} className="transition-transform group-hover:scale-110" />
+                  <InstagramIcon size={18} className="transition-transform group-hover:scale-[1.04]" />
                 </a>
 
                 {/* LinkedIn */}
@@ -111,10 +111,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="IEEE RNSIT SB LinkedIn"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-[#29A9E0]/50 hover:bg-[#00629B]/30 hover:text-[#29A9E0] hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
+                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-[#29A9E0]/50 hover:bg-[#00629B]/30 hover:text-[#29A9E0] hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-[1.02]"
                   title="Connect with IEEE RNSIT SB on LinkedIn"
                 >
-                  <LinkedinIcon size={18} className="transition-transform group-hover:scale-110" />
+                  <LinkedinIcon size={18} className="transition-transform group-hover:scale-[1.04]" />
                 </a>
 
                 {/* Official Email */}
@@ -123,10 +123,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Email IEEE SB RNSIT"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-cyan-400/50 hover:bg-[#00629B]/30 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-105"
+                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-cyan-400/50 hover:bg-[#00629B]/30 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-[1.02]"
                   title="Compose email to ieeestudentbranchrnsit@gmail.com"
                 >
-                  <Mail size={18} className="transition-transform group-hover:scale-110" />
+                  <Mail size={18} className="transition-transform group-hover:scale-[1.04]" />
                 </a>
 
                 {/* College Website */}
@@ -135,10 +135,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="RNSIT College Website"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.08] hover:text-white hover:scale-105"
+                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.08] hover:text-white hover:scale-[1.02]"
                   title="RNSIT Official Portal"
                 >
-                  <ExternalLink size={17} className="transition-transform group-hover:scale-110" />
+                  <ExternalLink size={17} className="transition-transform group-hover:scale-[1.04]" />
                 </a>
               </div>
             </div>

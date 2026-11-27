@@ -67,8 +67,8 @@ export default function Societies() {
   return (
     <section className="relative min-h-screen overflow-hidden bg-transparent px-4 pb-24 pt-32 sm:px-6 sm:pt-36 lg:px-12" ref={revealRef}>
       {/* Background ambient glow */}
-      <div className="pointer-events-none absolute -right-32 top-10 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.35)_0%,rgba(2,132,199,0.20)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
-      <div className="pointer-events-none absolute -left-40 bottom-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.28)_0%,rgba(249,115,22,0.18)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
+      <div className="pointer-events-none absolute -right-32 top-10 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.35)_0%,rgba(2,132,199,0.20)_40%,transparent_70%)] blur-[75px]" />
+      <div className="pointer-events-none absolute -left-40 bottom-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.28)_0%,rgba(249,115,22,0.18)_40%,transparent_70%)] blur-[75px]" />
 
       <div className="relative mx-auto max-w-7xl">
         {/* =========================================
@@ -166,11 +166,11 @@ export default function Societies() {
                 <Link
                   key={dept.code}
                   href={`/societies/${dept.code.toLowerCase()}`}
-                  className="group relative flex flex-col justify-between rounded-3xl border border-[#DCE5EC] bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-[#00629B]/40 hover:shadow-xl hover:shadow-[#00629B]/10"
+                  className="group relative flex flex-col justify-between rounded-3xl border border-[#DCE5EC] bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-xl hover:shadow-[#00629B]/10"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00629B] to-[#0284C7] font-bold text-white shadow-sm shadow-[#00629B]/30 transition-transform duration-300 group-hover:scale-105">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00629B] to-[#0284C7] font-bold text-white shadow-sm shadow-[#00629B]/30 transition-transform duration-300 group-hover:scale-[1.02]">
                         <span className="text-base font-extrabold tracking-wide">
                           {dept.code}
                         </span>

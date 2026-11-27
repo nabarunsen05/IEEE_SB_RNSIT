@@ -63,7 +63,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold transition-all ${
+                  className={`nav-link-animate whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold transition-all ${
                     active
                       ? "border border-[#B9E2F5] bg-[#E6F4FB] text-[#00629B] shadow-sm"
                       : "text-slate-700 hover:bg-white hover:text-[#00629B]"
@@ -78,7 +78,7 @@ export default function Navbar() {
           {/* Join IEEE */}
           <Link
             href="/join"
-            className="flex shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:scale-105 hover:from-[#004F7D] hover:to-[#0074B5] active:scale-95"
+            className="btn-animate flex shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:from-[#004F7D] hover:to-[#0074B5]"
           >
             Join IEEE
           </Link>
@@ -127,7 +127,7 @@ export default function Navbar() {
             <Link
               href="/join"
               onClick={() => setMenuOpen(false)}
-              className="mt-3 flex items-center justify-center rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-3 font-semibold text-white shadow-md transition hover:from-[#004F7D] hover:to-[#0074B5]"
+              className="btn-animate mt-3 flex items-center justify-center rounded-xl bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-3 font-semibold text-white shadow-md transition hover:from-[#004F7D] hover:to-[#0074B5]"
             >
               Join IEEE
             </Link>

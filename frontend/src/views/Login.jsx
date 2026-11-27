@@ -60,8 +60,8 @@ export default function Login({ initialError, initialEmail }) {
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#F3F7FA] px-4 py-24 sm:px-6 lg:px-8">
       {/* Background glowing orbs */}
-      <div className="pointer-events-none absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-[#E6F4FB] blur-3xl animate-pulse-glow" />
-      <div className="pointer-events-none absolute -right-32 bottom-1/4 h-96 w-96 rounded-full bg-[#E6F4FB] blur-3xl animate-pulse-glow" />
+      <div className="pointer-events-none absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-[#E6F4FB] blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-1/4 h-96 w-96 rounded-full bg-[#E6F4FB] blur-3xl" />
 
       <div className="relative w-full max-w-md">
         {isAuthenticated ? (

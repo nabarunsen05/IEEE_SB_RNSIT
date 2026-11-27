@@ -112,7 +112,7 @@ video {
     transparent 62%
   );
   transform: translateX(-120%);
-  transition: transform 0.8s ease-in-out;
+  transition: transform 0.35s ease-in-out;
 }
 
 .glass-card-interactive:hover::after {
@@ -169,51 +169,12 @@ video {
   transform: translateY(-1px);
 }
 
-/* Motion utilities */
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(1deg); }
-}
-
-@keyframes float-reverse {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(10px) rotate(-1.5deg); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.55; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.05); }
-}
-
-/* Atmospheric light-theme color flair drift */
-@keyframes flair-drift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translate3d(35px, -30px, 0) scale(1.1);
-    opacity: 0.95;
-  }
-  100% {
-    transform: translate3d(-25px, 25px, 0) scale(0.95);
-    opacity: 0.75;
-  }
-}
-
-.animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
-.animate-float-reverse { animation: float-reverse 6s ease-in-out infinite; }
-.animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
-.animate-flair-drift { animation: flair-drift 16s ease-in-out infinite alternate; }
-
-/* Dedicated Light Theme Ambient Background Flairs */
+/* Static light-theme ambient color flairs */
 .flair-blob {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
   filter: blur(80px);
-  will-change: transform, opacity;
-  animation: flair-drift 16s ease-in-out infinite alternate;
 }
 
 /* Hero atmosphere — vivid light ambient accents */
@@ -233,12 +194,9 @@ video {
     linear-gradient(rgba(0, 98, 155, 0.08) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 98, 155, 0.08) 1px, transparent 1px);
   background-size: 60px 60px;
-  transform: perspective(700px) rotateX(60deg);
-  transform-origin: center bottom;
   opacity: 0.65;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
   mask-image: linear-gradient(to bottom, transparent 0%, #000 45%);
-  animation: hero-grid-drift 24s linear infinite;
 }
 
 .hero-glow-blob {
@@ -247,7 +205,6 @@ video {
   filter: blur(75px);
   pointer-events: none;
   opacity: 0.55;
-  animation: hero-glow-pulse 8s ease-in-out infinite alternate;
 }
 
 /* Noticeable, beautiful pastel/vivid glow spots on light theme */
@@ -259,13 +216,11 @@ video {
 .hero-glow-blob--cyan {
   top: 22%; right: 10%; width: 500px; height: 500px;
   background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(14, 165, 233, 0.22) 45%, transparent 70%);
-  animation-delay: -3s;
 }
 
 .hero-glow-blob--warm {
   bottom: 12%; left: 30%; width: 400px; height: 400px;
   background: radial-gradient(circle, rgba(249, 115, 22, 0.25) 0%, rgba(251, 146, 60, 0.18) 45%, transparent 70%);
-  animation-delay: -5s;
 }
 
 .hero-orb {
@@ -276,14 +231,11 @@ video {
     radial-gradient(circle at 30% 25%, rgba(56, 189, 248, 0.32), transparent 45%),
     radial-gradient(circle at 70% 75%, rgba(2, 132, 199, 0.22), rgba(230, 244, 251, 0.3) 75%);
   box-shadow: 0 0 50px rgba(0, 98, 155, 0.14);
-  transform-style: preserve-3d;
-  will-change: transform;
 }
 
 .hero-orb--primary {
   top: 12%; right: 10%; width: clamp(160px, 22vw, 300px);
   aspect-ratio: 1;
-  animation: hero-orb-float 12s ease-in-out infinite;
 }
 
 .hero-orb--primary::before {
@@ -292,8 +244,7 @@ video {
   border: 1px dashed rgba(0, 98, 155, 0.3);
   border-radius: 50%;
   content: "";
-  transform: rotateX(68deg) rotateZ(-20deg);
-  animation: hero-ring-spin 20s linear infinite;
+  transform: rotate(-20deg);
 }
 
 .hero-orb--secondary {
@@ -302,27 +253,6 @@ video {
   border-color: rgba(0, 98, 155, 0.25);
   background: radial-gradient(circle at 35% 30%, rgba(56, 189, 248, 0.35), rgba(2, 132, 199, 0.16) 70%);
   box-shadow: 0 0 35px rgba(0, 98, 155, 0.16);
-  animation: hero-orb-float 8s ease-in-out -3s infinite reverse;
-}
-
-@keyframes hero-grid-drift {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 0 60px, 0 60px; }
-}
-
-@keyframes hero-orb-float {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(-12px, -20px, 0) rotate(5deg); }
-}
-
-@keyframes hero-ring-spin {
-  from { transform: rotateX(68deg) rotateZ(0deg); }
-  to { transform: rotateX(68deg) rotateZ(360deg); }
-}
-
-@keyframes hero-glow-pulse {
-  0% { opacity: 0.45; transform: scale(0.95); }
-  100% { opacity: 0.75; transform: scale(1.1); }
 }
 
 @media (max-width: 768px) {
@@ -341,12 +271,11 @@ video {
 
 .reveal {
   opacity: 0;
-  transform: translateY(18px);
+  transform: translateY(8px);
   transition:
     opacity 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
     transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
   transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
 }
 
 .reveal.visible {
@@ -359,7 +288,6 @@ video {
   opacity: 0;
   transition: opacity 0.4s ease;
   transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity;
 }
 
 .reveal-fade.visible {
@@ -368,7 +296,7 @@ video {
 
 /* =========================================================
    PAGE ENTRANCE
-   Applied to <main> in layout.jsx — gentle fade-in on load.
+   Applied to the route wrapper — gentle fade-in on navigation.
 ========================================================= */
 @keyframes page-enter {
   from { opacity: 0; }
@@ -376,7 +304,7 @@ video {
 }
 
 .page-enter {
-  animation: page-enter 0.35s ease both;
+  animation: page-enter 0.3s ease both;
 }
 
 /* =========================================================
@@ -391,18 +319,21 @@ video {
 .nav-link-animate::after {
   content: "";
   position: absolute;
-  bottom: -1px;
-  left: 50%;
-  right: 50%;
+  bottom: 2px;
+  left: 15%;
+  width: 70%;
   height: 2px;
   background: var(--ieee-blue);
   border-radius: 999px;
-  transition: left 0.22s ease, right 0.22s ease;
+  opacity: 0;
+  transform: scaleX(0);
+  transition: transform 0.22s ease, opacity 0.22s ease;
 }
 
-.nav-link-animate:hover::after {
-  left: 10%;
-  right: 10%;
+.nav-link-animate:hover::after,
+.nav-link-animate:focus-visible::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 /* =========================================================
@@ -434,12 +365,11 @@ video {
 }
 
 .img-zoom {
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .img-zoom-wrap:hover .img-zoom {
-  transform: scale(1.045);
+  transform: scale(1.02);
 }
 
 /* =========================================================
@@ -447,15 +377,15 @@ video {
    Use .btn-animate on interactive buttons for consistent feel.
 ========================================================= */
 .btn-animate {
-  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 .btn-animate:hover {
-  transform: translateY(-1px);
+  transform: scale(1.015);
 }
 
 .btn-animate:active {
-  transform: translateY(0) scale(0.97);
+  transform: scale(0.985);
 }
 
 @media (prefers-reduced-motion: reduce) {

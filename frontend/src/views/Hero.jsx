@@ -19,7 +19,6 @@ function Hero() {
           {/* Hero headline — staggered fade-in on page load */}
           <h1
             className="max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-[#10243A] sm:text-6xl lg:text-7xl"
-            style={{ animation: "page-enter 0.55s ease 0.1s both" }}
           >
             Innovate.<br />
             <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">Connect.</span><br />
@@ -28,7 +27,6 @@ function Hero() {
 
           <p
             className="mt-6 max-w-xl text-base leading-7 text-[#526477] sm:text-lg sm:leading-8"
-            style={{ animation: "page-enter 0.55s ease 0.25s both" }}
           >
             A vibrant community of students passionate about technology,
             cutting-edge research, hands-on engineering and building solutions
@@ -38,11 +36,10 @@ function Hero() {
           {/* Action Buttons */}
           <div
             className="mt-8 flex flex-wrap items-center gap-4"
-            style={{ animation: "page-enter 0.55s ease 0.38s both" }}
           >
             <Link
               href="/events"
-              className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-7 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/35 active:scale-95"
+              className="btn-animate group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-7 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/35 active:scale-95"
             >
               <span>Explore Events</span>
               <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
@@ -50,7 +47,7 @@ function Hero() {
 
             <Link
               href="/about"
-              className="group inline-flex items-center gap-2 rounded-full border border-[#DCE5EC] bg-white/95 px-7 py-3.5 font-semibold text-[#10243A] shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B] active:scale-95"
+              className="btn-animate group inline-flex items-center gap-2 rounded-full border border-[#DCE5EC] bg-white/95 px-7 py-3.5 font-semibold text-[#10243A] shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B] active:scale-95"
             >
               <span>Discover IEEE</span>
               <ChevronRight size={16} className="text-[#00629B] transition-transform duration-300 group-hover:translate-x-0.5" />
@@ -60,7 +57,6 @@ function Hero() {
           {/* Feature Badges */}
           <div
             className="mt-12 flex flex-wrap gap-3 border-t border-[#10243A]/10 pt-6"
-            style={{ animation: "page-enter 0.55s ease 0.5s both" }}
           >
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/70 bg-gradient-to-r from-blue-50/80 to-cyan-50/50 px-3.5 py-2 text-xs font-semibold text-blue-900 shadow-xs">
               <Zap size={14} className="text-[#00629B]" />
@@ -80,13 +76,12 @@ function Hero() {
         {/* Right Showcase */}
         <div
           className="relative hidden lg:block"
-          style={{ animation: "page-enter 0.65s ease 0.2s both" }}
         >
           <div className="pointer-events-none absolute -inset-6 rounded-full bg-gradient-to-tr from-[#00629B]/15 via-[#29A9E0]/15 to-[#F26522]/10 blur-3xl" />
 
           <div className="relative flex h-[520px] items-center justify-center">
             {/* Floating Card 1 */}
-            <div className="glass-card absolute -left-6 top-8 z-20 flex items-center gap-3 rounded-2xl border border-blue-100 px-4 py-3 shadow-[0_12px_28px_rgba(16,36,58,0.08)] animate-float-slow">
+            <div className="glass-card absolute -left-6 top-8 z-20 flex items-center gap-3 rounded-2xl border border-blue-100 px-4 py-3 shadow-[0_12px_28px_rgba(16,36,58,0.08)]">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/25">
                 <Zap size={20} />
               </div>
@@ -110,7 +105,7 @@ function Hero() {
             </div>
 
             {/* Floating Card 2 */}
-            <div className="glass-card absolute -right-4 bottom-10 z-20 flex items-center gap-3 rounded-2xl border border-orange-100 px-4 py-3 shadow-[0_12px_28px_rgba(16,36,58,0.08)] animate-float-reverse">
+            <div className="glass-card absolute -right-4 bottom-10 z-20 flex items-center gap-3 rounded-2xl border border-orange-100 px-4 py-3 shadow-[0_12px_28px_rgba(16,36,58,0.08)]">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/25">
                 <Award size={20} />
               </div>

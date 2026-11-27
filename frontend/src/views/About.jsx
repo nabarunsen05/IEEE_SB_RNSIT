@@ -272,7 +272,7 @@ function About() {
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
                 href="/societies"
-                className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-6 py-3 font-semibold text-white shadow-md shadow-[#00629B]/20 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/30"
+                className="btn-animate group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-6 py-3 font-semibold text-white shadow-md shadow-[#00629B]/20 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/30"
               >
                 <span>Explore 17+ Societies</span>
                 <ArrowRight
@@ -283,7 +283,7 @@ function About() {
 
               <Link
                 href="/events"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-[#10243A] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50"
+                className="btn-animate inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-[#10243A] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50"
               >
                 <span>Browse Events</span>
               </Link>
@@ -394,14 +394,14 @@ function About() {
             return (
               <div
                 key={stat.label}
-                className={`group relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-6 text-center shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_18px_36px_rgba(16,36,58,0.1)] sm:p-7 ${stat.borderHover}`}
+                className={`group relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-6 text-center shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_36px_rgba(16,36,58,0.1)] sm:p-7 ${stat.borderHover}`}
               >
                 <div
                   className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${stat.accentHover}`}
                 />
 
                 <div
-                  className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-sm transition-all duration-300 group-hover:scale-110 ${stat.gradient} ${stat.shadow}`}
+                  className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-sm transition-transform duration-300 group-hover:scale-[1.02] ${stat.gradient} ${stat.shadow}`}
                 >
                   <Icon size={24} />
                 </div>
@@ -446,7 +446,7 @@ function About() {
               return (
                 <div
                   key={step.title}
-                  className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#00629B]/40 hover:shadow-xl hover:shadow-[#00629B]/10"
+                  className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-xl hover:shadow-[#00629B]/10"
                 >
                   <div className="absolute right-6 top-6 text-3xl font-black text-slate-200 transition-colors group-hover:text-blue-100">
                     {step.number}
@@ -746,7 +746,7 @@ function About() {
                 href="https://mail.google.com/mail/?view=cm&fs=1&to=ieeestudentbranchrnsit@gmail.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-7 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                className="btn-animate inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-7 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
               >
                 <span>Contact Student Branch</span>
                 <ExternalLink size={16} />
@@ -754,7 +754,7 @@ function About() {
 
               <Link
                 href="/societies"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-7 py-3.5 font-semibold text-[#10243A] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-50"
+                className="btn-animate inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-7 py-3.5 font-semibold text-[#10243A] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-50"
               >
                 <span>View All Societies</span>
                 <ChevronRight size={16} />

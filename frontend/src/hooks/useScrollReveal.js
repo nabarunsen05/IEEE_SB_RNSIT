@@ -20,7 +20,11 @@ export function useScrollReveal({
 
   useEffect(() => {
     // Respect user preference for reduced motion
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (
+      typeof window !== "undefined" &&
+      (window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        !("IntersectionObserver" in window))
+    ) {
       // Make everything visible immediately without animation
       const container = containerRef.current;
       if (!container) return;

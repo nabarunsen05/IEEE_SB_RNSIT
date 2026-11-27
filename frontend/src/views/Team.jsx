@@ -43,7 +43,7 @@ function PhotoProfileCard({
           src={image}
           alt={name || "Team member"}
           loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#B9DCEC] via-[#DCEEF6] to-[#8CBFD9]">
@@ -204,12 +204,10 @@ export default function Team() {
 
         {/* Student Activities Committee */}
         <section className="reveal mt-24" style={{ "--reveal-delay": "80ms" }}>
-          <SectionHeading>
-              STUDENT ACTIVITIES COMMITTEE (SAC)
-            </SectionHeading>
+          <SectionHeading>STUDENT ACTIVITIES COMMITTEE (SAC)</SectionHeading>
 
-            <div className="space-y-14">
-              {studentCommittees.map((committee) => (
+          <div className="space-y-14">
+            {studentCommittees.map((committee) => (
                 <section
                   key={committee.id || committee.name}
                   className="border-b border-[#DCE5EC]/90 pb-12 last:border-b-0"
@@ -261,10 +259,10 @@ export default function Team() {
                       Members will be announced soon.
                     </p>
                   )}
+                </section>
+            ))}
+          </div>
         </section>
-              ))}
-            </div>
-          </section>
 
       </div>
     </section>
