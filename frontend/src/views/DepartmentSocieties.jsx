@@ -126,8 +126,9 @@ export default function DepartmentSocieties({ deptCode }) {
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {deptSocieties.map((society, idx) => (
-              <article
+              <Link
                 key={society.name}
+                href={`/societies/${normalizedCode.toLowerCase()}/${society.slug}`}
                 className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-lg hover:shadow-[#00629B]/10"
               >
                 <div>
@@ -160,7 +161,13 @@ export default function DepartmentSocieties({ deptCode }) {
                     </div>
                   </div>
                 </div>
-              </article>
+
+                {/* Click affordance arrow */}
+                <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-[#00629B] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <span>View Details</span>
+                  <ChevronRight size={14} />
+                </div>
+              </Link>
             ))}
           </div>
         </div>

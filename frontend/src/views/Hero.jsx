@@ -16,7 +16,6 @@ function Hero() {
 
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-96px)] w-full max-w-7xl items-center gap-12 px-6 py-16 sm:px-8 lg:grid-cols-2 lg:px-12">
         <div className="relative z-10">
-
           {/* Hero headline — staggered fade-in on page load */}
           <h1
             className="max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-[#10243A] sm:text-6xl lg:text-7xl"
@@ -107,16 +106,6 @@ function Hero() {
                   alt="IEEE RNSIT Student Branch"
                   className="img-zoom h-auto max-h-64 w-full object-contain filter drop-shadow-[0_4px_12px_rgba(0,98,155,0.08)]"
                 />
-              </div>
-
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#DCE5EC] pt-4 text-xs">
-                <span className="flex items-center gap-2 font-medium text-[#526477]">
-                  <span className="h-2 w-2 rounded-full bg-[#00629B]" />
-                  RNSIT Student Branch
-                </span>
-                <span className="rounded-full border border-blue-200/80 bg-gradient-to-r from-[#E6F4FB] to-sky-50 px-3 py-1 font-semibold text-[#00629B] shadow-2xs">
-                  Bangalore Section
-                </span>
               </div>
             </div>
 

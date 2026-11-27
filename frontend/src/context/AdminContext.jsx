@@ -189,8 +189,10 @@ export function AdminProvider({ children }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Data States
-  const [events, setEvents] = useState(initialEvents);
+  const [events, setEvents] = useState([]);
   const [executiveCommittee, setExecutiveCommittee] = useState(initialExecom);
+  const [branchCounsellor, setBranchCounsellor] = useState(null);
+  const [studentCommittees, setStudentCommittees] = useState([]);
   const [domains, setDomains] = useState(initialDomains);
   const [registrations, setRegistrations] = useState(initialRegistrations);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -236,6 +238,7 @@ export function AdminProvider({ children }) {
       const { data: execomData, error: execomError } = await supabase
         .from("executive_committee")
         .select("*")
+        .order("display_order", { ascending: true })
         .order("created_at", { ascending: true });
 
       if (execomError) {
@@ -243,6 +246,31 @@ export function AdminProvider({ children }) {
       } else if (execomData) {
         setExecutiveCommittee(execomData);
       }
+
+      // 2A. Branch Counsellor, SAC committees and members (public-readable tables)
+      const [counsellorResult, committeesResult, membersResult] = await Promise.all([
+        supabase.from("branch_counsellor").select("*").eq("id", 1).maybeSingle(),
+        supabase.from("student_committees").select("*").order("display_order", { ascending: true }),
+        supabase.from("student_committee_members").select("*").order("created_at", { ascending: true }),
+      ]);
+
+      if (counsellorResult.error) errors.push(`Branch Counsellor: ${counsellorResult.error.message}`);
+      else if (counsellorResult.data) setBranchCounsellor(counsellorResult.data);
+
+      if (committeesResult.error) errors.push(`SAC Committees: ${committeesResult.error.message}`);
+      else if (committeesResult.data) {
+        const membersByCommittee = new Map();
+        (membersResult.data || []).forEach((member) => {
+          const list = membersByCommittee.get(member.committee_id) || [];
+          list.push(member);
+          membersByCommittee.set(member.committee_id, list);
+        });
+        setStudentCommittees(committeesResult.data.map((committee) => ({
+          ...committee,
+          members: membersByCommittee.get(committee.id) || [],
+        })));
+      }
+      if (membersResult.error) errors.push(`SAC Members: ${membersResult.error.message}`);
 
       // 3. Domains
       const { data: domainsData, error: domainsError } = await supabase
@@ -703,10 +731,21 @@ export function AdminProvider({ children }) {
       venue: updates.venue,
       category: updates.category,
       registration_url: updates.registration_url || null,
-      parent_event_id: updates.parent_event_id || null,
       status: updates.status,
       recap: updates.recap,
+      registration_enabled: updates.registration_enabled,
+      registration_type: updates.registration_type,
+      min_team_size: updates.min_team_size,
+      max_team_size: updates.max_team_size,
+      registration_deadline: updates.registration_deadline || null,
+      payment_required: updates.payment_required,
+      payment_portal_url: updates.payment_portal_url || null,
+      payment_instructions: updates.payment_instructions || null,
+      registration_capacity: updates.registration_capacity === "" ? null : updates.registration_capacity,
     };
+    if (updates.parent_event_id !== undefined) {
+      allowed.parent_event_id = updates.parent_event_id || null;
+    }
     Object.keys(allowed).forEach((key) => allowed[key] === undefined && delete allowed[key]);
 
     if (supabase) {
@@ -950,35 +989,183 @@ export function AdminProvider({ children }) {
   // =========================================
   // EXECUTIVE COMMITTEE
   // =========================================
+  const requireSuperAdmin = () =>
+    adminProfile?.role === "super_admin" && adminProfile?.is_active === true;
+
   const addExecomMember = async (newMember) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage Office Bearers." };
+    if (!supabase) return { success: false, message: "Database not connected." };
     const memberItem = {
-      ...newMember,
-      id: "execom-" + Date.now(),
+      name: String(newMember.name || "").trim(),
+      role: String(newMember.role || "").trim(),
+      // Keep the legacy database column populated for schemas where it is NOT NULL.
+      // Bio/description is no longer collected or displayed.
+      description: "",
+      email: newMember.email || null,
+      linkedin: newMember.linkedin || null,
+      image: newMember.image || null,
+      display_order: executiveCommittee.length
+        ? Math.max(...executiveCommittee.map((member) => Number(member.display_order) || 0)) + 1
+        : 0,
+      id: `execom-${Date.now()}`,
     };
-
-    setExecutiveCommittee((prev) => [...prev, memberItem]);
-
-    if (supabase) {
-      try {
-        await supabase.from("executive_committee").insert([memberItem]);
-      } catch (err) {
-        console.error("Supabase insert execom error:", err);
-      }
+    if (!memberItem.name || !memberItem.role) {
+      return { success: false, message: "Name and role are required." };
     }
+    const { data, error } = await supabase.from("executive_committee").insert([memberItem]).select().single();
+    if (error) return { success: false, message: error.message };
+    setExecutiveCommittee((prev) => [...prev, data]);
+    return { success: true, data };
+  };
 
-    return memberItem;
+  const updateExecomMember = async (id, updates) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage Office Bearers." };
+    if (!supabase) return { success: false, message: "Database not connected." };
+    const payload = {
+      name: String(updates.name || "").trim(),
+      role: String(updates.role || "").trim(),
+      // Retain compatibility with the existing database column without exposing a bio field.
+      description: "",
+      email: updates.email || null,
+      linkedin: updates.linkedin || null,
+      image: updates.image || null,
+    };
+    if (!payload.name || !payload.role) return { success: false, message: "Name and role are required." };
+    const { data, error } = await supabase.from("executive_committee").update(payload).eq("id", id).select().single();
+    if (error) return { success: false, message: error.message };
+    setExecutiveCommittee((prev) => prev.map((member) => member.id === id ? data : member));
+    return { success: true, data };
   };
 
   const removeExecomMember = async (id) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage Office Bearers." };
+    if (!supabase) return { success: false, message: "Database not connected." };
+    const { error } = await supabase.from("executive_committee").delete().eq("id", id);
+    if (error) return { success: false, message: error.message };
     setExecutiveCommittee((prev) => prev.filter((member) => member.id !== id));
+    return { success: true };
+  };
 
-    if (supabase) {
-      try {
-        await supabase.from("executive_committee").delete().eq("id", id);
-      } catch (err) {
-        console.error("Supabase delete execom error:", err);
-      }
+  const reorderExecomMembers = async (orderedIds) => {
+    if (!requireSuperAdmin()) {
+      return { success: false, message: "Only an active Super Admin can reorder Office Bearers." };
     }
+    if (!supabase) return { success: false, message: "Database not connected." };
+
+    const currentIds = executiveCommittee.map((member) => String(member.id));
+    const nextIds = (orderedIds || []).map(String);
+    if (
+      nextIds.length !== currentIds.length ||
+      new Set(nextIds).size !== currentIds.length ||
+      currentIds.some((id) => !nextIds.includes(id))
+    ) {
+      return { success: false, message: "The Office Bearer order is invalid. Refresh and try again." };
+    }
+
+    const updates = await Promise.all(
+      nextIds.map((id, display_order) =>
+        supabase
+          .from("executive_committee")
+          .update({ display_order })
+          .eq("id", id)
+      )
+    );
+    const failed = updates.find((result) => result.error);
+    if (failed?.error) {
+      await fetchDataFromSupabase();
+      return { success: false, message: failed.error.message };
+    }
+
+    const memberById = new Map(executiveCommittee.map((member) => [String(member.id), member]));
+    setExecutiveCommittee(nextIds.map((id, display_order) => ({
+      ...memberById.get(id),
+      display_order,
+    })));
+    return { success: true };
+  };
+
+  // =========================================
+  // SUPER-ADMIN-ONLY TEAM MANAGEMENT
+  // =========================================
+  const updateBranchCounsellor = async (updates) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage Team details." };
+    if (!supabase) return { success: false, message: "Database not connected." };
+    const payload = {
+      id: 1,
+      name: String(updates.name || "").trim(),
+      role: "Branch Counsellor",
+      image: updates.image || null,
+      email: updates.email || null,
+      linkedin: updates.linkedin || null,
+      updated_at: new Date().toISOString(),
+    };
+    if (!payload.name) return { success: false, message: "Branch Counsellor name is required." };
+    const { data, error } = await supabase.from("branch_counsellor").upsert(payload, { onConflict: "id" }).select().single();
+    if (error) return { success: false, message: error.message };
+    setBranchCounsellor(data);
+    return { success: true, data };
+  };
+
+  const addStudentCommittee = async ({ name }) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage SAC committees." };
+    if (!supabase) return { success: false, message: "Database not connected." };
+    const cleanName = String(name || "").trim();
+    if (!cleanName) return { success: false, message: "Committee name is required." };
+    const { data, error } = await supabase.from("student_committees").insert({ name: cleanName, display_order: studentCommittees.length + 1 }).select().single();
+    if (error) return { success: false, message: error.message };
+    setStudentCommittees((prev) => [...prev, { ...data, members: [] }]);
+    return { success: true, data };
+  };
+
+  const updateStudentCommittee = async (id, updates) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage SAC committees." };
+    if (!supabase) return { success: false, message: "Database not connected." };
+    const cleanName = String(updates.name || "").trim();
+    if (!cleanName) return { success: false, message: "Committee name is required." };
+    const { data, error } = await supabase.from("student_committees").update({ name: cleanName }).eq("id", id).select().single();
+    if (error) return { success: false, message: error.message };
+    setStudentCommittees((prev) => prev.map((item) => item.id === id ? { ...item, ...data } : item));
+    return { success: true, data };
+  };
+
+  const removeStudentCommittee = async (id) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage SAC committees." };
+    if (!supabase) return { success: false, message: "Database not connected." };
+    const { error } = await supabase.from("student_committees").delete().eq("id", id);
+    if (error) return { success: false, message: error.message };
+    setStudentCommittees((prev) => prev.filter((item) => item.id !== id));
+    return { success: true };
+  };
+
+  const addStudentCommitteeMember = async (committeeId, member) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage SAC members." };
+    if (!supabase) return { success: false, message: "Database not connected." };
+    const name = String(member.name || "").trim();
+    if (!name) return { success: false, message: "Member name is required." };
+    const { data, error } = await supabase.from("student_committee_members").insert({ committee_id: committeeId, name, image: member.image || null }).select().single();
+    if (error) return { success: false, message: error.message };
+    setStudentCommittees((prev) => prev.map((committee) => committee.id === committeeId ? { ...committee, members: [...(committee.members || []), data] } : committee));
+    return { success: true, data };
+  };
+
+  const updateStudentCommitteeMember = async (committeeId, memberId, updates) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage SAC members." };
+    if (!supabase) return { success: false, message: "Database not connected." };
+    const name = String(updates.name || "").trim();
+    if (!name) return { success: false, message: "Member name is required." };
+    const { data, error } = await supabase.from("student_committee_members").update({ name, image: updates.image || null }).eq("id", memberId).eq("committee_id", committeeId).select().single();
+    if (error) return { success: false, message: error.message };
+    setStudentCommittees((prev) => prev.map((committee) => committee.id === committeeId ? { ...committee, members: committee.members.map((member) => member.id === memberId ? data : member) } : committee));
+    return { success: true, data };
+  };
+
+  const removeStudentCommitteeMember = async (committeeId, memberId) => {
+    if (!requireSuperAdmin()) return { success: false, message: "Only an active Super Admin can manage SAC members." };
+    if (!supabase) return { success: false, message: "Database not connected." };
+    const { error } = await supabase.from("student_committee_members").delete().eq("id", memberId).eq("committee_id", committeeId);
+    if (error) return { success: false, message: error.message };
+    setStudentCommittees((prev) => prev.map((committee) => committee.id === committeeId ? { ...committee, members: committee.members.filter((member) => member.id !== memberId) } : committee));
+    return { success: true };
   };
 
   // =========================================
@@ -1129,7 +1316,18 @@ export function AdminProvider({ children }) {
         // ExeCom
         executiveCommittee,
         addExecomMember,
+        updateExecomMember,
         removeExecomMember,
+        reorderExecomMembers,
+        branchCounsellor,
+        updateBranchCounsellor,
+        studentCommittees,
+        addStudentCommittee,
+        updateStudentCommittee,
+        removeStudentCommittee,
+        addStudentCommitteeMember,
+        updateStudentCommitteeMember,
+        removeStudentCommitteeMember,
         // Domains
         domains,
         addDomain,
