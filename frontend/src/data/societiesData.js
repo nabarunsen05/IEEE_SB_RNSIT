@@ -138,6 +138,7 @@ export const societies = [
     department: "ECE",
     advisor: "Dr. Ibrar Jahan M A",
     icon: "Aperture",
+    logo: "/assets/ieee-photonics-logo.png",
     about: "The IEEE Photonics Society fosters the generation, collection, transport, and use of photons — particles of light — in devices, components, and systems. Members explore laser technology, fiber optics, quantum photonics, optical networking, and emerging applications in sensing and biomedical imaging.",
     focusAreas: ["Laser Technology", "Fiber Optics", "Quantum Photonics", "Optical Networking", "Biomedical Imaging"],
   },
