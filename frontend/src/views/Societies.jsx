@@ -8,7 +8,6 @@ import {
   Layers,
   ArrowRight,
   BookOpen,
-  Sparkles,
 } from "lucide-react";
 import { societies, departmentsInfo } from "../data/societiesData";
 import { useScrollReveal } from "../hooks/useScrollReveal";
@@ -76,7 +75,6 @@ export default function Societies() {
         ========================================== */}
         <div className="reveal max-w-3xl">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-3.5 py-1.5 text-xs font-semibold text-[#00629B] shadow-2xs">
-            <Sparkles size={13} className="text-[#29A9E0]" />
             <span>{societies.length} Chapters Across {departmentGroups.length} Departments</span>
           </div>
           <h1 className="text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">

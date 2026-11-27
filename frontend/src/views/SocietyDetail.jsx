@@ -6,7 +6,6 @@ import {
   ArrowLeft,
   ChevronRight,
   GraduationCap,
-  Sparkles,
   Target,
   BookOpen,
   Users,
@@ -159,10 +158,6 @@ export default function SocietyDetail({ deptCode, societySlug }) {
 
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-[#00629B]">
-                      <Sparkles size={12} className="text-[#29A9E0]" />
-                      <span>IEEE Society</span>
-                    </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700">
                       {department.code}
                     </span>

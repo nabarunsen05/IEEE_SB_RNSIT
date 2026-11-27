@@ -7,7 +7,6 @@ import {
   GraduationCap,
   Layers,
   ChevronRight,
-  Sparkles,
   BrainCircuit,
   MonitorSmartphone,
   Binary,
@@ -124,11 +123,6 @@ export default function DepartmentSocieties({ deptCode }) {
 
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-[#00629B]">
-                      <Sparkles size={12} className="text-[#29A9E0]" />
-                      <span>IEEE Societies</span>
-                    </span>
-
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
                       <Layers size={13} className="text-[#00629B]" />
                       <span>

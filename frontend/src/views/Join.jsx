@@ -8,7 +8,6 @@ import {
   Award,
   Layers,
   Zap,
-  Sparkles,
 } from "lucide-react";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 
@@ -98,7 +97,6 @@ function Join() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-md">
-                <Sparkles size={13} className="text-[#38BDF8]" />
                 <span>Official Global IEEE Registration</span>
               </span>
               <h2 className="mt-3 text-2xl font-extrabold sm:text-3xl">
