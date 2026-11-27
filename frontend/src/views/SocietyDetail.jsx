@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   ChevronRight,
@@ -136,8 +137,24 @@ export default function SocietyDetail({ deptCode, societySlug }) {
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex items-start gap-5">
                 {/* Society Icon */}
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00629B] to-[#0284C7] text-white shadow-md shadow-[#00629B]/30">
-                  <IconComponent size={28} />
+                <div
+                  className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl ${
+                    society.logo
+                      ? "border border-slate-200 bg-white p-2"
+                      : "bg-gradient-to-br from-[#00629B] to-[#0284C7] text-white shadow-md shadow-[#00629B]/30"
+                  }`}
+                >
+                  {society.logo ? (
+                    <Image
+                      src={society.logo}
+                      alt={`${society.name} logo`}
+                      width={500}
+                      height={213}
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <IconComponent size={28} />
+                  )}
                 </div>
 
                 <div>
@@ -256,7 +273,17 @@ export default function SocietyDetail({ deptCode, societySlug }) {
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <div className="society-icon-wrap flex h-9 w-9 items-center justify-center rounded-lg border border-sky-200/70 bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
-                        <SiblingIcon size={16} />
+                        {s.logo ? (
+                          <Image
+                            src={s.logo}
+                            alt={`${s.name} logo`}
+                            width={500}
+                            height={213}
+                            className="h-6 w-8 object-contain"
+                          />
+                        ) : (
+                          <SiblingIcon size={16} />
+                        )}
                       </div>
                       <h3 className="text-sm font-bold text-[#10243A] transition-colors group-hover:text-[#00629B]">
                         {s.name}

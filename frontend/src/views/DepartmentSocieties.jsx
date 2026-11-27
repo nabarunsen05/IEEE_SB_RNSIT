@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   GraduationCap,
@@ -180,7 +181,17 @@ export default function DepartmentSocieties({ deptCode }) {
                   <div>
                     <div className="flex items-center justify-between gap-3">
                       <div className="society-icon-wrap flex h-12 w-12 items-center justify-center rounded-xl border border-sky-200/70 bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
-                        <IconComponent size={22} className="text-[#00629B]" />
+                        {society.logo ? (
+                          <Image
+                            src={society.logo}
+                            alt={`${society.name} logo`}
+                            width={500}
+                            height={213}
+                            className="h-8 w-12 object-contain"
+                          />
+                        ) : (
+                          <IconComponent size={22} className="text-[#00629B]" />
+                        )}
                       </div>
                       <span className="font-mono text-xs font-bold text-slate-400">
                         #{String(idx + 1).padStart(2, "0")}

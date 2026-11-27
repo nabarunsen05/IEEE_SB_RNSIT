@@ -128,6 +128,7 @@ export const societies = [
     department: "ECE",
     advisor: "Dr. Rajni V H",
     icon: "Satellite",
+    logo: "/assets/comsoc-logo.png",
     about: "The IEEE Communications Society promotes the advancement of communication technologies including wireless networks, optical communication, 5G/6G, and satellite systems. It is one of the most active IEEE societies, fostering innovation in next-generation telecommunications and network architectures.",
     focusAreas: ["Wireless Networks", "5G/6G Technology", "Optical Communication", "Network Architecture", "Satellite Systems"],
   },
