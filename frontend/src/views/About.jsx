@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRight,
@@ -19,7 +21,7 @@ import {
   Clock,
   CheckCircle2,
 } from "lucide-react";
-
+import { useScrollReveal } from "../hooks/useScrollReveal";
 const statistics = [
   {
     value: "1000+",
@@ -217,9 +219,12 @@ const competitions = [
 ];
 
 function About() {
+  const revealRef = useScrollReveal();
+
   return (
     <section
       id="about"
+      ref={revealRef}
       className="relative min-h-screen overflow-hidden bg-transparent pb-24 pt-28 sm:pb-28 sm:pt-32"
     >
       {/* Background radial accents */}
@@ -238,7 +243,7 @@ function About() {
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         {/* SECTION 1: HERO / MAIN INTRODUCTION */}
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+        <div className="reveal grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           {/* Left Column */}
           <div>
             <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-[#10243A] sm:text-5xl lg:text-5xl">
@@ -353,7 +358,7 @@ function About() {
         </div>
 
         {/* SECTION 2: STATISTICS BANNER */}
-        <div className="mt-16 grid grid-cols-2 gap-4 lg:mt-20 lg:grid-cols-4">
+        <div className="reveal mt-16 grid grid-cols-2 gap-4 lg:mt-20 lg:grid-cols-4" style={{ "--reveal-delay": "80ms" }}>
           {statistics.map((stat) => {
             const Icon = stat.icon;
 
@@ -391,7 +396,7 @@ function About() {
         </div>
 
         {/* SECTION 3: THE IEEE JOURNEY CYCLE */}
-        <div className="mt-24 sm:mt-32">
+        <div className="reveal mt-24 sm:mt-32" style={{ "--reveal-delay": "50ms" }}>
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <span>Continuous Growth Framework</span>
@@ -459,7 +464,7 @@ function About() {
         </div>
 
         {/* SECTION 4: HIERARCHY / SCOPE (From Campus to the World) */}
-        <div className="mt-24 sm:mt-32">
+        <div className="reveal mt-24 sm:mt-32" style={{ "--reveal-delay": "60ms" }}>
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <span>Institutional Scope</span>
@@ -523,7 +528,7 @@ function About() {
         </div>
 
         {/* SECTION 5: SCHOLARSHIPS, GRANTS & COMPETITIONS */}
-        <div className="mt-24 sm:mt-32">
+        <div className="reveal mt-24 sm:mt-32" style={{ "--reveal-delay": "60ms" }}>
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <span>Global Opportunities</span>
@@ -627,7 +632,7 @@ function About() {
         </div>
 
         {/* SECTION 6: IEEE WOMEN IN ENGINEERING (WIE) SPOTLIGHT */}
-        <div className="mt-24 sm:mt-32">
+        <div className="reveal mt-24 sm:mt-32" style={{ "--reveal-delay": "60ms" }}>
           <div className="relative overflow-hidden rounded-3xl border border-purple-200 bg-gradient-to-br from-white via-purple-50/30 to-fuchsia-50/20 p-8 shadow-md sm:p-12">
             <div
               aria-hidden="true"
@@ -706,7 +711,7 @@ function About() {
         </div>
 
         {/* SECTION 7: CLOSING PHILOSOPHY & INVITATION */}
-        <div className="mt-24 sm:mt-32 text-center">
+        <div className="reveal mt-24 sm:mt-32 text-center" style={{ "--reveal-delay": "80ms" }}>
           <div className="mx-auto max-w-3xl rounded-3xl border border-[#DCE5EC] bg-white p-8 shadow-lg sm:p-12">
             <h3 className="text-2xl font-extrabold tracking-tight text-[#10243A] sm:text-3xl">
               &ldquo;The more you put into IEEE, the more you&apos;ll get out of it.&rdquo;

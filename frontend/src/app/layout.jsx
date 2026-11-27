@@ -52,7 +52,7 @@ export default function RootLayout({ children }) {
 
         <Providers>
           <Navbar />
-          <main className="relative z-10 flex-1">{children}</main>
+          <main className="relative z-10 flex-1 page-enter">{children}</main>
           <Footer />
         </Providers>
       </body>

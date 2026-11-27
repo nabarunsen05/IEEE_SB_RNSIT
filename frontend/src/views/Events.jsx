@@ -16,6 +16,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
+import { useScrollReveal } from "../hooks/useScrollReveal";
 
 function getEventHeaderGradient(category = "") {
   const cat = category.toUpperCase();
@@ -154,6 +155,7 @@ function Events() {
   const [searchQuery, setSearchQuery] = useState("");
   const [galleryEvent, setGalleryEvent] = useState(null);
   const [currentPhotoIdx, setCurrentPhotoIdx] = useState(0);
+  const revealRef = useScrollReveal();
 
   const handleOpenGallery = (event, initialIndex = 0) => {
     if (!event?.photos?.length) return;
@@ -224,12 +226,12 @@ function Events() {
   };
 
   return (
-    <section id="events" className="relative min-h-screen overflow-hidden bg-transparent pt-28 pb-24 sm:pt-32 sm:pb-28">
+    <section id="events" className="relative min-h-screen overflow-hidden bg-transparent pt-28 pb-24 sm:pt-32 sm:pb-28" ref={revealRef}>
       <div className="pointer-events-none absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.38)_0%,rgba(2,132,199,0.22)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
       <div className="pointer-events-none absolute -right-40 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+        <div className="reveal flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
             <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl">
               Learn. Connect.
@@ -245,7 +247,7 @@ function Events() {
           </button>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 rounded-2xl border border-[#DCE5EC] bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="reveal mt-12 flex flex-col gap-4 rounded-2xl border border-[#DCE5EC] bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between" style={{ "--reveal-delay": "80ms" }}>
           <div className="flex flex-wrap items-center gap-2">
             <span className="mr-1 hidden items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#647588] sm:inline-flex"><Filter size={14} className="text-[#00629B]" /> Filter:</span>
             {categories.map((cat) => {

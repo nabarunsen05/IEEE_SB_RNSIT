@@ -7,6 +7,7 @@ import {
   Users,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
+import { useScrollReveal } from "../hooks/useScrollReveal";
 
 const studentCommittees = [
   {
@@ -60,10 +61,12 @@ function MemberAvatar({ image, name }) {
 
 function Team() {
   const { executiveCommittee } = useAdmin();
+  const revealRef = useScrollReveal();
 
   return (
     <section
       id="team"
+      ref={revealRef}
       className="relative min-h-screen overflow-hidden bg-transparent pt-28 pb-24 sm:pt-32 sm:pb-28"
     >
       {/* Background glowing decorations with gentle multi-color touch */}
@@ -75,7 +78,7 @@ function Team() {
         {/* =========================
             SECTION HEADER
         ========================== */}
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="reveal mx-auto max-w-3xl text-center">
 
 
 
@@ -94,7 +97,7 @@ function Team() {
         {/* =========================
             BRANCH COUNSELLOR
         ========================== */}
-        <div className="mt-16">
+        <div className="reveal mt-16" style={{ "--reveal-delay": "80ms" }}>
           <div className="mb-8 flex items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#00629B]/20 to-[#10243A]/15" />
             <h3 className="text-xs font-bold tracking-[0.2em] text-[#00629B]">
@@ -125,7 +128,7 @@ function Team() {
         {/* =========================
             EXECUTIVE COMMITTEE
         ========================== */}
-        <div className="mt-16">
+        <div className="reveal mt-16" style={{ "--reveal-delay": "100ms" }}>
 
           <div className="mb-8 flex items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#00629B]/20 to-[#10243A]/15" />
@@ -247,7 +250,7 @@ function Team() {
         {/* =========================
             STUDENT ACTIVITIES COMMITTEE
         ========================== */}
-        <div className="mt-20">
+        <div className="reveal mt-20" style={{ "--reveal-delay": "80ms" }}>
           <div className="mb-8 flex items-center gap-4">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#00629B]/20 to-[#10243A]/15" />
             <h3 className="text-xs font-bold tracking-[0.2em] text-[#00629B]">

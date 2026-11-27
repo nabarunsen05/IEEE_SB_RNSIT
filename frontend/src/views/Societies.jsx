@@ -11,9 +11,11 @@ import {
   BookOpen,
 } from "lucide-react";
 import { societies, departmentsInfo } from "../data/societiesData";
+import { useScrollReveal } from "../hooks/useScrollReveal";
 
 export default function Societies() {
   const [searchQuery, setSearchQuery] = useState("");
+  const revealRef = useScrollReveal();
 
   // Group societies into department-specific blocks
   const departmentGroups = useMemo(() => {
@@ -62,7 +64,7 @@ export default function Societies() {
   }, [departmentGroups, searchQuery]);
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-transparent px-4 pb-24 pt-32 sm:px-6 sm:pt-36 lg:px-12">
+    <section className="relative min-h-screen overflow-hidden bg-transparent px-4 pb-24 pt-32 sm:px-6 sm:pt-36 lg:px-12" ref={revealRef}>
       {/* Background ambient glow */}
       <div className="pointer-events-none absolute -right-32 top-10 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.35)_0%,rgba(2,132,199,0.20)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
       <div className="pointer-events-none absolute -left-40 bottom-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.28)_0%,rgba(249,115,22,0.18)_40%,transparent_70%)] blur-[75px] animate-pulse-glow" />
@@ -71,7 +73,7 @@ export default function Societies() {
         {/* =========================================
             HEADER & HERO DESCRIPTION
         ========================================== */}
-        <div className="max-w-3xl">
+        <div className="reveal max-w-3xl">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-3.5 py-1.5 text-xs font-semibold text-[#00629B] shadow-2xs">
             <Sparkles size={13} className="text-[#29A9E0]" />
             <span>{societies.length} Chapters Across {departmentGroups.length} Departments</span>
@@ -93,7 +95,7 @@ export default function Societies() {
         {/* =========================================
             SEARCH CONTROLS
         ========================================== */}
-        <div className="mt-8 rounded-2xl border border-[#DCE5EC] bg-white/90 p-4 shadow-2xs backdrop-blur-sm sm:p-5">
+        <div className="reveal mt-8 rounded-2xl border border-[#DCE5EC] bg-white/90 p-4 shadow-2xs backdrop-blur-sm sm:p-5" style={{ "--reveal-delay": "80ms" }}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative flex-1">
               <Search
@@ -131,7 +133,7 @@ export default function Societies() {
         {/* =========================================
             DEPARTMENT BLOCKS GRID (CLICK TO OPEN NEW PAGE)
         ========================================== */}
-        <div className="mt-10">
+        <div className="reveal mt-10" style={{ "--reveal-delay": "120ms" }}>
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
               Societies by Department

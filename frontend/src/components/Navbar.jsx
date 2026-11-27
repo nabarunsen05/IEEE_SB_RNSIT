@@ -104,7 +104,7 @@ export default function Navbar() {
       {menuOpen && (
         <div
           id="mobile-navigation"
-          className="absolute left-0 right-0 top-full z-[55] max-h-[calc(100dvh-78px)] overflow-y-auto border-t border-slate-200 bg-white px-6 py-5 shadow-xl xl:hidden"
+          className="mobile-menu-enter absolute left-0 right-0 top-full z-[55] max-h-[calc(100dvh-78px)] overflow-y-auto border-t border-slate-200 bg-white px-6 py-5 shadow-xl xl:hidden"
         >
           <div className="flex flex-col gap-2">
 

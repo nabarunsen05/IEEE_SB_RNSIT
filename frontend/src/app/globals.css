@@ -331,11 +331,145 @@ video {
   .hero-grid { opacity: 0.3; }
 }
 
+/* =========================================================
+   SCROLL REVEAL SYSTEM
+   .reveal = initial hidden state; .reveal.visible = animated-in.
+   Stagger siblings with --reveal-delay CSS custom prop.
+   All driven by IntersectionObserver (useScrollReveal hook).
+   Only opacity + transform are animated — no layout shift.
+========================================================= */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Fade-only variant: for elements that shouldn't move (e.g. headings at top) */
+.reveal-fade {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity;
+}
+
+.reveal-fade.visible {
+  opacity: 1;
+}
+
+/* =========================================================
+   PAGE ENTRANCE
+   Applied to <main> in layout.jsx — gentle fade-in on load.
+========================================================= */
+@keyframes page-enter {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.page-enter {
+  animation: page-enter 0.35s ease both;
+}
+
+/* =========================================================
+   NAVBAR LINK UNDERLINE ANIMATION
+   The active link already uses a pill style.
+   For hover, we animate a sliding underline using ::after.
+========================================================= */
+.nav-link-animate {
+  position: relative;
+}
+
+.nav-link-animate::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  right: 50%;
+  height: 2px;
+  background: var(--ieee-blue);
+  border-radius: 999px;
+  transition: left 0.22s ease, right 0.22s ease;
+}
+
+.nav-link-animate:hover::after {
+  left: 10%;
+  right: 10%;
+}
+
+/* =========================================================
+   MOBILE MENU SLIDE-IN
+   Replaces the abrupt conditional render with a smooth drop.
+========================================================= */
+@keyframes mobile-menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-menu-enter {
+  animation: mobile-menu-enter 0.22s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* =========================================================
+   IMAGE HOVER ZOOM
+   Apply .img-zoom-wrap to a container with overflow:hidden
+   and .img-zoom to the <img> inside.
+========================================================= */
+.img-zoom-wrap {
+  overflow: hidden;
+}
+
+.img-zoom {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.img-zoom-wrap:hover .img-zoom {
+  transform: scale(1.045);
+}
+
+/* =========================================================
+   BUTTON SCALE — supplement Tailwind active states
+   Use .btn-animate on interactive buttons for consistent feel.
+========================================================= */
+.btn-animate {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+
+.btn-animate:hover {
+  transform: translateY(-1px);
+}
+
+.btn-animate:active {
+  transform: translateY(0) scale(0.97);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* Immediately reveal all scroll-reveal elements */
+  .reveal,
+  .reveal-fade {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
