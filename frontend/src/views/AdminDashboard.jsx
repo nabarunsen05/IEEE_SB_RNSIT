@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
 import EventRegistrationSettings from "../components/events/EventRegistrationSettings";
+import Pop, { PopGroup, PopItem } from "../components/Pop";
 
 const CATEGORIES = [
   "WORKSHOP",
@@ -858,7 +859,7 @@ export default function AdminDashboard() {
         {/* =========================================
             ADMIN TOP BAR
         ========================================== */}
-        <div className="rounded-3xl border border-[#DCE6EF] bg-white p-6 shadow-[0_12px_40px_rgba(16,36,58,0.06)] sm:p-8">
+        <Pop className="rounded-3xl border border-[#DCE6EF] bg-white p-6 shadow-[0_12px_40px_rgba(16,36,58,0.06)] sm:p-8">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-extrabold text-[#10243A] sm:text-4xl">
@@ -912,12 +913,12 @@ export default function AdminDashboard() {
 
 
           </div>
-        </div>
+        </Pop>
 
         {/* =========================================
             TABS NAVIGATION
         ========================================== */}
-        <div className="mt-8 flex flex-wrap items-center gap-3 border-b border-[#DCE6EF] pb-4">
+        <Pop delay={0.05} className="mt-8 flex flex-wrap items-center gap-3 border-b border-[#DCE6EF] pb-4">
           <button
             onClick={() => setActiveTab("events")}
             className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition ${
@@ -958,14 +959,14 @@ export default function AdminDashboard() {
                 <span>Manage Administrators</span>
               </button>
             )}
-        </div>
+        </Pop>
 
         {/* =========================================
             TAB 1: UPCOMING EVENTS
         ========================================== */}
         {activeTab === "events" && (
           <section className="mt-8 space-y-5">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <Pop className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-bold text-[#10243A]">Manage Events</h2>
                 <p className="mt-1 text-sm text-slate-500">Search, filter and manage your event hierarchy.</p>
@@ -977,9 +978,9 @@ export default function AdminDashboard() {
               >
                 <Plus size={17} /> Create Event
               </button>
-            </div>
+            </Pop>
 
-            <div className="rounded-2xl border border-[#DCE6EF] bg-white p-4 shadow-sm">
+            <Pop className="rounded-2xl border border-[#DCE6EF] bg-white p-4 shadow-sm">
               <div className="flex flex-col gap-3 md:flex-row">
                 <div className="relative min-w-0 flex-1">
                   <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -1018,18 +1019,22 @@ export default function AdminDashboard() {
                   <button type="button" onClick={() => { setEventSearch(""); setEventCategoryFilter("ALL"); setEventSort("DATE_DESC"); setEventPage(1); }} className="font-semibold text-[#00629B] hover:underline">Clear filters</button>
                 )}
               </div>
-            </div>
+            </Pop>
 
             {paginatedRootEvents.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-[#DCE6EF] bg-white px-6 py-14 text-center">
+              <Pop className="rounded-2xl border border-dashed border-[#DCE6EF] bg-white px-6 py-14 text-center">
                 <CalendarDays className="mx-auto text-slate-400" size={36} />
                 <p className="mt-3 text-sm font-semibold text-[#10243A]">No matching events</p>
                 <p className="mt-1 text-xs text-slate-500">Try another search or create a new event.</p>
-              </div>
+              </Pop>
             ) : (
-              <div className="space-y-3">
-                {paginatedRootEvents.map((event) => renderEventNode(event))}
-              </div>
+              <PopGroup className="space-y-3">
+                {paginatedRootEvents.map((event) => (
+                  <PopItem key={event.id}>
+                    {renderEventNode(event)}
+                  </PopItem>
+                ))}
+              </PopGroup>
             )}
 
             {totalEventPages > 1 && (
@@ -1413,11 +1418,11 @@ export default function AdminDashboard() {
                   <p className="text-xs text-slate-500">Add a new leader using the form on the left or reset to default.</p>
                 </div>
               ) : (
-                <div className="grid gap-4 sm:grid-cols-2">
+                <PopGroup className="grid gap-4 sm:grid-cols-2">
                   {executiveCommittee.map((member) => (
+                    <PopItem key={member.id}>
                     <div
-                      key={member.id}
-                      className="group relative flex flex-col justify-between rounded-2xl border border-[#DCE6EF] bg-white p-5 backdrop-blur-xl transition hover:border-[#A8D8EF] hover:bg-white"
+                      className="group relative flex h-full flex-col justify-between rounded-2xl border border-[#DCE6EF] bg-white p-5 backdrop-blur-xl transition hover:border-[#A8D8EF] hover:bg-white"
                     >
                       <div>
                         {/* Member Header */}
@@ -1484,8 +1489,9 @@ export default function AdminDashboard() {
                         </div>
                       )}
                     </div>
+                    </PopItem>
                   ))}
-                </div>
+                </PopGroup>
               )}
             </div>
           </div>

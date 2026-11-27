@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -29,6 +30,8 @@ import {
   Building2,
 } from "lucide-react";
 import { departmentsInfo, societies } from "../data/societiesData";
+import Pop, { PopGroup, PopItem } from "../components/Pop";
+import TiltCard from "../components/TiltCard";
 
 // Map icon string names to actual Lucide components
 const iconMap = {
@@ -89,7 +92,8 @@ export default function DepartmentSocieties({ deptCode }) {
         {/* =========================================
             BREADCRUMB & BACK BUTTON
         ========================================== */}
-        <div className="mb-8 flex items-center justify-between">
+        <Pop className="mb-8 flex items-center justify-between">
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
           <Link
             href="/societies"
             className="group inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs backdrop-blur-sm transition-all hover:border-[#00629B]/40 hover:bg-[#E6F4FB] hover:text-[#00629B]"
@@ -97,6 +101,7 @@ export default function DepartmentSocieties({ deptCode }) {
             <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-1" />
             <span>Back to All Departments</span>
           </Link>
+          </motion.div>
 
           <div className="hidden items-center gap-2 text-xs font-medium text-slate-400 sm:flex">
             <Link href="/societies" className="hover:text-[#00629B] transition-colors">
@@ -105,12 +110,12 @@ export default function DepartmentSocieties({ deptCode }) {
             <ChevronRight size={13} />
             <span className="font-semibold text-[#00629B]">{department.code}</span>
           </div>
-        </div>
+        </Pop>
 
         {/* =========================================
             DEPARTMENT HEADER BANNER
         ========================================== */}
-        <div className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_12px_40px_rgba(16,36,58,0.07)]">
+        <Pop className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_12px_40px_rgba(16,36,58,0.07)]">
           <div className="h-1.5 w-full bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#F26522]" />
 
           <div className="bg-gradient-to-r from-slate-50/90 via-white to-sky-50/50 p-6 sm:p-10">
@@ -142,13 +147,13 @@ export default function DepartmentSocieties({ deptCode }) {
               </div>
             </div>
           </div>
-        </div>
+        </Pop>
 
         {/* =========================================
             SOCIETY CHAPTERS LIST
         ========================================== */}
         <div className="mt-10">
-          <div className="mb-6 flex items-center justify-between">
+          <Pop className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-[#10243A]">
                 Active IEEE Chapters in {department.code}
@@ -160,17 +165,17 @@ export default function DepartmentSocieties({ deptCode }) {
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
               {deptSocieties.length} Total
             </span>
-          </div>
+          </Pop>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <PopGroup className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
             {deptSocieties.map((society, idx) => {
               const IconComponent = iconMap[society.icon] || Building2;
               return (
+                <PopItem key={society.name}>
+                <TiltCard className="h-full rounded-2xl">
                 <Link
-                  key={society.name}
                   href={`/societies/${normalizedCode.toLowerCase()}/${society.slug}`}
-                  className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs animate-card-enter transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-lg hover:shadow-[#00629B]/10"
-                  style={{ "--card-index": idx }}
+                  className="flex h-full flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-[border-color] duration-300 group-hover:border-[#00629B]/40"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-3">
@@ -219,13 +224,16 @@ export default function DepartmentSocieties({ deptCode }) {
                     <ChevronRight size={14} />
                   </div>
                 </Link>
+                </TiltCard>
+                </PopItem>
               );
             })}
-          </div>
+          </PopGroup>
         </div>
 
         {/* Back to All Societies */}
-        <div className="mt-14 flex items-center justify-center">
+        <Pop className="mt-14 flex items-center justify-center">
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
           <Link
             href="/societies"
             className="group inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-[#00629B]/40 hover:bg-[#E6F4FB] hover:text-[#00629B]"
@@ -233,7 +241,8 @@ export default function DepartmentSocieties({ deptCode }) {
             <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
             <span>Back to All Societies</span>
           </Link>
-        </div>
+          </motion.div>
+        </Pop>
       </div>
     </section>
   );

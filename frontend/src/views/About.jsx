@@ -1,6 +1,9 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
+import Pop, { PopGroup, PopItem } from "../components/Pop";
+import CountUp from "../components/CountUp";
 import {
   ArrowRight,
   Users,
@@ -19,7 +22,6 @@ import {
   Clock,
   CheckCircle2,
 } from "lucide-react";
-import { useScrollReveal } from "../hooks/useScrollReveal";
 const statistics = [
   {
     value: "1000+",
@@ -217,12 +219,9 @@ const competitions = [
 ];
 
 function About() {
-  const revealRef = useScrollReveal();
-
   return (
     <section
       id="about"
-      ref={revealRef}
       className="relative min-h-screen overflow-hidden bg-transparent pb-24 pt-28 sm:pb-28 sm:pt-32"
     >
       {/* Background radial accents */}
@@ -241,16 +240,19 @@ function About() {
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         {/* SECTION 1: HERO / MAIN INTRODUCTION */}
-        <div className="reveal grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           {/* Left Column */}
           <div>
+            <Pop delay={0}>
             <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-[#10243A] sm:text-5xl lg:text-5xl">
               More than just a membership:{" "}
               <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
                 your gateway to endless possibilities.
               </span>
             </h1>
+            </Pop>
 
+            <Pop delay={0.1}>
             <p className="mt-6 max-w-xl text-lg leading-8 text-[#526477]">
               The <strong className="text-[#10243A] font-semibold">IEEE Student Branch at RNSIT</strong> was
               established in <strong>2010</strong>. Over a remarkable <strong>16-year journey</strong>, it has
@@ -268,8 +270,11 @@ function About() {
               advisors, a unique <strong>membership reimbursement initiative</strong>, and a thriving
               student volunteer community across <strong>17+ technical societies</strong>.
             </p>
+            </Pop>
 
+            <Pop delay={0.2}>
             <div className="mt-8 flex flex-wrap items-center gap-4">
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
               <Link
                 href="/societies"
                 className="btn-animate group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-6 py-3 font-semibold text-white shadow-md shadow-[#00629B]/20 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/30"
@@ -280,14 +285,18 @@ function About() {
                   className="transition-transform duration-300 group-hover:translate-x-1"
                 />
               </Link>
+              </motion.div>
 
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
               <Link
                 href="/events"
                 className="btn-animate inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-[#10243A] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50"
               >
                 <span>Browse Events</span>
               </Link>
+              </motion.div>
             </div>
+            </Pop>
           </div>
 
           {/* Right Column: Mission Card */}
@@ -299,7 +308,7 @@ function About() {
                 className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#00629B] via-[#29A9E0] to-[#F26522]"
               />
 
-              <div className="mb-6">
+              <Pop className="mb-6">
                 <h3 className="mt-3 text-2xl font-bold text-[#10243A] sm:text-3xl">
                   Advancing Technology for Humanity
                 </h3>
@@ -310,11 +319,12 @@ function About() {
                   <strong className="text-[#10243A]">190+ countries</strong>. At RNSIT, our branch provides
                   unparalleled institutional backing to ensure every student excels.
                 </p>
-              </div>
+              </Pop>
 
               {/* Sub-cards */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-white via-sky-50/40 to-blue-50/30 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/[0.08]">
+              <PopGroup className="grid gap-4 sm:grid-cols-2">
+                <PopItem>
+                <div className="h-full rounded-2xl border border-blue-100 bg-gradient-to-br from-white via-sky-50/40 to-blue-50/30 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/[0.08]">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/25">
                     <ShieldCheck size={22} />
                   </div>
@@ -325,8 +335,10 @@ function About() {
                     Institutional support providing student membership reimbursement to promote technical excellence.
                   </p>
                 </div>
+                </PopItem>
 
-                <div className="rounded-2xl border border-orange-100 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-lg hover:shadow-orange-500/[0.08]">
+                <PopItem>
+                <div className="h-full rounded-2xl border border-orange-100 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-lg hover:shadow-orange-500/[0.08]">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/25">
                     <Users size={22} />
                   </div>
@@ -337,10 +349,11 @@ function About() {
                     Dedicated faculty advisors and experienced student volunteers mentoring next-generation innovators.
                   </p>
                 </div>
-              </div>
+                </PopItem>
+              </PopGroup>
 
               {/* Student membership inclusions */}
-              <div className="mt-6 overflow-hidden rounded-2xl border border-[#CFE3F2] bg-gradient-to-br from-[#F4FAFE] via-white to-[#FFF8F3] p-5 sm:p-6">
+              <Pop className="mt-6 overflow-hidden rounded-2xl border border-[#CFE3F2] bg-gradient-to-br from-[#F4FAFE] via-white to-[#FFF8F3] p-5 sm:p-6">
                 <div className="min-w-0">
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#00629B]">
                     Your student membership
@@ -356,7 +369,9 @@ function About() {
                       <Layers size={21} />
                     </div>
                     <div className="w-full min-w-0">
-                      <p className="text-2xl font-extrabold leading-none text-[#10243A]">152</p>
+                      <p className="text-2xl font-extrabold leading-none text-[#10243A]">
+                        <CountUp value={152} />
+                      </p>
                       <p className="mt-2 break-words text-sm font-medium leading-snug text-[#526477]">Technical Communities</p>
                     </div>
                   </div>
@@ -366,7 +381,9 @@ function About() {
                       <Network size={21} />
                     </div>
                     <div className="w-full min-w-0">
-                      <p className="text-2xl font-extrabold leading-none text-[#10243A]">7</p>
+                      <p className="text-2xl font-extrabold leading-none text-[#10243A]">
+                        <CountUp value={7} />
+                      </p>
                       <p className="mt-2 break-words text-sm font-medium leading-snug text-[#526477]">IEEE Councils</p>
                     </div>
                   </div>
@@ -381,20 +398,22 @@ function About() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Pop>
             </div>
           </div>
         </div>
 
         {/* SECTION 2: STATISTICS BANNER */}
-        <div className="reveal mt-16 grid grid-cols-2 gap-4 lg:mt-20 lg:grid-cols-4" style={{ "--reveal-delay": "80ms" }}>
+        <PopGroup className="mt-16 grid grid-cols-2 gap-4 lg:mt-20 lg:grid-cols-4">
           {statistics.map((stat) => {
             const Icon = stat.icon;
 
             return (
-              <div
-                key={stat.label}
-                className={`group relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-6 text-center shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_36px_rgba(16,36,58,0.1)] sm:p-7 ${stat.borderHover}`}
+              <PopItem key={stat.label}>
+              <motion.div
+                whileHover={{ y: -4, boxShadow: "0 18px 36px rgba(16,36,58,0.13)" }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className={`group relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-6 text-center shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-shadow duration-300 hover:shadow-[0_18px_36px_rgba(16,36,58,0.1)] sm:p-7 ${stat.borderHover}`}
               >
                 <div
                   className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${stat.accentHover}`}
@@ -407,7 +426,7 @@ function About() {
                 </div>
 
                 <p className="mt-5 text-3xl font-extrabold tracking-tight text-[#10243A] sm:text-4xl">
-                  {stat.value}
+                  <CountUp value={stat.value} />
                 </p>
 
                 <p
@@ -419,14 +438,15 @@ function About() {
                 <p className="mt-2 text-xs leading-5 text-[#647588]">
                   {stat.subtext}
                 </p>
-              </div>
+              </motion.div>
+              </PopItem>
             );
           })}
-        </div>
+        </PopGroup>
 
         {/* SECTION 3: THE IEEE JOURNEY CYCLE */}
-        <div className="reveal mt-24 sm:mt-32" style={{ "--reveal-delay": "50ms" }}>
-          <div className="mx-auto max-w-3xl text-center">
+        <div className="mt-24 sm:mt-32">
+          <Pop className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <span>Continuous Growth Framework</span>
             </div>
@@ -438,15 +458,17 @@ function About() {
             <p className="mt-4 text-lg italic text-[#526477]">
               &ldquo;A continuous journey of learning, connecting, leading, and growing together.&rdquo;
             </p>
-          </div>
+          </Pop>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <PopGroup className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {journeySteps.map((step) => {
               const Icon = step.icon;
               return (
-                <div
-                  key={step.title}
-                  className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-xl hover:shadow-[#00629B]/10"
+                <PopItem key={step.title}>
+                <motion.div
+                  whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(0,98,155,0.12)" }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-7 shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-[#00629B]/40"
                 >
                   <div className="absolute right-6 top-6 text-3xl font-black text-slate-200 transition-colors group-hover:text-blue-100">
                     {step.number}
@@ -471,16 +493,17 @@ function About() {
                       {step.description}
                     </p>
                   </div>
-                </div>
+                </motion.div>
+                </PopItem>
               );
             })}
-          </div>
+          </PopGroup>
 
         </div>
 
         {/* SECTION 4: HIERARCHY / SCOPE (From Campus to the World) */}
-        <div className="reveal mt-24 sm:mt-32" style={{ "--reveal-delay": "60ms" }}>
-          <div className="mx-auto max-w-3xl text-center">
+        <div className="mt-24 sm:mt-32">
+          <Pop className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <span>Institutional Scope</span>
             </div>
@@ -492,12 +515,12 @@ function About() {
             <p className="mt-4 text-base leading-7 text-[#526477]">
               Your journey starts in your classroom at RNSIT and can take you directly to the global stage.
             </p>
-          </div>
+          </Pop>
 
-          <div className="mt-12 space-y-4">
+          <PopGroup className="mt-12 space-y-4">
             {hierarchyLevels.map((item, idx) => (
+              <PopItem key={item.level}>
               <div
-                key={item.level}
                 className="group relative overflow-hidden rounded-2xl border border-[#DCE5EC] bg-white p-6 shadow-sm transition-all duration-300 hover:border-[#00629B]/40 hover:shadow-md sm:p-7"
               >
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -526,11 +549,12 @@ function About() {
                   </div>
                 </div>
               </div>
+              </PopItem>
             ))}
-          </div>
+          </PopGroup>
 
           {/* Inclusive Philosophy Box from Slide 6 */}
-          <div className="mt-8 rounded-3xl border border-blue-200 bg-gradient-to-br from-white via-sky-50/50 to-blue-50/30 p-8 shadow-sm">
+          <Pop className="mt-8 rounded-3xl border border-blue-200 bg-gradient-to-br from-white via-sky-50/50 to-blue-50/30 p-8 shadow-sm">
             <h4 className="text-xl font-bold text-[#10243A]">
               There is always a place for you in IEEE.
             </h4>
@@ -539,12 +563,12 @@ function About() {
               a researcher, or simply someone passionate to learn—IEEE welcomes your unique voice. Our student
               branch offers roles tailored to every passion.
             </p>
-          </div>
+          </Pop>
         </div>
 
         {/* SECTION 5: SCHOLARSHIPS, GRANTS & COMPETITIONS */}
-        <div className="reveal mt-24 sm:mt-32" style={{ "--reveal-delay": "60ms" }}>
-          <div className="mx-auto max-w-3xl text-center">
+        <div className="mt-24 sm:mt-32">
+          <Pop className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <span>Global Opportunities</span>
             </div>
@@ -557,12 +581,12 @@ function About() {
               IEEE members gain privileged access to global funding, research stipends, travel grants, and
               world-renowned collegiate competitions.
             </p>
-          </div>
+          </Pop>
 
           <div className="mt-12 grid gap-8 lg:grid-cols-2">
             {/* Scholarships & Grants */}
             <div className="rounded-3xl border border-[#DCE5EC] bg-white p-7 shadow-sm">
-              <div className="flex items-center gap-3">
+              <Pop className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/20">
                   <GraduationCap size={22} />
                 </div>
@@ -574,12 +598,12 @@ function About() {
                     Funding technical education & research
                   </p>
                 </div>
-              </div>
+              </Pop>
 
-              <div className="mt-6 space-y-4">
+              <PopGroup className="mt-6 space-y-4">
                 {scholarships.map((s) => (
+                  <PopItem key={s.title}>
                   <div
-                    key={s.title}
                     className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 transition-all duration-200 hover:border-blue-200 hover:bg-white"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
@@ -595,13 +619,14 @@ function About() {
                     </p>
                     <p className="mt-1 text-xs text-[#647588]">{s.note}</p>
                   </div>
+                  </PopItem>
                 ))}
-              </div>
+              </PopGroup>
             </div>
 
             {/* Competitions */}
             <div className="rounded-3xl border border-[#DCE5EC] bg-white p-7 shadow-sm">
-              <div className="flex items-center gap-3">
+              <Pop className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/20">
                   <Trophy size={22} />
                 </div>
@@ -613,12 +638,12 @@ function About() {
                     Showcase engineering acumen internationally
                   </p>
                 </div>
-              </div>
+              </Pop>
 
-              <div className="mt-6 space-y-4">
+              <PopGroup className="mt-6 space-y-4">
                 {competitions.map((c) => (
+                  <PopItem key={c.title}>
                   <div
-                    key={c.title}
                     className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 transition-all duration-200 hover:border-orange-200 hover:bg-white"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
@@ -633,15 +658,18 @@ function About() {
                       {c.desc}
                     </p>
                   </div>
+                  </PopItem>
                 ))}
 
                 {/* Additional Grants Note */}
+                <PopItem>
                 <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/50 p-4 text-xs text-[#526477]">
                   <strong className="text-[#10243A]">IEEE Foundation Grants:</strong> Includes Spoken
                   Language Processing Grants, Grainger PES Fund, Valentin Jordanov Radiation Instrumentation,
                   Raj Mittra Travel Grants, and Magnetics Society travel awards.
                 </div>
-              </div>
+                </PopItem>
+              </PopGroup>
             </div>
           </div>
         </div>
@@ -656,26 +684,29 @@ function About() {
 
             <div className="relative grid gap-8 lg:grid-cols-3 lg:items-center">
               <div className="lg:col-span-2">
-                <div className="inline-flex items-center gap-2 rounded-full border border-purple-300 bg-purple-100/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-purple-800">
-                  <span>Special Initiative</span>
-                </div>
+                <Pop>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-purple-300 bg-purple-100/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-purple-800">
+                    <span>Special Initiative</span>
+                  </div>
 
-                <h3 className="mt-4 text-3xl font-extrabold text-[#10243A] sm:text-4xl">
-                  IEEE Women in Engineering (WIE)
-                </h3>
+                  <h3 className="mt-4 text-3xl font-extrabold text-[#10243A] sm:text-4xl">
+                    IEEE Women in Engineering (WIE)
+                  </h3>
 
-                <p className="mt-4 text-base leading-7 text-[#526477]">
-                  IEEE WIE is one of the world&apos;s largest international communities dedicated to
-                  promoting women in engineering, technology, and STEM. It empowers members through dedicated
-                  scholarships, global mentorship, conference grants, and transformative leadership pathways.
-                </p>
+                  <p className="mt-4 text-base leading-7 text-[#526477]">
+                    IEEE WIE is one of the world&apos;s largest international communities dedicated to
+                    promoting women in engineering, technology, and STEM. It empowers members through dedicated
+                    scholarships, global mentorship, conference grants, and transformative leadership pathways.
+                  </p>
 
-                <blockquote className="mt-4 border-l-4 border-purple-500 pl-4 text-sm font-semibold italic text-purple-900">
-                  &ldquo;Learn. Lead. Inspire. | IEEE WIE empowers women to engineer a better tomorrow.&rdquo;
-                </blockquote>
+                  <blockquote className="mt-4 border-l-4 border-purple-500 pl-4 text-sm font-semibold italic text-purple-900">
+                    &ldquo;Learn. Lead. Inspire. | IEEE WIE empowers women to engineer a better tomorrow.&rdquo;
+                  </blockquote>
+                </Pop>
 
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-purple-200 bg-white p-4 shadow-sm">
+                <PopGroup className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <PopItem>
+                  <div className="h-full rounded-2xl border border-purple-200 bg-white p-4 shadow-sm">
                     <div className="flex items-center gap-2 font-bold text-purple-900">
                       <Award size={18} className="text-purple-600" />
                       <span>Quest Global CSR Scholarship</span>
@@ -685,8 +716,10 @@ function About() {
                       mentorship, IEEE learning resources, and placement support for eligible female engineering students.
                     </p>
                   </div>
+                  </PopItem>
 
-                  <div className="rounded-2xl border border-purple-200 bg-white p-4 shadow-sm">
+                  <PopItem>
+                  <div className="h-full rounded-2xl border border-purple-200 bg-white p-4 shadow-sm">
                     <div className="flex items-center gap-2 font-bold text-purple-900">
                       <GraduationCap size={18} className="text-purple-600" />
                       <span>Frances B. Hugle Scholarship</span>
@@ -696,11 +729,12 @@ function About() {
                       and leadership excellence.
                     </p>
                   </div>
-                </div>
+                  </PopItem>
+                </PopGroup>
               </div>
 
               {/* Right column perks list */}
-              <div className="rounded-2xl border border-purple-200 bg-white p-6 shadow-sm">
+              <Pop delay={0.1} className="rounded-2xl border border-purple-200 bg-white p-6 shadow-sm">
                 <h4 className="font-bold text-[#10243A]">More Ways WIE Empowers You</h4>
                 <ul className="mt-4 space-y-3 text-xs text-[#526477]">
                   <li className="flex items-start gap-2">
@@ -720,13 +754,13 @@ function About() {
                     <span><strong>International Exposure</strong> at WIE Leadership Summits worldwide</span>
                   </li>
                 </ul>
-              </div>
+              </Pop>
             </div>
           </div>
         </div>
 
         {/* SECTION 7: CLOSING PHILOSOPHY & INVITATION */}
-        <div className="reveal mt-24 sm:mt-32 text-center" style={{ "--reveal-delay": "80ms" }}>
+        <Pop className="mt-24 sm:mt-32 text-center">
           <div className="mx-auto max-w-3xl rounded-3xl border border-[#DCE5EC] bg-white p-8 shadow-lg sm:p-12">
             <h3 className="text-2xl font-extrabold tracking-tight text-[#10243A] sm:text-3xl">
               &ldquo;The more you put into IEEE, the more you&apos;ll get out of it.&rdquo;
@@ -761,7 +795,7 @@ function About() {
               </Link>
             </div>
           </div>
-        </div>
+        </Pop>
       </div>
     </section>
   );

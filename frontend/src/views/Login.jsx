@@ -11,6 +11,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
+import Pop from "../components/Pop";
 
 export default function Login({ initialError, initialEmail }) {
   const { isAuthenticated, signInWithGoogle, logout } = useAdmin();
@@ -63,7 +64,7 @@ export default function Login({ initialError, initialEmail }) {
       <div className="pointer-events-none absolute -left-32 top-1/4 h-96 w-96 rounded-full bg-[#E6F4FB] blur-3xl" />
       <div className="pointer-events-none absolute -right-32 bottom-1/4 h-96 w-96 rounded-full bg-[#E6F4FB] blur-3xl" />
 
-      <div className="relative w-full max-w-md">
+      <Pop className="relative w-full max-w-md">
         {isAuthenticated ? (
           <div className="rounded-3xl border border-[#DCE6EF] bg-white p-8 shadow-[0_18px_55px_rgba(16,36,58,0.10)] text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-[#A8D8EF] bg-[#E6F4FB] text-[#00629B]">
@@ -193,7 +194,7 @@ export default function Login({ initialError, initialEmail }) {
             </div>
           </div>
         )}
-      </div>
+      </Pop>
     </div>
   );
 }

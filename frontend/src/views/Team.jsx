@@ -1,9 +1,10 @@
 
 "use client";
 
+import { motion } from "framer-motion";
 import { ExternalLink, Mail, UserRound } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
-import { useScrollReveal } from "../hooks/useScrollReveal";
+import Pop, { PopGroup, PopItem } from "../components/Pop";
 
 function SectionHeading({ children }) {
   return (
@@ -109,12 +110,10 @@ export default function Team() {
     branchCounsellor,
     studentCommittees = [],
   } = useAdmin();
-  const revealRef = useScrollReveal();
 
   return (
     <section
       id="team"
-      ref={revealRef}
       className="relative min-h-screen overflow-hidden bg-transparent pt-28 pb-24 sm:pt-32 sm:pb-28"
     >
       {/* Background accents */}
@@ -123,29 +122,32 @@ export default function Team() {
       <div className="pointer-events-none absolute -right-40 bottom-40 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.18)_0%,rgba(249,115,22,0.1)_40%,transparent_70%)] blur-[75px]" />
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
-
         {/* Page heading */}
-        <header className="reveal mx-auto max-w-none text-center">
+        <header className="mx-auto max-w-none text-center">
+          <Pop delay={0}>
           <h2 className="text-3xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-4xl lg:whitespace-nowrap lg:text-[clamp(2.5rem,3.8vw,3.25rem)]">
             Meet the people behind
             <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
               {" "}IEEE RNSIT SB.
             </span>
           </h2>
+          </Pop>
 
+          <Pop delay={0.1}>
           <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-[#526477] sm:text-lg">
             A dynamic council of student leaders, engineers, and visionaries
             dedicated to cultivating innovation, technical excellence and
             collaborative community growth.
           </p>
+          </Pop>
         </header>
 
         {/* Branch Counsellor */}
         {branchCounsellor && (
-          <section className="reveal mt-16" style={{ "--reveal-delay": "80ms" }}>
-            <SectionHeading>BRANCH COUNSELLOR</SectionHeading>
+          <section className="mt-16">
+            <Pop><SectionHeading>BRANCH COUNSELLOR</SectionHeading></Pop>
 
-            <div className="flex justify-center">
+            <Pop delay={0.1} className="flex justify-center">
               <div className="w-full max-w-[230px]">
                 <PhotoProfileCard
                   name={branchCounsellor.name}
@@ -153,16 +155,16 @@ export default function Team() {
                   image={branchCounsellor.image}
                 />
               </div>
-            </div>
+            </Pop>
           </section>
         )}
 
         {/* Office Bearers */}
-        <section className="reveal mt-20" style={{ "--reveal-delay": "100ms" }}>
-          <SectionHeading>OFFICE BEARERS</SectionHeading>
+        <section className="mt-20">
+          <Pop><SectionHeading>OFFICE BEARERS</SectionHeading></Pop>
 
           {executiveCommittee.length > 0 ? (
-            <div
+            <PopGroup
               className="
                 -mx-6 flex flex-nowrap gap-4 overflow-x-auto
                 px-6 pb-5
@@ -174,7 +176,7 @@ export default function Team() {
               "
             >
               {executiveCommittee.map((member) => (
-                <div
+                <PopItem
                   key={member.id || member.role || member.name}
                   className="
                     w-[190px] shrink-0 snap-start
@@ -184,6 +186,7 @@ export default function Team() {
                     sm:shrink
                   "
                 >
+                  <motion.div whileHover={{ y: -4, boxShadow: "0 18px 38px rgba(0,98,155,0.18)" }} transition={{ duration: 0.3, ease: "easeOut" }} className="rounded-[24px]">
                   <PhotoProfileCard
                     name={member.name}
                     role={member.role}
@@ -192,19 +195,22 @@ export default function Team() {
                     email={member.email}
                     size="office"
                   />
-                </div>
+                  </motion.div>
+                </PopItem>
               ))}
-            </div>
+            </PopGroup>
           ) : (
+            <Pop>
             <p className="rounded-2xl border border-dashed border-[#DCE5EC] bg-white/80 p-8 text-center text-sm text-slate-500">
               Office Bearers will be announced soon.
             </p>
+            </Pop>
           )}
         </section>
 
         {/* Student Activities Committee */}
-        <section className="reveal mt-24" style={{ "--reveal-delay": "80ms" }}>
-          <SectionHeading>STUDENT ACTIVITIES COMMITTEE (SAC)</SectionHeading>
+        <section className="mt-24">
+          <Pop><SectionHeading>STUDENT ACTIVITIES COMMITTEE (SAC)</SectionHeading></Pop>
 
           <div className="space-y-14">
             {studentCommittees.map((committee) => (
@@ -213,17 +219,17 @@ export default function Team() {
                   className="border-b border-[#DCE5EC]/90 pb-12 last:border-b-0"
                 >
                   {/* Committee heading */}
-                  <div className="mb-7 text-center">
+                  <Pop className="mb-7 text-center">
                     <h4 className="text-lg font-bold tracking-wide text-[#10243A] sm:text-xl">
                       {committee.name}
                     </h4>
 
                     <div className="mx-auto mt-3 h-1 w-12 rounded-full bg-[#00629B]/70" />
-                  </div>
+                  </Pop>
 
                   {/* Committee members */}
                   {(committee.members || []).length > 0 ? (
-                    <div
+                    <PopGroup
                       className="
                         -mx-6 flex flex-nowrap gap-4 overflow-x-auto
                         px-6 pb-5
@@ -235,7 +241,7 @@ export default function Team() {
                       "
                     >
                       {committee.members.map((member) => (
-                        <div
+                        <PopItem
                           key={member.id || member.name}
                           className="
                             w-[145px] shrink-0 snap-start
@@ -246,14 +252,16 @@ export default function Team() {
                             sm:shrink
                           "
                         >
+                          <motion.div whileHover={{ y: -4, boxShadow: "0 16px 32px rgba(0,98,155,0.16)" }} transition={{ duration: 0.3, ease: "easeOut" }} className="rounded-[24px]">
                           <PhotoProfileCard
                             name={member.name}
                             image={member.image}
                             size="sac"
                           />
-                        </div>
+                          </motion.div>
+                        </PopItem>
                       ))}
-                    </div>
+                    </PopGroup>
                   ) : (
                     <p className="text-center text-sm text-slate-400">
                       Members will be announced soon.

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
   Globe,
   BookOpen,
@@ -9,7 +10,7 @@ import {
   Layers,
   Zap,
 } from "lucide-react";
-import { useScrollReveal } from "../hooks/useScrollReveal";
+import Pop, { PopGroup, PopItem } from "../components/Pop";
 
 const IEEE_BENEFITS = [
   {
@@ -63,10 +64,8 @@ const IEEE_BENEFITS = [
 ];
 
 function Join() {
-  const revealRef = useScrollReveal();
-
   return (
-    <section ref={revealRef} className="relative min-h-screen overflow-hidden bg-transparent px-6 pt-28 pb-20 sm:px-8 sm:pt-32 lg:px-12">
+    <section className="relative min-h-screen overflow-hidden bg-transparent px-6 pt-28 pb-20 sm:px-8 sm:pt-32 lg:px-12">
       {/* Background glowing decorations with delicate color combinations */}
       <div className="pointer-events-none absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.38)_0%,rgba(2,132,199,0.24)_40%,transparent_70%)] blur-[75px]" />
       <div className="pointer-events-none absolute -right-40 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px]" />
@@ -75,25 +74,29 @@ function Join() {
         {/* =========================
             HEADER
         ========================== */}
-        <div className="reveal mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-3xl text-center">
+          <Pop delay={0}>
           <h1 className="text-4xl font-bold tracking-tight text-[#10243A] sm:text-5xl lg:text-6xl">
             Join the IEEE{" "}
             <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
               Global Community
             </span>
           </h1>
+          </Pop>
 
+          <Pop delay={0.1}>
           <p className="mt-5 text-lg leading-8 text-[#526477]">
             Step into the world&apos;s largest technical professional organization. Gain access to
             IEEE Xplore, distinguished lecture series, flagship student hackathons, international
             scholarships, and career networks.
           </p>
+          </Pop>
         </div>
 
         {/* =========================
             OFFICIAL PORTALS ACTION CARD
         ========================== */}
-        <div className="reveal mt-12 overflow-hidden rounded-3xl border border-[#00629B]/25 bg-gradient-to-br from-[#10243A] via-[#0B3A60] to-[#00629B] p-6 text-white shadow-xl sm:p-10" style={{ "--reveal-delay": "80ms" }}>
+        <Pop delay={0.15} className="mt-12 overflow-hidden rounded-3xl border border-[#00629B]/25 bg-gradient-to-br from-[#10243A] via-[#0B3A60] to-[#00629B] p-6 text-white shadow-xl sm:p-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur-md">
@@ -131,13 +134,13 @@ function Join() {
               </a>
             </div>
           </div>
-        </div>
+        </Pop>
 
         {/* =========================
             BENEFITS GRID
         ========================== */}
-        <div className="reveal mt-16" style={{ "--reveal-delay": "120ms" }}>
-          <div className="text-center">
+        <div className="mt-16">
+          <Pop className="text-center">
             <span className="text-xs font-bold uppercase tracking-wider text-[#00629B]">
               Member Privileges
             </span>
@@ -148,15 +151,17 @@ function Join() {
               From research papers to worldwide competitions and industry recognition, explore what
               IEEE membership offers you.
             </p>
-          </div>
+          </Pop>
 
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <PopGroup className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {IEEE_BENEFITS.map((benefit) => {
               const Icon = benefit.icon;
               return (
-                <div
-                  key={benefit.title}
-                  className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-lg hover:shadow-[#00629B]/10"
+                <PopItem key={benefit.title}>
+                <motion.div
+                  whileHover={{ y: -4, boxShadow: "0 18px 36px rgba(0,98,155,0.11)" }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="group flex h-full flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-[border-color] duration-300 hover:border-[#00629B]/40"
                 >
                   <div>
                     <div className="flex items-center justify-between">
@@ -183,16 +188,17 @@ function Join() {
                       Official IEEE Benefit
                     </span>
                   </div>
-                </div>
+                </motion.div>
+                </PopItem>
               );
             })}
-          </div>
+          </PopGroup>
         </div>
 
         {/* =========================
             QUESTIONS / CONTACT FOOTER
         ========================== */}
-        <div className="mt-16 text-center">
+        <Pop className="mt-16 text-center">
           <p className="text-sm text-[#526477]">
             Have questions about joining or getting involved with IEEE SB RNSIT?{" "}
             <a
@@ -204,7 +210,7 @@ function Join() {
               Email us at ieeestudentbranchrnsit@gmail.com
             </a>
           </p>
-        </div>
+        </Pop>
       </div>
     </section>
   );

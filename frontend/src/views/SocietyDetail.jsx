@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -31,6 +32,8 @@ import {
   Building2,
 } from "lucide-react";
 import { departmentsInfo, societies } from "../data/societiesData";
+import Pop, { PopGroup, PopItem } from "../components/Pop";
+import TiltCard from "../components/TiltCard";
 
 // Map icon string names to actual Lucide components
 const iconMap = {
@@ -101,7 +104,8 @@ export default function SocietyDetail({ deptCode, societySlug }) {
         {/* =========================================
             BREADCRUMB & BACK BUTTON
         ========================================== */}
-        <div className="mb-8 flex items-center justify-between">
+        <Pop className="mb-8 flex items-center justify-between">
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
           <Link
             href={`/societies/${normalizedDept.toLowerCase()}`}
             className="group inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs backdrop-blur-sm transition-all hover:border-[#00629B]/40 hover:bg-[#E6F4FB] hover:text-[#00629B]"
@@ -109,6 +113,7 @@ export default function SocietyDetail({ deptCode, societySlug }) {
             <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-1" />
             <span>Back to {department.code} Societies</span>
           </Link>
+          </motion.div>
 
           <div className="hidden items-center gap-2 text-xs font-medium text-slate-400 sm:flex">
             <Link href="/societies" className="hover:text-[#00629B] transition-colors">
@@ -124,12 +129,12 @@ export default function SocietyDetail({ deptCode, societySlug }) {
             <ChevronRight size={13} />
             <span className="font-semibold text-[#00629B]">{society.slug.toUpperCase()}</span>
           </div>
-        </div>
+        </Pop>
 
         {/* =========================================
             SOCIETY HERO BANNER
         ========================================== */}
-        <div className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_12px_40px_rgba(16,36,58,0.07)]">
+        <Pop className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_12px_40px_rgba(16,36,58,0.07)]">
           <div className="h-1.5 w-full bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#F26522]" />
 
           <div className="bg-gradient-to-r from-slate-50/90 via-white to-sky-50/50 p-6 sm:p-10">
@@ -174,14 +179,15 @@ export default function SocietyDetail({ deptCode, societySlug }) {
               </div>
             </div>
           </div>
-        </div>
+        </Pop>
 
         {/* =========================================
             ABOUT SECTION
         ========================================== */}
-        <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <PopGroup className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* About Card — takes 2 columns */}
-          <div className="lg:col-span-2 overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs animate-card-enter" style={{ "--card-index": 0 }}>
+          <PopItem className="lg:col-span-2">
+          <div className="h-full overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
             <div className="flex items-center gap-3 mb-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
                 <BookOpen size={20} />
@@ -192,9 +198,11 @@ export default function SocietyDetail({ deptCode, societySlug }) {
               {society.about}
             </p>
           </div>
+          </PopItem>
 
           {/* Faculty Advisor Card */}
-          <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs animate-card-enter" style={{ "--card-index": 1 }}>
+          <PopItem>
+          <div className="h-full overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs">
             <div className="flex items-center gap-3 mb-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
                 <GraduationCap size={20} />
@@ -216,13 +224,14 @@ export default function SocietyDetail({ deptCode, societySlug }) {
               </div>
             </div>
           </div>
-        </div>
+          </PopItem>
+        </PopGroup>
 
         {/* =========================================
             FOCUS AREAS
         ========================================== */}
         {society.focusAreas && society.focusAreas.length > 0 && (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs animate-card-enter" style={{ "--card-index": 2 }}>
+          <Pop className="mt-6 overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
             <div className="flex items-center gap-3 mb-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 text-[#F26522]">
                 <Target size={20} />
@@ -240,7 +249,7 @@ export default function SocietyDetail({ deptCode, societySlug }) {
                 </span>
               ))}
             </div>
-          </div>
+          </Pop>
         )}
 
         {/* =========================================
@@ -248,23 +257,23 @@ export default function SocietyDetail({ deptCode, societySlug }) {
         ========================================== */}
         {siblingsSocieties.length > 0 && (
           <div className="mt-10">
-            <div className="flex items-center gap-3 mb-5">
+            <Pop className="flex items-center gap-3 mb-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
                 <Users size={20} />
               </div>
               <h2 className="text-xl font-bold text-[#10243A]">
                 Other Societies in {department.code}
               </h2>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {siblingsSocieties.map((s, sIdx) => {
+            </Pop>
+            <PopGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {siblingsSocieties.map((s) => {
                 const SiblingIcon = iconMap[s.icon] || Building2;
                 return (
+                  <PopItem key={s.slug}>
+                  <TiltCard className="h-full rounded-2xl">
                   <Link
-                    key={s.slug}
                     href={`/societies/${normalizedDept.toLowerCase()}/${s.slug}`}
-                    className="group rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs animate-card-enter transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-lg hover:shadow-[#00629B]/10"
-                    style={{ "--card-index": sIdx }}
+                    className="block h-full rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition-[border-color] duration-300 group-hover:border-[#00629B]/40"
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <div className="society-icon-wrap flex h-9 w-9 items-center justify-center rounded-lg border border-sky-200/70 bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
@@ -288,16 +297,19 @@ export default function SocietyDetail({ deptCode, societySlug }) {
                       <span className="font-semibold">Advisor:</span> {s.advisor}
                     </p>
                   </Link>
+                  </TiltCard>
+                  </PopItem>
                 );
               })}
-            </div>
+            </PopGroup>
           </div>
         )}
 
         {/* =========================================
             BACK NAV
         ========================================== */}
-        <div className="mt-14 flex items-center justify-center gap-4">
+        <Pop className="mt-14 flex items-center justify-center gap-4">
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
           <Link
             href={`/societies/${normalizedDept.toLowerCase()}`}
             className="group inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-[#00629B]/40 hover:bg-[#E6F4FB] hover:text-[#00629B]"
@@ -305,7 +317,8 @@ export default function SocietyDetail({ deptCode, societySlug }) {
             <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
             <span>Back to {department.code} Societies</span>
           </Link>
-        </div>
+          </motion.div>
+        </Pop>
       </div>
     </section>
   );

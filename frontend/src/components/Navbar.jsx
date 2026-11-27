@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion, useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
@@ -16,14 +17,47 @@ const navLinks = [
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { scrollY } = useScroll();
+  const shouldReduce = useReducedMotion();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    setScrolled(latest > 20);
+
+    if (menuOpen) {
+      setHidden(false);
+      return;
+    }
+
+    if (latest > previous && latest > 80) {
+      setHidden(true);
+    } else if (latest < previous) {
+      setHidden(false);
+    }
+  });
 
   useEffect(() => {
     setMenuOpen(false);
+    setHidden(false);
   }, [pathname]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200 bg-white shadow-sm">
+    <motion.header
+      animate={
+        shouldReduce
+          ? { opacity: hidden ? 0 : 1 }
+          : { y: hidden ? "-100%" : 0, opacity: hidden ? 0 : 1 }
+      }
+      transition={{ duration: 0.25, ease: "easeInOut" }}
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors duration-300 ${
+        scrolled
+          ? "border-slate-200/80 bg-white/85 backdrop-blur-md shadow-md"
+          : "border-slate-200 bg-white shadow-sm"
+      }`}
+    >
       {/* Top accent */}
       <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#00629B]/40 via-[#29A9E0]/35 to-[#F26522]/30" />
 
@@ -134,6 +168,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-    </header>
+    </motion.header>
   );
 }

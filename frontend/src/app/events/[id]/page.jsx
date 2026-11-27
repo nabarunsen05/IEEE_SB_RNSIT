@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -11,6 +12,7 @@ import {
 import { useAdmin } from "../../../context/AdminContext";
 import { supabase } from "../../../lib/supabase";
 import EventRegistrationForm from "../../../components/events/EventRegistrationForm";
+import Pop, { PopGroup, PopItem } from "../../../components/Pop";
 
 function getChildren(events, parentId) {
   if (!Array.isArray(events) || !parentId) return [];
@@ -28,21 +30,38 @@ function EventGallery({ event, onOpen }) {
   if (!photos.length) return null;
   return (
     <section className="mt-10">
-      <div className="mb-4 flex items-end justify-between gap-4">
+      <Pop className="mb-4 flex items-end justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#00629B]">Memories</p>
           <h2 className="mt-1 text-2xl font-extrabold text-[#10243A]">Event Gallery</h2>
         </div>
-        <span className="rounded-full bg-[#E6F4FB] px-3 py-1.5 text-xs font-semibold text-[#00629B]">{photos.length} photo{photos.length === 1 ? "" : "s"}</span>
-      </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <span className="rounded-full bg-[#E6F4FB] px-3 py-1.5 text-xs font-semibold text-[#00629B]">
+          {photos.length} photo{photos.length === 1 ? "" : "s"}
+        </span>
+      </Pop>
+      <PopGroup className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {photos.map((photo, index) => (
-          <button key={`${photo}-${index}`} type="button" onClick={() => onOpen(event, index)} className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-2xl bg-slate-100 text-left">
-            <img src={photo} alt={`${event.title} gallery image ${index + 1}`} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />
-            <span className="absolute inset-0 flex items-center justify-center bg-[#10243A]/0 text-white transition group-hover:bg-[#10243A]/25"><Camera className="opacity-0 drop-shadow transition group-hover:opacity-100" size={24} /></span>
-          </button>
+          <PopItem key={`${photo}-${index}`}>
+          <motion.button
+            whileHover={{ y: -4, boxShadow: "0 14px 28px rgba(16,36,58,0.14)" }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            type="button"
+            onClick={() => onOpen(event, index)}
+            className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-slate-100 text-left cursor-pointer"
+          >
+            <img
+              src={photo}
+              alt={`${event.title} gallery image ${index + 1}`}
+              loading="lazy"
+              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            />
+            <span className="absolute inset-0 flex items-center justify-center bg-[#10243A]/0 text-white transition group-hover:bg-[#10243A]/25">
+              <Camera className="opacity-0 drop-shadow transition group-hover:opacity-100" size={24} />
+            </span>
+          </motion.button>
+          </PopItem>
         ))}
-      </div>
+      </PopGroup>
     </section>
   );
 }
@@ -226,7 +245,14 @@ export default function EventDetailsPage() {
   return (
     <main className="min-h-screen bg-[#F5F9FC] pb-20 pt-24 sm:pt-28">
       <div className="mx-auto max-w-5xl px-5 sm:px-8">
-        <Link href="/events" className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[#526477] transition hover:text-[#00629B]"><ArrowLeft size={17} /> Back to all events</Link>
+        <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
+        <Link
+          href="/events"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[#526477] transition hover:text-[#00629B]"
+        >
+          <ArrowLeft size={17} /> Back to all events
+        </Link>
+        </motion.div>
         <article className="overflow-hidden rounded-[28px] border border-[#DCE5EC] bg-white shadow-[0_18px_55px_rgba(16,36,58,0.09)]">
           {cover ? (
             <div className="relative h-64 bg-[#10243A] sm:h-[390px]">
@@ -237,7 +263,9 @@ export default function EventDetailsPage() {
                   <span className="rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur">{event.category || "Event"}</span>
                   <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${isCompleted ? "bg-slate-200/90 text-slate-700" : "bg-emerald-300/90 text-emerald-900"}`}>{isCompleted ? "Completed" : "Upcoming"}</span>
                 </div>
+                <Pop delay={0}>
                 <h1 className="max-w-3xl text-3xl font-extrabold leading-tight sm:text-4xl">{event.title}</h1>
+                </Pop>
               </div>
             </div>
           ) : (
@@ -246,35 +274,118 @@ export default function EventDetailsPage() {
                 <span className="rounded-full border border-white/30 bg-white/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">{event.category || "Event"}</span>
                 <span className="rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider">{isCompleted ? "Completed" : "Upcoming"}</span>
               </div>
+              <Pop delay={0}>
               <h1 className="max-w-3xl text-3xl font-extrabold leading-tight sm:text-4xl">{event.title}</h1>
+              </Pop>
             </div>
           )}
 
           <div className="p-6 sm:p-9">
             {!isCompleted && (
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl bg-[#F4F8FB] p-4"><CalendarDays size={18} className="text-[#00629B]" /><p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#8190A0]">Date</p><p className="mt-1 text-sm font-semibold text-[#10243A]">{getDateRangeLabel(event.date)} {event.month} {event.year}</p></div>
-                <div className="rounded-2xl bg-[#F4F8FB] p-4"><Clock size={18} className="text-[#00629B]" /><p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#8190A0]">Time</p><p className="mt-1 text-sm font-semibold text-[#10243A]">{event.time || "To be announced"}</p></div>
-                <div className="rounded-2xl bg-[#F4F8FB] p-4"><MapPin size={18} className="text-[#00629B]" /><p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#8190A0]">Venue</p><p className="mt-1 text-sm font-semibold text-[#10243A]">{event.venue || "To be announced"}</p></div>
-              </div>
+              <PopGroup className="grid gap-3 sm:grid-cols-3">
+                <PopItem>
+                <motion.div
+                  whileHover={{ y: -4, boxShadow: "0 12px 24px rgba(0,98,155,0.08)" }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="h-full rounded-2xl bg-[#F4F8FB] p-4"
+                >
+                  <CalendarDays size={18} className="text-[#00629B]" />
+                  <p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#8190A0]">Date</p>
+                  <p className="mt-1 text-sm font-semibold text-[#10243A]">
+                    {getDateRangeLabel(event.date)} {event.month} {event.year}
+                  </p>
+                </motion.div>
+                </PopItem>
+                <PopItem>
+                <motion.div
+                  whileHover={{ y: -4, boxShadow: "0 12px 24px rgba(0,98,155,0.08)" }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="h-full rounded-2xl bg-[#F4F8FB] p-4"
+                >
+                  <Clock size={18} className="text-[#00629B]" />
+                  <p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#8190A0]">Time</p>
+                  <p className="mt-1 text-sm font-semibold text-[#10243A]">{event.time || "To be announced"}</p>
+                </motion.div>
+                </PopItem>
+                <PopItem>
+                <motion.div
+                  whileHover={{ y: -4, boxShadow: "0 12px 24px rgba(0,98,155,0.08)" }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="h-full rounded-2xl bg-[#F4F8FB] p-4"
+                >
+                  <MapPin size={18} className="text-[#00629B]" />
+                  <p className="mt-3 text-[10px] font-bold uppercase tracking-wider text-[#8190A0]">Venue</p>
+                  <p className="mt-1 text-sm font-semibold text-[#10243A]">{event.venue || "To be announced"}</p>
+                </motion.div>
+                </PopItem>
+              </PopGroup>
             )}
 
-            {event.description && <section className="mt-9"><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#00629B]">About the event</p><p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-[#526477]">{event.description}</p></section>}
+            {event.description && (
+              <Pop>
+              <section className="mt-9">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#00629B]">About the event</p>
+                <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-[#526477]">{event.description}</p>
+              </section>
+              </Pop>
+            )}
 
-            {isCompleted && event.recap && <section className="mt-8 rounded-2xl border border-[#DCE5EC] bg-[#F8FBFD] p-5 sm:p-6"><div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[#00629B]"><CheckCircle2 size={16} /> Event recap</div><p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#526477]">{event.recap}</p></section>}
+            {isCompleted && event.recap && (
+              <Pop>
+              <section className="mt-8 rounded-2xl border border-[#DCE5EC] bg-[#F8FBFD] p-5 sm:p-6">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[#00629B]">
+                  <CheckCircle2 size={16} /> Event recap
+                </div>
+                <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#526477]">{event.recap}</p>
+              </section>
+              </Pop>
+            )}
 
             {!isCompleted && event.registration_enabled && (
+              <Pop>
               <section className="mt-9 flex flex-col gap-3 rounded-2xl border border-[#B8DCEC] bg-[#F3FAFE] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-                <div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#00629B]">Registration</p><h2 className="mt-1 text-lg font-extrabold text-[#10243A]">Be part of {event.title}</h2><p className="mt-1 text-sm text-[#647588]">{event.registration_type === "team" ? `Team size: ${event.min_team_size}–${event.max_team_size}, including the team leader.` : "Individual registration is available."}</p></div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#00629B]">Registration</p>
+                  <h2 className="mt-1 text-lg font-extrabold text-[#10243A]">Be part of {event.title}</h2>
+                  <p className="mt-1 text-sm text-[#647588]">{event.registration_type === "team" ? `Team size: ${event.min_team_size}–${event.max_team_size}, including the team leader.` : "Individual registration is available."}</p>
+                </div>
                 <button type="button" onClick={() => setIsRegistrationOpen(true)} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#00629B] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#004F7D]">Register for Event <ArrowRight size={17} /></button>
               </section>
+              </Pop>
+            )}
+
+            {!isCompleted && !event.registration_enabled && event.registration_url && (
+              <Pop>
+              <motion.a
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                href={event.registration_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#00629B] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#004F7D]"
+              >
+                Register for Event <ArrowRight size={17} />
+              </motion.a>
+              </Pop>
             )}
 
             <EventGallery event={event} onOpen={openGallery} />
             {children.length > 0 && (
               <section className="mt-12">
-                <div className="mb-5"><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#00629B]">Event structure</p><h2 className="mt-1 text-2xl font-extrabold text-[#10243A]">Activities & Competitions</h2><p className="mt-2 text-sm leading-6 text-[#647588]">Explore the activities and competitions conducted as part of this event.</p></div>
-                <div className="space-y-4">{children.map((child) => <NestedEvent key={child.id} event={child} events={allEvents} onOpenGallery={openGallery} />)}</div>
+                <Pop className="mb-5">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#00629B]">Event structure</p>
+                  <h2 className="mt-1 text-2xl font-extrabold text-[#10243A]">Activities & Competitions</h2>
+                  <p className="mt-2 text-sm leading-6 text-[#647588]">
+                    Explore the activities and competitions conducted as part of this event.
+                  </p>
+                </Pop>
+                <PopGroup className="space-y-4">
+                  {children.map((child) => (
+                    <PopItem key={child.id}>
+                      <NestedEvent key={child.id} event={child} events={allEvents} onOpenGallery={openGallery} />
+                    </PopItem>
+                  ))}
+                </PopGroup>
               </section>
             )}
           </div>

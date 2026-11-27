@@ -1,82 +1,95 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { ArrowRight, Globe, Award, Zap, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import Parallax from "../components/Parallax";
+import Pop, { PopGroup, PopItem } from "../components/Pop";
 
 function Hero() {
   return (
     <section id="home" className="relative min-h-screen w-full overflow-hidden bg-transparent pt-24">
       {/* Ambient multi-color atmosphere on clean light canvas */}
       <div className="hero-atmosphere" aria-hidden="true">
-        <div className="hero-glow-blob hero-glow-blob--blue" />
-        <div className="hero-glow-blob hero-glow-blob--cyan" />
-        <div className="hero-glow-blob hero-glow-blob--warm" />
-        <div className="hero-orb hero-orb--primary" />
-        <div className="hero-orb hero-orb--secondary" />
+        <Parallax speed={0.3} className="pointer-events-none absolute inset-0">
+          <div className="hero-glow-blob hero-glow-blob--blue" />
+          <div className="hero-glow-blob hero-glow-blob--cyan" />
+          <div className="hero-glow-blob hero-glow-blob--warm" />
+          <div className="hero-orb hero-orb--primary" />
+          <div className="hero-orb hero-orb--secondary" />
+        </Parallax>
         <div className="hero-grid" />
       </div>
 
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-96px)] w-full max-w-7xl items-center gap-12 px-6 py-16 sm:px-8 lg:grid-cols-2 lg:px-12">
+        {/* Left Column: Heading, intro & actions */}
         <div className="relative z-10">
-          {/* Hero headline — staggered fade-in on page load */}
-          <h1
-            className="max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-[#10243A] sm:text-6xl lg:text-7xl"
-          >
-            Innovate.<br />
-            <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">Connect.</span><br />
-            Create.
-          </h1>
+          <Pop delay={0}>
+            <h1 className="max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-[#10243A] sm:text-6xl lg:text-7xl">
+              Innovate.<br />
+              <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">Connect.</span><br />
+              Create.
+            </h1>
+          </Pop>
 
-          <p
-            className="mt-6 max-w-xl text-base leading-7 text-[#526477] sm:text-lg sm:leading-8"
-          >
-            A vibrant community of students passionate about technology,
-            cutting-edge research, hands-on engineering and building solutions
-            for a better tomorrow.
-          </p>
+          <Pop delay={0.08}>
+            <p className="mt-6 max-w-xl text-base leading-7 text-[#526477] sm:text-lg sm:leading-8">
+              A vibrant community of students passionate about technology,
+              cutting-edge research, hands-on engineering and building solutions
+              for a better tomorrow.
+            </p>
+          </Pop>
 
           {/* Action Buttons */}
-          <div
-            className="mt-8 flex flex-wrap items-center gap-4"
-          >
-            <Link
-              href="/events"
-              className="btn-animate group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-7 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/35 active:scale-95"
-            >
-              <span>Explore Events</span>
-              <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
+          <Pop delay={0.16}>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
+                <Link
+                  href="/events"
+                  className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-7 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/35 active:translate-y-0"
+                >
+                  <span>Explore Events</span>
+                  <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </motion.div>
 
-            <Link
-              href="/about"
-              className="btn-animate group inline-flex items-center gap-2 rounded-full border border-[#DCE5EC] bg-white/95 px-7 py-3.5 font-semibold text-[#10243A] shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B] active:scale-95"
-            >
-              <span>Discover IEEE</span>
-              <ChevronRight size={16} className="text-[#00629B] transition-transform duration-300 group-hover:translate-x-0.5" />
-            </Link>
-          </div>
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
+                <Link
+                  href="/about"
+                  className="group inline-flex items-center gap-2 rounded-full border border-[#DCE5EC] bg-white/95 px-7 py-3.5 font-semibold text-[#10243A] shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B]"
+                >
+                  <span>Discover IEEE</span>
+                  <ChevronRight size={16} className="text-[#00629B] transition-transform duration-300 group-hover:translate-x-0.5" />
+                </Link>
+              </motion.div>
+            </div>
+          </Pop>
 
           {/* Feature Badges */}
-          <div
-            className="mt-12 flex flex-wrap gap-3 border-t border-[#10243A]/10 pt-6"
-          >
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/70 bg-gradient-to-r from-blue-50/80 to-cyan-50/50 px-3.5 py-2 text-xs font-semibold text-blue-900 shadow-xs">
-              <Zap size={14} className="text-[#00629B]" />
-              <span>Technical Workshops</span>
-            </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/70 bg-gradient-to-r from-amber-50/80 to-orange-50/50 px-3.5 py-2 text-xs font-semibold text-amber-950 shadow-xs">
-              <Award size={14} className="text-[#F26522]" />
-              <span>Project Mentorship</span>
-            </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-gradient-to-r from-emerald-50/80 to-teal-50/50 px-3.5 py-2 text-xs font-semibold text-emerald-950 shadow-xs">
-              <Globe size={14} className="text-emerald-600" />
-              <span>Global Community</span>
-            </div>
-          </div>
+          <PopGroup className="mt-12 flex flex-wrap gap-3 border-t border-[#10243A]/10 pt-6">
+            <PopItem>
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/70 bg-gradient-to-r from-blue-50/80 to-cyan-50/50 px-3.5 py-2 text-xs font-semibold text-blue-900 shadow-xs">
+                <Zap size={14} className="text-[#00629B]" />
+                <span>Technical Workshops</span>
+              </div>
+            </PopItem>
+            <PopItem>
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/70 bg-gradient-to-r from-amber-50/80 to-orange-50/50 px-3.5 py-2 text-xs font-semibold text-amber-950 shadow-xs">
+                <Award size={14} className="text-[#F26522]" />
+                <span>Project Mentorship</span>
+              </div>
+            </PopItem>
+            <PopItem>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-gradient-to-r from-emerald-50/80 to-teal-50/50 px-3.5 py-2 text-xs font-semibold text-emerald-950 shadow-xs">
+                <Globe size={14} className="text-emerald-600" />
+                <span>Global Community</span>
+              </div>
+            </PopItem>
+          </PopGroup>
         </div>
 
         {/* Right Showcase */}
-        <div
-          className="relative hidden lg:block"
-        >
+        <Pop delay={0.2} className="relative hidden lg:block">
           <div className="pointer-events-none absolute -inset-6 rounded-full bg-gradient-to-tr from-[#00629B]/15 via-[#29A9E0]/15 to-[#F26522]/10 blur-3xl" />
 
           <div className="relative flex h-[520px] items-center justify-center">
@@ -87,7 +100,7 @@ function Hero() {
               </div>
               <div>
                 <p className="text-xs font-medium text-[#526477]">Student Community</p>
-                <p className="text-sm font-bold text-[#10243A]">250+ Members</p>
+                <p className="text-sm font-bold text-[#10243A]">1000+ Members</p>
               </div>
             </div>
 
@@ -115,7 +128,7 @@ function Hero() {
               </div>
             </div>
           </div>
-        </div>
+        </Pop>
       </div>
     </section>
   );

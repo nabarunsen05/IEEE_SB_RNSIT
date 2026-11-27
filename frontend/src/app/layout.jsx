@@ -1,6 +1,7 @@
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import ScrollProgress from "../components/ScrollProgress";
 import { Providers } from "./providers";
 
 export const metadata = {
@@ -42,6 +43,7 @@ export default function RootLayout({ children }) {
         </div>
 
         <Providers>
+          <ScrollProgress />
           <Navbar />
           <main className="relative z-10 flex-1">
             {children}

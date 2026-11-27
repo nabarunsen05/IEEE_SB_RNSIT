@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight, CalendarDays, Clock, MapPin, Search, Filter, X,
   Layers, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { useAdmin } from "../context/AdminContext";
-import { useScrollReveal } from "../hooks/useScrollReveal";
+import Pop, { PopGroup, PopItem } from "../components/Pop";
+import TiltCard from "../components/TiltCard";
 
 function getEventHeaderGradient(category = "") {
   const cat = category.toUpperCase();
@@ -63,7 +65,6 @@ function Events() {
   const [searchQuery, setSearchQuery] = useState("");
   const [galleryEvent, setGalleryEvent] = useState(null);
   const [currentPhotoIdx, setCurrentPhotoIdx] = useState(0);
-  const revealRef = useScrollReveal();
   const router = useRouter();
 
   const mainEvents = useMemo(
@@ -131,28 +132,34 @@ function Events() {
   };
 
   return (
-    <section id="events" className="relative min-h-screen overflow-hidden bg-transparent pt-28 pb-24 sm:pt-32 sm:pb-28" ref={revealRef}>
+    <section id="events" className="relative min-h-screen overflow-hidden bg-transparent pt-28 pb-24 sm:pt-32 sm:pb-28">
       <div className="pointer-events-none absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.38)_0%,rgba(2,132,199,0.22)_40%,transparent_70%)] blur-[75px]" />
       <div className="pointer-events-none absolute -right-40 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.32)_0%,rgba(249,115,22,0.2)_40%,transparent_70%)] blur-[75px]" />
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
-        <div className="reveal flex flex-col justify-between gap-6 md:flex-row md:items-end">
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
+            <Pop delay={0}>
             <h2 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight text-[#10243A] sm:text-5xl">
               Learn. Connect.
               <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent"> Experience at RNSIT.</span>
             </h2>
+            </Pop>
+            <Pop delay={0.1}>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-[#526477]">
               Explore hands-on technical workshops, inter-collegiate hackathons, distinguished expert lectures, and annual flagship symposiums organized by the IEEE Student Branch at R.N.S. Institute of Technology, Bengaluru.
             </p>
+            </Pop>
           </div>
-          <button type="button" onClick={handleViewAll} className="group inline-flex shrink-0 items-center gap-2.5 rounded-full border border-[#DCE5EC] bg-white px-6 py-3 font-semibold text-[#10243A] shadow-xs transition-all duration-300 hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B]">
+          <Pop delay={0.18}>
+          <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} type="button" onClick={handleViewAll} className="group inline-flex shrink-0 items-center gap-2.5 rounded-full border border-[#DCE5EC] bg-white px-6 py-3 font-semibold text-[#10243A] shadow-xs transition-all duration-300 hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B]">
             <span>View all events ({mainEvents.length})</span>
             <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
-          </button>
+          </motion.button>
+          </Pop>
         </div>
 
-        <div className="reveal mt-12 flex flex-col gap-4 rounded-2xl border border-[#DCE5EC] bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between" style={{ "--reveal-delay": "80ms" }}>
+        <Pop delay={0.1} className="mt-12 flex flex-col gap-4 rounded-2xl border border-[#DCE5EC] bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
             <span className="mr-1 hidden items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#647588] sm:inline-flex"><Filter size={14} className="text-[#00629B]" /> Filter:</span>
             {categories.map((cat) => {
@@ -171,29 +178,33 @@ function Events() {
             <input type="text" placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full rounded-xl border border-[#DCE5EC] bg-white py-2 pl-9 pr-8 text-xs text-[#10243A] placeholder-[#8190A0] focus:border-[#00629B] focus:outline-none focus:ring-2 focus:ring-[#00629B]/10" />
             {searchQuery && <button type="button" onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#647588] hover:text-[#10243A]" aria-label="Clear search"><X size={14} /></button>}
           </div>
-        </div>
+        </Pop>
 
-        <div id="events-grid" className="reveal mt-8" style={{ "--reveal-delay": "120ms" }}>
+        <div id="events-grid">
           {isLoading ? (
-            <div className="mt-12 rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
+            <Pop className="mt-12 rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
               <p className="text-sm font-medium text-[#526477]">Loading events...</p>
-            </div>
+            </Pop>
           ) : filteredEvents.length === 0 ? (
-            <div className="mt-12 rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
+            <Pop className="mt-12 rounded-3xl border border-[#DCE5EC] bg-white p-12 text-center shadow-sm">
               <Layers className="mx-auto text-[#00629B]" size={44} />
               <h3 className="mt-4 text-xl font-bold text-[#10243A]">No Matching Events Found</h3>
               <p className="mt-2 text-sm text-[#526477]">{searchQuery || selectedCategory !== "ALL" ? "No events match the selected filter or search keyword." : "Check back soon for new workshops, technical competitions, and hackathons."}</p>
-              {(searchQuery || selectedCategory !== "ALL") && <button type="button" onClick={handleViewAll} className="btn-animate mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] to-[#0074B5] px-5 py-2.5 text-xs font-semibold text-white shadow-md transition">Reset Filters & View All</button>}
-            </div>
+              {(searchQuery || selectedCategory !== "ALL") && <button type="button" onClick={handleViewAll} className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] to-[#0074B5] px-5 py-2.5 text-xs font-semibold text-white shadow-md transition hover:scale-105">Reset Filters & View All</button>}
+            </Pop>
           ) : (
-            <div className="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <PopGroup className="mt-8 grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredEvents.map((event) => {
                 const isPast = isPastEvent(event);
                 const coverImage = event.cover_image_url || event.image_url;
                 return (
-                  <article key={event.id} className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_8px_24px_rgba(16,36,58,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/35 hover:shadow-[0_20px_40px_rgba(0,98,155,0.14)]">
+                  <PopItem key={event.id}>
+                  <TiltCard className="h-full rounded-3xl">
+                  <article
+                    className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_8px_24px_rgba(16,36,58,0.06)] transition-[border-color] duration-300 group-hover:border-[#00629B]/35"
+                  >
                     <div className={`relative h-40 shrink-0 overflow-hidden bg-gradient-to-br ${getEventHeaderGradient(event.category)} p-5`}>
-                      {coverImage && <img src={coverImage} alt={`${event.title} event photo`} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]" />}
+                      {coverImage && <img src={coverImage} alt={`${event.title} event photo`} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:group-hover:scale-100" />}
                       {coverImage && <div className="absolute inset-0 bg-slate-950/35" />}
                       <div className="absolute -right-8 -top-8 h-36 w-36 rounded-full border border-white/20" />
                       <div className="absolute -bottom-16 -left-8 h-44 w-44 rounded-full border border-white/15" />
@@ -244,9 +255,11 @@ function Events() {
                       </div>
                     </div>
                   </article>
+                  </TiltCard>
+                  </PopItem>
                 );
               })}
-            </div>
+            </PopGroup>
           )}
         </div>
 

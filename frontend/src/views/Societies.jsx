@@ -10,11 +10,11 @@ import {
   BookOpen,
 } from "lucide-react";
 import { societies, departmentsInfo } from "../data/societiesData";
-import { useScrollReveal } from "../hooks/useScrollReveal";
+import Pop, { PopGroup, PopItem } from "../components/Pop";
+import TiltCard from "../components/TiltCard";
 
 export default function Societies() {
   const [searchQuery, setSearchQuery] = useState("");
-  const revealRef = useScrollReveal();
 
   // Group societies into department-specific blocks.
   const departmentGroups = useMemo(() => {
@@ -64,16 +64,15 @@ export default function Societies() {
   }, [departmentGroups, searchQuery]);
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-transparent px-4 pb-24 pt-32 sm:px-6 sm:pt-36 lg:px-12" ref={revealRef}>
+    <section className="relative min-h-screen overflow-hidden bg-transparent px-4 pb-24 pt-32 sm:px-6 sm:pt-36 lg:px-12">
       {/* Background ambient glow */}
       <div className="pointer-events-none absolute -right-32 top-10 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.35)_0%,rgba(2,132,199,0.20)_40%,transparent_70%)] blur-[75px]" />
       <div className="pointer-events-none absolute -left-40 bottom-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(251,146,60,0.28)_0%,rgba(249,115,22,0.18)_40%,transparent_70%)] blur-[75px]" />
 
       <div className="relative mx-auto max-w-7xl">
-        {/* =========================================
-            HEADER & HERO DESCRIPTION
-        ========================================== */}
-        <div className="reveal max-w-3xl">
+        {/* Header and hero description */}
+        <div className="max-w-3xl">
+          <Pop delay={0}>
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-3.5 py-1.5 text-xs font-semibold text-[#00629B] shadow-2xs">
             <span>{societies.length} Chapters Across {departmentGroups.length} Departments</span>
           </div>
@@ -83,17 +82,18 @@ export default function Societies() {
               RNSIT
             </span>
           </h1>
+          </Pop>
 
+          <Pop delay={0.1}>
           <p className="mt-4 text-base leading-7 text-[#526477] sm:text-lg sm:leading-8">
             Select any department block below to open its dedicated page and view all active
             society chapters, specialized domains, and faculty advisors for that department.
           </p>
+          </Pop>
         </div>
 
-        {/* =========================================
-            SEARCH CONTROLS
-        ========================================== */}
-        <div className="reveal mt-8 rounded-2xl border border-[#DCE5EC] bg-white/90 p-4 shadow-2xs backdrop-blur-sm sm:p-5" style={{ "--reveal-delay": "80ms" }}>
+        {/* Search controls */}
+        <Pop delay={0.15} className="mt-8 rounded-2xl border border-[#DCE5EC] bg-white/90 p-4 shadow-2xs backdrop-blur-sm sm:p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative flex-1">
               <Search
@@ -126,23 +126,21 @@ export default function Societies() {
               </span>
             </div>
           </div>
-        </div>
+        </Pop>
 
-        {/* =========================================
-            DEPARTMENT BLOCKS GRID (CLICK TO OPEN NEW PAGE)
-        ========================================== */}
-        <div className="reveal mt-10" style={{ "--reveal-delay": "120ms" }}>
-          <div className="mb-6 flex items-center justify-between">
+        {/* Department blocks */}
+        <div className="mt-10">
+          <Pop className="mb-6 flex items-center justify-between">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
               Societies by Department
             </h2>
             <span className="text-xs text-slate-400">
               Click any block to view its societies
             </span>
-          </div>
+          </Pop>
 
           {filteredDepartments.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-slate-300 bg-white/70 p-12 text-center">
+            <Pop className="rounded-3xl border border-dashed border-slate-300 bg-white/70 p-12 text-center">
               <BookOpen size={40} className="mx-auto text-slate-400" />
               <h3 className="mt-4 text-lg font-bold text-[#10243A]">
                 No departments or societies found
@@ -157,14 +155,15 @@ export default function Societies() {
               >
                 Reset Search
               </button>
-            </div>
+            </Pop>
           ) : (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <PopGroup className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {filteredDepartments.map((dept) => (
+                <PopItem key={dept.code}>
+                <TiltCard className="h-full rounded-3xl">
                 <Link
-                  key={dept.code}
                   href={`/societies/${dept.code.toLowerCase()}`}
-                  className="group relative flex flex-col justify-between rounded-3xl border border-[#DCE5EC] bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-xl hover:shadow-[#00629B]/10"
+                  className="relative flex h-full flex-col justify-between rounded-3xl border border-[#DCE5EC] bg-white p-6 shadow-xs transition-[border-color] duration-300 group-hover:border-[#00629B]/40"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-3">
@@ -199,8 +198,10 @@ export default function Societies() {
                     </div>
                   </div>
                 </Link>
+                </TiltCard>
+                </PopItem>
               ))}
-            </div>
+            </PopGroup>
           )}
         </div>
       </div>
