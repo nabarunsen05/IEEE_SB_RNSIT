@@ -3,15 +3,58 @@
 import Link from "next/link";
 import {
   ArrowLeft,
-  Building2,
   ChevronRight,
   GraduationCap,
   Sparkles,
   Target,
   BookOpen,
   Users,
+  BrainCircuit,
+  MonitorSmartphone,
+  Binary,
+  Bot,
+  ShieldCheck,
+  Satellite,
+  Aperture,
+  Radar,
+  HeartHandshake,
+  Stethoscope,
+  Activity,
+  CircuitBoard,
+  Car,
+  Zap,
+  Rocket,
+  Briefcase,
+  Factory,
+  Scale,
+  Navigation,
+  Building2,
 } from "lucide-react";
 import { departmentsInfo, societies } from "../data/societiesData";
+
+// Map icon string names to actual Lucide components
+const iconMap = {
+  BrainCircuit,
+  MonitorSmartphone,
+  Binary,
+  Bot,
+  ShieldCheck,
+  GraduationCap,
+  Satellite,
+  Aperture,
+  Radar,
+  HeartHandshake,
+  Stethoscope,
+  Activity,
+  CircuitBoard,
+  Car,
+  Zap,
+  Rocket,
+  Briefcase,
+  Factory,
+  Scale,
+  Navigation,
+};
 
 export default function SocietyDetail({ deptCode, societySlug }) {
   const normalizedDept = (deptCode || "").toUpperCase();
@@ -41,6 +84,8 @@ export default function SocietyDetail({ deptCode, societySlug }) {
     );
   }
 
+  const IconComponent = iconMap[society.icon] || Building2;
+
   // Get sibling societies in same department (excluding current)
   const siblingsSocieties = societies.filter(
     (s) => s.department === normalizedDept && s.slug !== society.slug
@@ -56,7 +101,7 @@ export default function SocietyDetail({ deptCode, societySlug }) {
         {/* =========================================
             BREADCRUMB & BACK BUTTON
         ========================================== */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between animate-slide-in-left">
           <Link
             href={`/societies/${normalizedDept.toLowerCase()}`}
             className="group inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs backdrop-blur-sm transition-all hover:border-[#00629B]/40 hover:bg-[#E6F4FB] hover:text-[#00629B]"
@@ -84,15 +129,15 @@ export default function SocietyDetail({ deptCode, societySlug }) {
         {/* =========================================
             SOCIETY HERO BANNER
         ========================================== */}
-        <div className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_12px_40px_rgba(16,36,58,0.07)]">
+        <div className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_12px_40px_rgba(16,36,58,0.07)] animate-slide-in-right">
           <div className="h-1.5 w-full bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#F26522]" />
 
           <div className="bg-gradient-to-r from-slate-50/90 via-white to-sky-50/50 p-6 sm:p-10">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex items-start gap-5">
                 {/* Society Icon */}
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00629B] to-[#0284C7] text-white shadow-md shadow-[#00629B]/30">
-                  <Building2 size={28} />
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00629B] to-[#0284C7] text-white shadow-md shadow-[#00629B]/30 animate-icon-bob">
+                  <IconComponent size={28} />
                 </div>
 
                 <div>
@@ -124,7 +169,7 @@ export default function SocietyDetail({ deptCode, societySlug }) {
         ========================================== */}
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* About Card — takes 2 columns */}
-          <div className="lg:col-span-2 overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
+          <div className="lg:col-span-2 overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs card-shimmer animate-card-enter" style={{ "--card-index": 0 }}>
             <div className="flex items-center gap-3 mb-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
                 <BookOpen size={20} />
@@ -137,7 +182,7 @@ export default function SocietyDetail({ deptCode, societySlug }) {
           </div>
 
           {/* Faculty Advisor Card */}
-          <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs">
+          <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs card-shimmer animate-card-enter" style={{ "--card-index": 1 }}>
             <div className="flex items-center gap-3 mb-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
                 <GraduationCap size={20} />
@@ -145,7 +190,7 @@ export default function SocietyDetail({ deptCode, societySlug }) {
               <h2 className="text-lg font-bold text-[#10243A]">Faculty Advisor</h2>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#00629B] to-[#0284C7] text-white font-bold text-lg shadow-md">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#00629B] to-[#0284C7] text-white font-bold text-lg shadow-md animate-icon-bob">
                 {society.advisor
                   .split(" ")
                   .filter((w) => w !== "Dr." && w !== "Ms." && w !== "Mr.")
@@ -165,7 +210,7 @@ export default function SocietyDetail({ deptCode, societySlug }) {
             FOCUS AREAS
         ========================================== */}
         {society.focusAreas && society.focusAreas.length > 0 && (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
+          <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs card-shimmer animate-card-enter" style={{ "--card-index": 2 }}>
             <div className="flex items-center gap-3 mb-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 text-[#F26522]">
                 <Target size={20} />
@@ -173,10 +218,11 @@ export default function SocietyDetail({ deptCode, societySlug }) {
               <h2 className="text-xl font-bold text-[#10243A]">Focus Areas</h2>
             </div>
             <div className="flex flex-wrap gap-3">
-              {society.focusAreas.map((area) => (
+              {society.focusAreas.map((area, areaIdx) => (
                 <span
                   key={area}
-                  className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-[#10243A] transition-colors hover:border-[#00629B]/40 hover:bg-[#E6F4FB] hover:text-[#00629B]"
+                  className="focus-tag inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-[#10243A] transition-colors hover:border-[#00629B]/40 hover:bg-[#E6F4FB] hover:text-[#00629B] animate-card-enter cursor-default"
+                  style={{ "--card-index": areaIdx + 3 }}
                 >
                   {area}
                 </span>
@@ -199,20 +245,29 @@ export default function SocietyDetail({ deptCode, societySlug }) {
               </h2>
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {siblingsSocieties.map((s) => (
-                <Link
-                  key={s.slug}
-                  href={`/societies/${normalizedDept.toLowerCase()}/${s.slug}`}
-                  className="group rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-lg hover:shadow-[#00629B]/10"
-                >
-                  <h3 className="text-sm font-bold text-[#10243A] transition-colors group-hover:text-[#00629B]">
-                    {s.name}
-                  </h3>
-                  <p className="mt-2 text-xs text-slate-500">
-                    <span className="font-semibold">Advisor:</span> {s.advisor}
-                  </p>
-                </Link>
-              ))}
+              {siblingsSocieties.map((s, sIdx) => {
+                const SiblingIcon = iconMap[s.icon] || Building2;
+                return (
+                  <Link
+                    key={s.slug}
+                    href={`/societies/${normalizedDept.toLowerCase()}/${s.slug}`}
+                    className="group rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs card-shimmer animate-card-enter transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-lg hover:shadow-[#00629B]/10"
+                    style={{ "--card-index": sIdx }}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="society-icon-wrap flex h-9 w-9 items-center justify-center rounded-lg border border-sky-200/70 bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
+                        <SiblingIcon size={16} />
+                      </div>
+                      <h3 className="text-sm font-bold text-[#10243A] transition-colors group-hover:text-[#00629B]">
+                        {s.name}
+                      </h3>
+                    </div>
+                    <p className="mt-2 text-xs text-slate-500">
+                      <span className="font-semibold">Advisor:</span> {s.advisor}
+                    </p>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}

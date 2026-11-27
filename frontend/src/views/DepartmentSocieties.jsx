@@ -3,13 +3,56 @@
 import Link from "next/link";
 import {
   ArrowLeft,
-  Building2,
   GraduationCap,
   Layers,
   ChevronRight,
   Sparkles,
+  BrainCircuit,
+  MonitorSmartphone,
+  Binary,
+  Bot,
+  ShieldCheck,
+  Satellite,
+  Aperture,
+  Radar,
+  HeartHandshake,
+  Stethoscope,
+  Activity,
+  CircuitBoard,
+  Car,
+  Zap,
+  Rocket,
+  Briefcase,
+  Factory,
+  Scale,
+  Navigation,
+  Building2,
 } from "lucide-react";
 import { departmentsInfo, societies } from "../data/societiesData";
+
+// Map icon string names to actual Lucide components
+const iconMap = {
+  BrainCircuit,
+  MonitorSmartphone,
+  Binary,
+  Bot,
+  ShieldCheck,
+  GraduationCap,
+  Satellite,
+  Aperture,
+  Radar,
+  HeartHandshake,
+  Stethoscope,
+  Activity,
+  CircuitBoard,
+  Car,
+  Zap,
+  Rocket,
+  Briefcase,
+  Factory,
+  Scale,
+  Navigation,
+};
 
 export default function DepartmentSocieties({ deptCode }) {
   const normalizedCode = (deptCode || "").toUpperCase();
@@ -46,7 +89,7 @@ export default function DepartmentSocieties({ deptCode }) {
         {/* =========================================
             BREADCRUMB & BACK BUTTON
         ========================================== */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex items-center justify-between animate-slide-in-left">
           <Link
             href="/societies"
             className="group inline-flex items-center gap-2 rounded-full border border-slate-200/90 bg-white/90 px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs backdrop-blur-sm transition-all hover:border-[#00629B]/40 hover:bg-[#E6F4FB] hover:text-[#00629B]"
@@ -67,14 +110,14 @@ export default function DepartmentSocieties({ deptCode }) {
         {/* =========================================
             DEPARTMENT HEADER BANNER
         ========================================== */}
-        <div className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_12px_40px_rgba(16,36,58,0.07)]">
+        <div className="overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white shadow-[0_12px_40px_rgba(16,36,58,0.07)] animate-slide-in-right">
           <div className="h-1.5 w-full bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#F26522]" />
 
           <div className="bg-gradient-to-r from-slate-50/90 via-white to-sky-50/50 p-6 sm:p-10">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex items-start gap-5">
                 {/* Department Code Badge */}
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00629B] to-[#0284C7] font-bold text-white shadow-md shadow-[#00629B]/30">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#00629B] to-[#0284C7] font-bold text-white shadow-md shadow-[#00629B]/30 animate-icon-bob">
                   <span className="text-xl font-extrabold tracking-wide">{department.code}</span>
                 </div>
 
@@ -125,50 +168,54 @@ export default function DepartmentSocieties({ deptCode }) {
           </div>
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {deptSocieties.map((society, idx) => (
-              <Link
-                key={society.name}
-                href={`/societies/${normalizedCode.toLowerCase()}/${society.slug}`}
-                className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-lg hover:shadow-[#00629B]/10"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-sky-200/70 bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B] transition-transform duration-300 group-hover:scale-105">
-                      <Building2 size={20} className="text-[#00629B]" />
-                    </div>
-                    <span className="font-mono text-xs font-bold text-slate-400">
-                      #{String(idx + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-5 text-lg font-bold leading-snug text-[#10243A] transition-colors duration-200 group-hover:text-[#00629B]">
-                    {society.name}
-                  </h3>
-                </div>
-
-                <div className="mt-6 border-t border-slate-100 pt-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[#00629B]">
-                      <GraduationCap size={16} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                        Faculty Advisor
-                      </span>
-                      <span className="block truncate text-sm font-semibold text-[#10243A]">
-                        {society.advisor}
+            {deptSocieties.map((society, idx) => {
+              const IconComponent = iconMap[society.icon] || Building2;
+              return (
+                <Link
+                  key={society.name}
+                  href={`/societies/${normalizedCode.toLowerCase()}/${society.slug}`}
+                  className="group flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xs card-shimmer animate-card-enter transition-all duration-300 hover:-translate-y-1 hover:border-[#00629B]/40 hover:shadow-lg hover:shadow-[#00629B]/10"
+                  style={{ "--card-index": idx }}
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="society-icon-wrap flex h-12 w-12 items-center justify-center rounded-xl border border-sky-200/70 bg-gradient-to-br from-[#E6F4FB] to-sky-100 text-[#00629B]">
+                        <IconComponent size={22} className="text-[#00629B]" />
+                      </div>
+                      <span className="font-mono text-xs font-bold text-slate-400">
+                        #{String(idx + 1).padStart(2, "0")}
                       </span>
                     </div>
-                  </div>
-                </div>
 
-                {/* Click affordance arrow */}
-                <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-[#00629B] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <span>View Details</span>
-                  <ChevronRight size={14} />
-                </div>
-              </Link>
-            ))}
+                    <h3 className="mt-5 text-lg font-bold leading-snug text-[#10243A] transition-colors duration-200 group-hover:text-[#00629B]">
+                      {society.name}
+                    </h3>
+                  </div>
+
+                  <div className="mt-6 border-t border-slate-100 pt-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-[#00629B]">
+                        <GraduationCap size={16} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                          Faculty Advisor
+                        </span>
+                        <span className="block truncate text-sm font-semibold text-[#10243A]">
+                          {society.advisor}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Click affordance arrow */}
+                  <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-[#00629B] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <span>View Details</span>
+                    <ChevronRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
