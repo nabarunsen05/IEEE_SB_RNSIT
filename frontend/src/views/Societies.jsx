@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   Search,
   X,
-  Layers,
   ArrowRight,
   BookOpen,
 } from "lucide-react";
@@ -94,49 +93,38 @@ export default function Societies() {
 
         {/* Search controls */}
         <Pop delay={0.15} className="mt-8 rounded-2xl border border-[#DCE5EC] bg-white/90 p-4 shadow-2xs backdrop-blur-sm sm:p-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative flex-1">
-              <Search
-                size={18}
-                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by society name, faculty advisor, or department..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-10 text-sm text-[#10243A] placeholder-slate-400 transition focus:border-[#00629B] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00629B]/20"
-                aria-label="Search societies"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-                  aria-label="Clear search"
-                >
-                  <X size={15} />
-                </button>
-              )}
-            </div>
-
-            <div className="flex shrink-0 items-center gap-2 text-xs font-semibold text-[#00629B]">
-              <span className="rounded-xl border border-slate-200/90 bg-slate-50 px-3.5 py-2">
-                {filteredDepartments.length} Departments {searchQuery ? "Matched" : "Available"}
-              </span>
-            </div>
+          <div className="relative">
+            <Search
+              size={18}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by society name, faculty advisor, or department..."
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2.5 pl-10 pr-10 text-sm text-[#10243A] placeholder-slate-400 transition focus:border-[#00629B] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00629B]/20"
+              aria-label="Search societies"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                aria-label="Clear search"
+              >
+                <X size={15} />
+              </button>
+            )}
           </div>
         </Pop>
 
         {/* Department blocks */}
         <div className="mt-10">
-          <Pop className="mb-6 flex items-center justify-between">
+          <Pop className="mb-6">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">
               Societies by Department
             </h2>
-            <span className="text-xs text-slate-400">
-              Click any block to view its societies
-            </span>
           </Pop>
 
           {filteredDepartments.length === 0 ? (
@@ -172,14 +160,6 @@ export default function Societies() {
                           {dept.code}
                         </span>
                       </div>
-
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200/80 bg-sky-50 px-3 py-1 text-xs font-semibold text-[#00629B]">
-                        <Layers size={13} />
-                        <span>
-                          {dept.societies.length}{" "}
-                          {dept.societies.length === 1 ? "Chapter" : "Chapters"}
-                        </span>
-                      </span>
                     </div>
 
                     <h3 className="mt-5 text-xl font-bold leading-snug text-[#10243A] transition-colors duration-200 group-hover:text-[#00629B]">

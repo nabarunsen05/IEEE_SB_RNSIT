@@ -24,19 +24,6 @@ function Hero() {
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-96px)] w-full max-w-7xl items-center gap-10 px-6 py-12 sm:px-8 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:px-12">
         {/* Left Column: Heading, intro & actions */}
         <div className="relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-3.5 py-1.5 text-xs font-semibold text-[#00629B] shadow-2xs backdrop-blur-sm"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#29A9E0] opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00629B]" />
-            </span>
-            <span>IEEE Student Branch • RNSIT</span>
-          </motion.div>
-
           <Pop delay={0}>
             <h1 className="max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-[#10243A] sm:text-6xl lg:text-7xl">
               Innovate.<br />

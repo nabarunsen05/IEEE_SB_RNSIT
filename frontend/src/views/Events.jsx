@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight, CalendarDays, Clock, MapPin, Search, Filter, X,
@@ -151,12 +150,6 @@ function Events() {
             </p>
             </Pop>
           </div>
-          <Pop delay={0.18}>
-          <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} type="button" onClick={handleViewAll} className="group inline-flex shrink-0 items-center gap-2.5 rounded-full border border-[#DCE5EC] bg-white px-6 py-3 font-semibold text-[#10243A] shadow-xs transition-all duration-300 hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B]">
-            <span>View all events ({mainEvents.length})</span>
-            <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
-          </motion.button>
-          </Pop>
         </div>
 
         <Pop delay={0.1} className="mt-12 flex flex-col gap-4 rounded-2xl border border-[#DCE5EC] bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
