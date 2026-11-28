@@ -222,7 +222,7 @@ function About() {
   return (
     <section
       id="about"
-      className="relative min-h-screen overflow-hidden bg-transparent pb-24 pt-28 sm:pb-28 sm:pt-32"
+      className="relative min-h-screen overflow-hidden bg-transparent pb-10 pt-24 sm:pb-14 sm:pt-32"
     >
       {/* Background radial accents */}
       <div
@@ -238,13 +238,13 @@ function About() {
         className="pointer-events-none absolute right-10 bottom-20 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.18)_0%,rgba(147,51,234,0.1)_40%,transparent_70%)] blur-[80px]"
       />
 
-      <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
         {/* SECTION 1: HERO / MAIN INTRODUCTION */}
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+        <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-14">
           {/* Left Column */}
           <div>
             <Pop delay={0}>
-            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-[#10243A] sm:text-5xl lg:text-5xl">
+            <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-[#10243A] sm:text-4xl lg:text-5xl">
               More than just a membership:{" "}
               <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">
                 your gateway to endless possibilities.
@@ -253,7 +253,7 @@ function About() {
             </Pop>
 
             <Pop delay={0.1}>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-[#526477]">
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#526477] sm:mt-6 sm:text-base sm:leading-8">
               The <strong className="text-[#10243A] font-semibold">IEEE Student Branch at RNSIT</strong> was
               established in <strong>2010</strong>. Over a remarkable <strong>16-year journey</strong>, it has
               grown into one of the largest and most vibrant Student Branches in the{" "}
@@ -261,7 +261,7 @@ function About() {
               <strong className="text-[#00629B]">1000+ active student members</strong>.
             </p>
 
-            <p className="mt-4 max-w-xl leading-7 text-[#647588]">
+            <p className="mt-3 max-w-xl text-xs leading-relaxed text-[#647588] sm:mt-4 sm:text-sm sm:leading-7">
               IEEE exists for one universal purpose:{" "}
               <em className="text-[#10243A] font-medium not-italic">
                 &ldquo;Advancing Technology for the benefit of humanity.&rdquo;
@@ -273,24 +273,24 @@ function About() {
             </Pop>
 
             <Pop delay={0.2}>
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
+            <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-4">
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} style={{ display: "inline-flex" }}>
               <Link
                 href="/societies"
-                className="btn-animate group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-6 py-3 font-semibold text-white shadow-md shadow-[#00629B]/20 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/30"
+                className="btn-animate group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#00629B]/20 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg sm:px-6 sm:py-3 sm:text-sm"
               >
                 <span>Explore 17+ Societies</span>
                 <ArrowRight
-                  size={18}
+                  size={16}
                   className="transition-transform duration-300 group-hover:translate-x-1"
                 />
               </Link>
               </motion.div>
 
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} style={{ display: "inline-flex" }}>
               <Link
                 href="/events"
-                className="btn-animate inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3 font-semibold text-[#10243A] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50"
+                className="btn-animate inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-xs font-semibold text-[#10243A] shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-slate-50 sm:px-6 sm:py-3 sm:text-sm"
               >
                 <span>Browse Events</span>
               </Link>
@@ -301,19 +301,19 @@ function About() {
 
           {/* Right Column: Mission Card */}
           <div className="relative">
-            <div className="relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-8 shadow-[0_16px_45px_rgba(16,36,58,0.08)] sm:p-10">
+            <div className="relative overflow-hidden rounded-2xl border border-[#DCE5EC] bg-white p-5 shadow-[0_16px_45px_rgba(16,36,58,0.08)] sm:rounded-3xl sm:p-8">
               {/* Multi-color top gradient border */}
               <div
                 aria-hidden="true"
                 className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#00629B] via-[#29A9E0] to-[#F26522]"
               />
 
-              <Pop className="mb-6">
-                <h3 className="mt-3 text-2xl font-bold text-[#10243A] sm:text-3xl">
+              <Pop className="mb-4 sm:mb-6">
+                <h3 className="mt-1 text-xl font-bold text-[#10243A] sm:text-2xl lg:text-3xl">
                   Advancing Technology for Humanity
                 </h3>
 
-                <p className="mt-3 leading-7 text-[#526477]">
+                <p className="mt-2 text-xs leading-relaxed text-[#526477] sm:mt-3 sm:text-sm sm:leading-7">
                   IEEE is the world&apos;s largest technical professional organization with over{" "}
                   <strong className="text-[#10243A]">450,000+ members</strong> across more than{" "}
                   <strong className="text-[#10243A]">190+ countries</strong>. At RNSIT, our branch provides
@@ -322,30 +322,30 @@ function About() {
               </Pop>
 
               {/* Sub-cards */}
-              <PopGroup className="grid gap-4 sm:grid-cols-2">
+              <PopGroup className="grid gap-3 sm:grid-cols-2">
                 <PopItem>
-                <div className="h-full rounded-2xl border border-blue-100 bg-gradient-to-br from-white via-sky-50/40 to-blue-50/30 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/[0.08]">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/25">
-                    <ShieldCheck size={22} />
+                <div className="h-full rounded-xl border border-blue-100 bg-gradient-to-br from-white via-sky-50/40 to-blue-50/30 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md sm:rounded-2xl sm:p-5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-xs sm:h-11 sm:w-11 sm:rounded-xl">
+                    <ShieldCheck size={18} className="sm:w-5 sm:h-5" />
                   </div>
-                  <h4 className="mt-4 font-semibold text-[#10243A]">
+                  <h4 className="mt-2.5 text-xs font-semibold text-[#10243A] sm:mt-4 sm:text-sm">
                     Reimbursement Initiative
                   </h4>
-                  <p className="mt-2 text-sm leading-6 text-[#526477]">
+                  <p className="mt-1 text-[11px] leading-relaxed text-[#526477] sm:text-xs">
                     Institutional support providing student membership reimbursement to promote technical excellence.
                   </p>
                 </div>
                 </PopItem>
 
                 <PopItem>
-                <div className="h-full rounded-2xl border border-orange-100 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-lg hover:shadow-orange-500/[0.08]">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/25">
-                    <Users size={22} />
+                <div className="h-full rounded-xl border border-orange-100 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-300 hover:shadow-md sm:rounded-2xl sm:p-5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-xs sm:h-11 sm:w-11 sm:rounded-xl">
+                    <Users size={18} className="sm:w-5 sm:h-5" />
                   </div>
-                  <h4 className="mt-4 font-semibold text-[#10243A]">
+                  <h4 className="mt-2.5 text-xs font-semibold text-[#10243A] sm:mt-4 sm:text-sm">
                     Faculty & Peer Mentorship
                   </h4>
-                  <p className="mt-2 text-sm leading-6 text-[#526477]">
+                  <p className="mt-1 text-[11px] leading-relaxed text-[#526477] sm:text-xs">
                     Dedicated faculty advisors and experienced student volunteers mentoring next-generation innovators.
                   </p>
                 </div>
@@ -353,48 +353,48 @@ function About() {
               </PopGroup>
 
               {/* Student membership inclusions */}
-              <Pop className="mt-6 overflow-hidden rounded-2xl border border-[#CFE3F2] bg-gradient-to-br from-[#F4FAFE] via-white to-[#FFF8F3] p-5 sm:p-6">
+              <Pop className="mt-4 sm:mt-6 overflow-hidden rounded-xl sm:rounded-2xl border border-[#CFE3F2] bg-gradient-to-br from-[#F4FAFE] via-white to-[#FFF8F3] p-4 sm:p-6">
                 <div className="min-w-0">
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#00629B]">
+                  <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.16em] text-[#00629B]">
                     Your student membership
                   </p>
-                  <h4 className="mt-1 text-lg font-bold leading-snug text-[#10243A]">
+                  <h4 className="mt-0.5 text-sm sm:text-base lg:text-lg font-bold leading-snug text-[#10243A]">
                     A world of technical communities and opportunities
                   </h4>
                 </div>
 
-                <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-3">
-                  <div className="flex min-w-0 min-h-[124px] flex-col items-center justify-center gap-3 rounded-xl border border-blue-100 bg-white/95 p-4 text-center shadow-sm">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#00629B]">
-                      <Layers size={21} />
+                <div className="mt-3.5 grid grid-cols-3 gap-2 sm:mt-5 sm:gap-3">
+                  <div className="flex min-w-0 flex-col items-center justify-center rounded-lg sm:rounded-xl border border-blue-100 bg-white/95 p-2 sm:p-3.5 text-center shadow-2xs">
+                    <div className="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-[#00629B]">
+                      <Layers size={16} className="sm:w-5 sm:h-5" />
                     </div>
-                    <div className="w-full min-w-0">
-                      <p className="text-2xl font-extrabold leading-none text-[#10243A]">
+                    <div className="w-full min-w-0 mt-1">
+                      <p className="text-lg sm:text-2xl font-extrabold leading-none text-[#10243A]">
                         <CountUp value={152} />
                       </p>
-                      <p className="mt-2 break-words text-sm font-medium leading-snug text-[#526477]">Technical Communities</p>
+                      <p className="mt-1 text-[10px] sm:text-xs font-medium text-[#526477] line-clamp-1">Communities</p>
                     </div>
                   </div>
 
-                  <div className="flex min-w-0 min-h-[124px] flex-col items-center justify-center gap-3 rounded-xl border border-cyan-100 bg-white/95 p-4 text-center shadow-sm">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
-                      <Network size={21} />
+                  <div className="flex min-w-0 flex-col items-center justify-center rounded-lg sm:rounded-xl border border-cyan-100 bg-white/95 p-2 sm:p-3.5 text-center shadow-2xs">
+                    <div className="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-cyan-50 text-cyan-700">
+                      <Network size={16} className="sm:w-5 sm:h-5" />
                     </div>
-                    <div className="w-full min-w-0">
-                      <p className="text-2xl font-extrabold leading-none text-[#10243A]">
+                    <div className="w-full min-w-0 mt-1">
+                      <p className="text-lg sm:text-2xl font-extrabold leading-none text-[#10243A]">
                         <CountUp value={7} />
                       </p>
-                      <p className="mt-2 break-words text-sm font-medium leading-snug text-[#526477]">IEEE Councils</p>
+                      <p className="mt-1 text-[10px] sm:text-xs font-medium text-[#526477] line-clamp-1">Councils</p>
                     </div>
                   </div>
 
-                  <div className="flex min-w-0 min-h-[124px] flex-col items-center justify-center gap-3 rounded-xl border border-orange-100 bg-white/95 p-4 text-center shadow-sm">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-[#D85A1A]">
-                      <Users size={21} />
+                  <div className="flex min-w-0 flex-col items-center justify-center rounded-lg sm:rounded-xl border border-orange-100 bg-white/95 p-2 sm:p-3.5 text-center shadow-2xs">
+                    <div className="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-[#D85A1A]">
+                      <Users size={16} className="sm:w-5 sm:h-5" />
                     </div>
-                    <div className="w-full min-w-0">
-                      <p className="break-words text-base font-extrabold leading-tight text-[#10243A]">WIE & SIGHT</p>
-                      <p className="mt-2 break-words text-sm font-medium leading-snug text-[#526477]">Affinity groups & initiatives</p>
+                    <div className="w-full min-w-0 mt-1">
+                      <p className="text-sm sm:text-base font-extrabold leading-tight text-[#10243A]">WIE/SIGHT</p>
+                      <p className="mt-1 text-[10px] sm:text-xs font-medium text-[#526477] line-clamp-1">Initiatives</p>
                     </div>
                   </div>
                 </div>
@@ -404,7 +404,7 @@ function About() {
         </div>
 
         {/* SECTION 2: STATISTICS BANNER */}
-        <PopGroup className="mt-16 grid grid-cols-2 gap-4 lg:mt-20 lg:grid-cols-4">
+        <PopGroup className="mt-10 sm:mt-16 grid grid-cols-2 gap-2.5 sm:gap-4 lg:mt-20 lg:grid-cols-4">
           {statistics.map((stat) => {
             const Icon = stat.icon;
 
@@ -413,29 +413,29 @@ function About() {
               <motion.div
                 whileHover={{ y: -4, boxShadow: "0 18px 36px rgba(16,36,58,0.13)" }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className={`group relative overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-6 text-center shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-shadow duration-300 hover:shadow-[0_18px_36px_rgba(16,36,58,0.1)] sm:p-7 ${stat.borderHover}`}
+                className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-[#DCE5EC] bg-white p-3.5 sm:p-6 text-center shadow-[0_8px_24px_rgba(16,36,58,0.05)] transition-shadow duration-300 hover:shadow-[0_18px_36px_rgba(16,36,58,0.1)] ${stat.borderHover}`}
               >
                 <div
                   className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${stat.accentHover}`}
                 />
 
                 <div
-                  className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-sm transition-transform duration-300 group-hover:scale-[1.02] ${stat.gradient} ${stat.shadow}`}
+                  className={`mx-auto flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br text-white shadow-xs transition-transform duration-300 group-hover:scale-[1.03] ${stat.gradient} ${stat.shadow}`}
                 >
-                  <Icon size={24} />
+                  <Icon size={18} className="sm:w-5 sm:h-5" />
                 </div>
 
-                <p className="mt-5 text-3xl font-extrabold tracking-tight text-[#10243A] sm:text-4xl">
+                <p className="mt-2.5 text-xl font-extrabold tracking-tight text-[#10243A] sm:mt-4 sm:text-3xl lg:text-4xl">
                   <CountUp value={stat.value} />
                 </p>
 
                 <p
-                  className={`mt-1.5 text-xs font-bold uppercase tracking-wider text-[#10243A] transition-colors ${stat.textHover}`}
+                  className={`mt-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#10243A] transition-colors ${stat.textHover}`}
                 >
                   {stat.label}
                 </p>
 
-                <p className="mt-2 text-xs leading-5 text-[#647588]">
+                <p className="mt-1 text-[11px] leading-snug text-[#647588] line-clamp-1 sm:line-clamp-none">
                   {stat.subtext}
                 </p>
               </motion.div>
@@ -445,22 +445,22 @@ function About() {
         </PopGroup>
 
         {/* SECTION 3: THE IEEE JOURNEY CYCLE */}
-        <div className="mt-24 sm:mt-32">
+        <div className="mt-10 sm:mt-16">
           <Pop className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3 py-1 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <span>Continuous Growth Framework</span>
             </div>
 
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243A] sm:text-4xl">
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#10243A] sm:text-3xl lg:text-4xl">
               The IEEE Journey Cycle
             </h2>
 
-            <p className="mt-4 text-lg italic text-[#526477]">
+            <p className="mt-2 text-xs sm:text-sm italic text-[#526477]">
               &ldquo;A continuous journey of learning, connecting, leading, and growing together.&rdquo;
             </p>
           </Pop>
 
-          <PopGroup className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <PopGroup className="mt-8 sm:mt-12 grid gap-3 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {journeySteps.map((step) => {
               const Icon = step.icon;
               return (
@@ -468,28 +468,28 @@ function About() {
                 <motion.div
                   whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(0,98,155,0.12)" }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
-                  className="group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-[#DCE5EC] bg-white p-7 shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-[#00629B]/40"
+                  className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-[#DCE5EC] bg-white p-4 sm:p-6 shadow-xs transition-[border-color,box-shadow] duration-300 hover:border-[#00629B]/40"
                 >
-                  <div className="absolute right-6 top-6 text-3xl font-black text-slate-200 transition-colors group-hover:text-blue-100">
+                  <div className="absolute right-4 top-4 sm:right-6 sm:top-6 text-xl sm:text-2xl lg:text-3xl font-black text-slate-200 transition-colors group-hover:text-blue-100">
                     {step.number}
                   </div>
 
                   <div>
                     <div
-                      className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl border ${step.accent} shadow-sm`}
+                      className={`inline-flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl sm:rounded-2xl border ${step.accent} shadow-2xs`}
                     >
-                      <Icon size={22} />
+                      <Icon size={18} className="sm:w-5 sm:h-5" />
                     </div>
 
-                    <div className="mt-5 inline-block rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600">
+                    <div className="mt-3 sm:mt-4 inline-block rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-semibold text-slate-600">
                       {step.pill}
                     </div>
 
-                    <h3 className="mt-2 text-2xl font-bold text-[#10243A]">
+                    <h3 className="mt-1.5 sm:mt-2 text-base sm:text-lg lg:text-xl font-bold text-[#10243A]">
                       {step.title}
                     </h3>
 
-                    <p className="mt-3 text-sm leading-6 text-[#526477]">
+                    <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm leading-relaxed text-[#526477]">
                       {step.description}
                     </p>
                   </div>
@@ -498,51 +498,50 @@ function About() {
               );
             })}
           </PopGroup>
-
         </div>
 
         {/* SECTION 4: HIERARCHY / SCOPE (From Campus to the World) */}
-        <div className="mt-24 sm:mt-32">
+        <div className="mt-10 sm:mt-16">
           <Pop className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3 py-1 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <span>Institutional Scope</span>
             </div>
 
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243A] sm:text-4xl">
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#10243A] sm:text-3xl lg:text-4xl">
               From Campus to the World
             </h2>
 
-            <p className="mt-4 text-base leading-7 text-[#526477]">
+            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[#526477]">
               Your journey starts in your classroom at RNSIT and can take you directly to the global stage.
             </p>
           </Pop>
 
-          <PopGroup className="mt-12 space-y-4">
+          <PopGroup className="mt-8 sm:mt-10 space-y-2.5 sm:space-y-3.5">
             {hierarchyLevels.map((item, idx) => (
               <PopItem key={item.level}>
               <div
-                className="group relative overflow-hidden rounded-2xl border border-[#DCE5EC] bg-white p-6 shadow-sm transition-all duration-300 hover:border-[#00629B]/40 hover:shadow-md sm:p-7"
+                className="group relative overflow-hidden rounded-xl sm:rounded-2xl border border-[#DCE5EC] bg-white p-3.5 sm:p-5 shadow-xs transition-all duration-300 hover:border-[#00629B]/40 hover:shadow-md"
               >
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 font-bold text-[#00629B]">
+                <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs sm:text-sm font-bold text-[#00629B]">
                       {idx + 1}
                     </div>
                     <div>
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <h3 className="text-xl font-bold text-[#10243A]">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-base sm:text-lg font-bold text-[#10243A]">
                           {item.level}
                         </h3>
                         <span
-                          className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${item.badgeColor}`}
+                          className={`rounded-full border px-2 py-0.5 text-[10px] sm:text-xs font-semibold ${item.badgeColor}`}
                         >
                           {item.highlight}
                         </span>
                       </div>
-                      <p className="mt-1 text-xs font-medium uppercase tracking-wider text-slate-500">
+                      <p className="mt-0.5 text-[10px] sm:text-xs font-medium uppercase tracking-wider text-slate-500">
                         {item.tag}
                       </p>
-                      <p className="mt-2 text-sm leading-6 text-[#526477]">
+                      <p className="mt-1 text-xs sm:text-sm leading-relaxed text-[#526477]">
                         {item.description}
                       </p>
                     </div>
@@ -553,12 +552,12 @@ function About() {
             ))}
           </PopGroup>
 
-          {/* Inclusive Philosophy Box from Slide 6 */}
-          <Pop className="mt-8 rounded-3xl border border-blue-200 bg-gradient-to-br from-white via-sky-50/50 to-blue-50/30 p-8 shadow-sm">
-            <h4 className="text-xl font-bold text-[#10243A]">
+          {/* Inclusive Philosophy Box */}
+          <Pop className="mt-6 sm:mt-8 rounded-2xl sm:rounded-3xl border border-blue-200 bg-gradient-to-br from-white via-sky-50/50 to-blue-50/30 p-4 sm:p-6 shadow-xs">
+            <h4 className="text-base sm:text-lg font-bold text-[#10243A]">
               There is always a place for you in IEEE.
             </h4>
-            <p className="mt-2 leading-7 text-[#526477]">
+            <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-[#526477]">
               Whether you are a programmer, a designer, a photographer, a content writer, a public speaker,
               a researcher, or simply someone passionate to learn—IEEE welcomes your unique voice. Our student
               branch offers roles tailored to every passion.
@@ -567,57 +566,57 @@ function About() {
         </div>
 
         {/* SECTION 5: SCHOLARSHIPS, GRANTS & COMPETITIONS */}
-        <div className="mt-24 sm:mt-32">
+        <div className="mt-10 sm:mt-16">
           <Pop className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#00629B]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/80 px-3 py-1 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#00629B]">
               <span>Global Opportunities</span>
             </div>
 
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#10243A] sm:text-4xl">
+            <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#10243A] sm:text-3xl lg:text-4xl">
               Scholarships, Grants & Competitions
             </h2>
 
-            <p className="mt-4 text-base leading-7 text-[#526477]">
+            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[#526477]">
               IEEE members gain privileged access to global funding, research stipends, travel grants, and
               world-renowned collegiate competitions.
             </p>
           </Pop>
 
-          <div className="mt-12 grid gap-8 lg:grid-cols-2">
+          <div className="mt-8 sm:mt-10 grid gap-4 sm:gap-6 lg:grid-cols-2">
             {/* Scholarships & Grants */}
-            <div className="rounded-3xl border border-[#DCE5EC] bg-white p-7 shadow-sm">
+            <div className="rounded-2xl sm:rounded-3xl border border-[#DCE5EC] bg-white p-4 sm:p-6 shadow-xs">
               <Pop className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/20">
-                  <GraduationCap size={22} />
+                <div className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/20">
+                  <GraduationCap size={18} className="sm:w-5 sm:h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#10243A]">
+                  <h3 className="text-base sm:text-lg font-bold text-[#10243A]">
                     Fellowships & Scholarships
                   </h3>
-                  <p className="text-xs text-[#647588]">
+                  <p className="text-[11px] sm:text-xs text-[#647588]">
                     Funding technical education & research
                   </p>
                 </div>
               </Pop>
 
-              <PopGroup className="mt-6 space-y-4">
+              <PopGroup className="mt-4 sm:mt-5 space-y-2.5 sm:space-y-3.5">
                 {scholarships.map((s) => (
                   <PopItem key={s.title}>
                   <div
-                    className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 transition-all duration-200 hover:border-blue-200 hover:bg-white"
+                    className="rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/60 p-3 sm:p-3.5 transition-all duration-200 hover:border-blue-200 hover:bg-white"
                   >
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h4 className="font-semibold text-[#10243A]">
+                    <div className="flex flex-wrap items-center justify-between gap-1.5">
+                      <h4 className="text-xs sm:text-sm font-semibold text-[#10243A]">
                         {s.title}
                       </h4>
-                      <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-700">
+                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] sm:text-xs font-bold text-emerald-700">
                         {s.award}
                       </span>
                     </div>
-                    <p className="mt-1.5 text-xs font-medium text-blue-600">
+                    <p className="mt-1 text-[11px] sm:text-xs font-medium text-blue-600">
                       {s.eligibility}
                     </p>
-                    <p className="mt-1 text-xs text-[#647588]">{s.note}</p>
+                    <p className="mt-0.5 text-[10px] sm:text-xs text-[#647588]">{s.note}</p>
                   </div>
                   </PopItem>
                 ))}
@@ -625,36 +624,36 @@ function About() {
             </div>
 
             {/* Competitions */}
-            <div className="rounded-3xl border border-[#DCE5EC] bg-white p-7 shadow-sm">
+            <div className="rounded-2xl sm:rounded-3xl border border-[#DCE5EC] bg-white p-4 sm:p-6 shadow-xs">
               <Pop className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/20">
-                  <Trophy size={22} />
+                <div className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/20">
+                  <Trophy size={18} className="sm:w-5 sm:h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#10243A]">
+                  <h3 className="text-base sm:text-lg font-bold text-[#10243A]">
                     Flagship Competitions
                   </h3>
-                  <p className="text-xs text-[#647588]">
+                  <p className="text-[11px] sm:text-xs text-[#647588]">
                     Showcase engineering acumen internationally
                   </p>
                 </div>
               </Pop>
 
-              <PopGroup className="mt-6 space-y-4">
+              <PopGroup className="mt-4 sm:mt-5 space-y-2.5 sm:space-y-3.5">
                 {competitions.map((c) => (
                   <PopItem key={c.title}>
                   <div
-                    className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 transition-all duration-200 hover:border-orange-200 hover:bg-white"
+                    className="rounded-xl sm:rounded-2xl border border-slate-100 bg-slate-50/60 p-3 sm:p-3.5 transition-all duration-200 hover:border-orange-200 hover:bg-white"
                   >
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h4 className="font-semibold text-[#10243A]">
+                    <div className="flex flex-wrap items-center justify-between gap-1.5">
+                      <h4 className="text-xs sm:text-sm font-semibold text-[#10243A]">
                         {c.title}
                       </h4>
-                      <span className="rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-700">
+                      <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-orange-700">
                         {c.type}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs leading-5 text-[#526477]">
+                    <p className="mt-1 text-[11px] sm:text-xs leading-relaxed text-[#526477]">
                       {c.desc}
                     </p>
                   </div>
@@ -663,7 +662,7 @@ function About() {
 
                 {/* Additional Grants Note */}
                 <PopItem>
-                <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/50 p-4 text-xs text-[#526477]">
+                <div className="mt-3 rounded-xl border border-blue-200 bg-blue-50/50 p-3 text-[11px] sm:text-xs text-[#526477]">
                   <strong className="text-[#10243A]">IEEE Foundation Grants:</strong> Includes Spoken
                   Language Processing Grants, Grainger PES Fund, Valentin Jordanov Radiation Instrumentation,
                   Raj Mittra Travel Grants, and Magnetics Society travel awards.
@@ -675,43 +674,43 @@ function About() {
         </div>
 
         {/* SECTION 6: IEEE WOMEN IN ENGINEERING (WIE) SPOTLIGHT */}
-        <div className="reveal mt-24 sm:mt-32" style={{ "--reveal-delay": "60ms" }}>
-          <div className="relative overflow-hidden rounded-3xl border border-purple-200 bg-gradient-to-br from-white via-purple-50/30 to-fuchsia-50/20 p-8 shadow-md sm:p-12">
+        <div className="mt-10 sm:mt-16">
+          <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-purple-200 bg-gradient-to-br from-white via-purple-50/30 to-fuchsia-50/20 p-5 sm:p-8 lg:p-10 shadow-sm">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-purple-300/20 blur-3xl"
             />
 
-            <div className="relative grid gap-8 lg:grid-cols-3 lg:items-center">
+            <div className="relative grid gap-6 lg:grid-cols-3 lg:items-center">
               <div className="lg:col-span-2">
                 <Pop>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-purple-300 bg-purple-100/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-purple-800">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-purple-300 bg-purple-100/80 px-3 py-1 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-purple-800">
                     <span>Special Initiative</span>
                   </div>
 
-                  <h3 className="mt-4 text-3xl font-extrabold text-[#10243A] sm:text-4xl">
+                  <h3 className="mt-3 text-2xl font-extrabold text-[#10243A] sm:text-3xl lg:text-4xl">
                     IEEE Women in Engineering (WIE)
                   </h3>
 
-                  <p className="mt-4 text-base leading-7 text-[#526477]">
+                  <p className="mt-2.5 text-xs sm:text-sm leading-relaxed text-[#526477]">
                     IEEE WIE is one of the world&apos;s largest international communities dedicated to
                     promoting women in engineering, technology, and STEM. It empowers members through dedicated
                     scholarships, global mentorship, conference grants, and transformative leadership pathways.
                   </p>
 
-                  <blockquote className="mt-4 border-l-4 border-purple-500 pl-4 text-sm font-semibold italic text-purple-900">
+                  <blockquote className="mt-3 border-l-4 border-purple-500 pl-3 text-xs sm:text-sm font-semibold italic text-purple-900">
                     &ldquo;Learn. Lead. Inspire. | IEEE WIE empowers women to engineer a better tomorrow.&rdquo;
                   </blockquote>
                 </Pop>
 
-                <PopGroup className="mt-6 grid gap-4 sm:grid-cols-2">
+                <PopGroup className="mt-4 sm:mt-6 grid gap-3 sm:grid-cols-2">
                   <PopItem>
-                  <div className="h-full rounded-2xl border border-purple-200 bg-white p-4 shadow-sm">
-                    <div className="flex items-center gap-2 font-bold text-purple-900">
-                      <Award size={18} className="text-purple-600" />
+                  <div className="h-full rounded-xl sm:rounded-2xl border border-purple-200 bg-white p-3.5 sm:p-4 shadow-2xs">
+                    <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-purple-900">
+                      <Award size={16} className="text-purple-600 sm:w-4 sm:h-4" />
                       <span>Quest Global CSR Scholarship</span>
                     </div>
-                    <p className="mt-1 text-xs leading-5 text-[#526477]">
+                    <p className="mt-1 text-[11px] sm:text-xs leading-relaxed text-[#526477]">
                       Provides <strong className="text-purple-700 font-bold">₹50,000 financial assistance</strong>,
                       mentorship, IEEE learning resources, and placement support for eligible female engineering students.
                     </p>
@@ -719,12 +718,12 @@ function About() {
                   </PopItem>
 
                   <PopItem>
-                  <div className="h-full rounded-2xl border border-purple-200 bg-white p-4 shadow-sm">
-                    <div className="flex items-center gap-2 font-bold text-purple-900">
-                      <GraduationCap size={18} className="text-purple-600" />
+                  <div className="h-full rounded-xl sm:rounded-2xl border border-purple-200 bg-white p-3.5 sm:p-4 shadow-2xs">
+                    <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-purple-900">
+                      <GraduationCap size={16} className="text-purple-600 sm:w-4 sm:h-4" />
                       <span>Frances B. Hugle Scholarship</span>
                     </div>
-                    <p className="mt-1 text-xs leading-5 text-[#526477]">
+                    <p className="mt-1 text-[11px] sm:text-xs leading-relaxed text-[#526477]">
                       International scholarships for female engineering students demonstrating outstanding academic
                       and leadership excellence.
                     </p>
@@ -734,23 +733,23 @@ function About() {
               </div>
 
               {/* Right column perks list */}
-              <Pop delay={0.1} className="rounded-2xl border border-purple-200 bg-white p-6 shadow-sm">
-                <h4 className="font-bold text-[#10243A]">More Ways WIE Empowers You</h4>
-                <ul className="mt-4 space-y-3 text-xs text-[#526477]">
+              <Pop delay={0.1} className="rounded-xl sm:rounded-2xl border border-purple-200 bg-white p-4 sm:p-5 shadow-2xs">
+                <h4 className="font-bold text-xs sm:text-sm text-[#10243A]">More Ways WIE Empowers You</h4>
+                <ul className="mt-3 space-y-2 sm:space-y-2.5 text-[11px] sm:text-xs text-[#526477]">
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-purple-600" />
+                    <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-purple-600 sm:w-4 sm:h-4" />
                     <span><strong>Free WIE Membership</strong> during eligible student campaigns</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-purple-600" />
+                    <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-purple-600 sm:w-4 sm:h-4" />
                     <span><strong>Global Mentoring</strong> with experienced global IEEE leaders</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-purple-600" />
+                    <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-purple-600 sm:w-4 sm:h-4" />
                     <span><strong>WIE Family Cares Grant</strong> for conference travel assistance</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-purple-600" />
+                    <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-purple-600 sm:w-4 sm:h-4" />
                     <span><strong>International Exposure</strong> at WIE Leadership Summits worldwide</span>
                   </li>
                 </ul>
@@ -760,38 +759,38 @@ function About() {
         </div>
 
         {/* SECTION 7: CLOSING PHILOSOPHY & INVITATION */}
-        <Pop className="mt-24 sm:mt-32 text-center">
-          <div className="mx-auto max-w-3xl rounded-3xl border border-[#DCE5EC] bg-white p-8 shadow-lg sm:p-12">
-            <h3 className="text-2xl font-extrabold tracking-tight text-[#10243A] sm:text-3xl">
+        <Pop className="mt-10 sm:mt-14 text-center">
+          <div className="mx-auto max-w-3xl rounded-2xl sm:rounded-3xl border border-[#DCE5EC] bg-white p-5 sm:p-8 lg:p-10 shadow-md">
+            <h3 className="text-xl font-extrabold tracking-tight text-[#10243A] sm:text-2xl lg:text-3xl">
               &ldquo;The more you put into IEEE, the more you&apos;ll get out of it.&rdquo;
             </h3>
 
-            <p className="mt-4 text-lg font-medium text-[#00629B]">
+            <p className="mt-2 text-sm sm:text-base font-medium text-[#00629B]">
               Because sometimes... one &ldquo;yes&rdquo; is all it takes to completely change your journey.
             </p>
 
-            <p className="mt-4 text-sm text-[#526477]">
+            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[#526477]">
               Join over 1000+ peers at RNSIT and step onto the global stage. Benefit from technical societies,
               travel grants, prestigious fellowships, and lifelong friendships.
             </p>
 
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <div className="mt-5 flex flex-wrap justify-center gap-3 sm:mt-6 sm:gap-4">
               <a
                 href="https://mail.google.com/mail/?view=cm&fs=1&to=ieeestudentbranchrnsit@gmail.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-animate inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-7 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                className="btn-animate inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#00629B]/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg sm:px-7 sm:py-3.5 sm:text-sm"
               >
                 <span>Contact Student Branch</span>
-                <ExternalLink size={16} />
+                <ExternalLink size={14} className="sm:w-4 sm:h-4" />
               </a>
 
               <Link
                 href="/societies"
-                className="btn-animate inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-7 py-3.5 font-semibold text-[#10243A] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-50"
+                className="btn-animate inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-xs font-semibold text-[#10243A] shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-50 sm:px-7 sm:py-3.5 sm:text-sm"
               >
                 <span>View All Societies</span>
-                <ChevronRight size={16} />
+                <ChevronRight size={14} className="sm:w-4 sm:h-4" />
               </Link>
             </div>
           </div>

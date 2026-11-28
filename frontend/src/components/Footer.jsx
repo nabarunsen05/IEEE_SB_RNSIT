@@ -59,50 +59,50 @@ export default function Footer() {
       <div className="pointer-events-none absolute right-10 bottom-0 h-80 w-80 rounded-full bg-[#29A9E0]/10 blur-3xl" />
 
       {/* Main Footer Container */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-14 pb-10 sm:px-8 sm:pt-16 sm:pb-12 lg:px-12">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-12 lg:grid-cols-4 lg:gap-10">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pt-8 pb-6 sm:px-8 sm:pt-14 sm:pb-10 lg:px-12">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4 lg:gap-8">
 
           {/* =========================================
               COLUMN 1: BRANDING & SOCIAL MEDIA
           ========================================== */}
-          <div className="space-y-5">
+          <div className="space-y-3 sm:space-y-5">
             <Link href="/" className="inline-block transition-transform duration-300 hover:scale-[1.01]">
               <img
                 src="/assets/ieee-bangalore-section.png"
                 alt="IEEE Bangalore Section - RNSIT SB"
-                className="h-12 w-auto filter drop-shadow-[0_2px_10px_rgba(41,169,224,0.3)]"
+                className="h-9 sm:h-12 w-auto filter drop-shadow-[0_2px_10px_rgba(41,169,224,0.3)]"
               />
             </Link>
 
             <div>
-              <h3 className="text-lg font-bold text-white tracking-tight">
+              <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
                 IEEE Student Branch
               </h3>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#29A9E0]">
+              <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#29A9E0]">
                 RNS Institute of Technology
               </p>
             </div>
 
-            <p className="max-w-sm text-sm leading-6 text-slate-400">
+            <p className="max-w-sm text-xs sm:text-sm leading-5 sm:leading-6 text-slate-400 line-clamp-2 sm:line-clamp-none">
               Fostering technical innovation, engineering excellence, and academic collaboration. Connecting passionate students with IEEE&apos;s global network of 420,000+ professionals.
             </p>
 
             {/* Social Media Links */}
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
+              <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 sm:mb-3">
                 Connect With Us
               </p>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2 sm:gap-2.5">
                 {/* Instagram */}
                 <a
                   href="https://www.instagram.com/ieee_rnsit_sb/"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="IEEE RNSIT SB Instagram"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-pink-500/50 hover:bg-gradient-to-tr hover:from-amber-500/20 hover:via-pink-500/20 hover:to-purple-500/20 hover:text-pink-400 hover:shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-[1.02]"
+                  className="group flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-pink-500/50 hover:bg-gradient-to-tr hover:from-amber-500/20 hover:via-pink-500/20 hover:to-purple-500/20 hover:text-pink-400 hover:shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-[1.02]"
                   title="Follow IEEE RNSIT SB on Instagram"
                 >
-                  <InstagramIcon size={18} className="transition-transform group-hover:scale-[1.04]" />
+                  <InstagramIcon size={16} className="transition-transform group-hover:scale-[1.04]" />
                 </a>
 
                 {/* LinkedIn */}
@@ -111,10 +111,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="IEEE RNSIT SB LinkedIn"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-[#29A9E0]/50 hover:bg-[#00629B]/30 hover:text-[#29A9E0] hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-[1.02]"
+                  className="group flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-[#29A9E0]/50 hover:bg-[#00629B]/30 hover:text-[#29A9E0] hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-[1.02]"
                   title="Connect with IEEE RNSIT SB on LinkedIn"
                 >
-                  <LinkedinIcon size={18} className="transition-transform group-hover:scale-[1.04]" />
+                  <LinkedinIcon size={16} className="transition-transform group-hover:scale-[1.04]" />
                 </a>
 
                 {/* Official Email */}
@@ -123,10 +123,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Email IEEE SB RNSIT"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-cyan-400/50 hover:bg-[#00629B]/30 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-[1.02]"
+                  className="group flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-cyan-400/50 hover:bg-[#00629B]/30 hover:text-cyan-300 hover:shadow-[0_0_20px_rgba(41,169,224,0.35)] hover:scale-[1.02]"
                   title="Compose email to ieeestudentbranchrnsit@gmail.com"
                 >
-                  <Mail size={18} className="transition-transform group-hover:scale-[1.04]" />
+                  <Mail size={16} className="transition-transform group-hover:scale-[1.04]" />
                 </a>
 
                 {/* College Website */}
@@ -135,10 +135,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="RNSIT College Website"
-                  className="group flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.08] hover:text-white hover:scale-[1.02]"
+                  className="group flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl border border-white/10 bg-white/[0.05] text-slate-300 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.08] hover:text-white hover:scale-[1.02]"
                   title="RNSIT Official Portal"
                 >
-                  <ExternalLink size={17} className="transition-transform group-hover:scale-[1.04]" />
+                  <ExternalLink size={15} className="transition-transform group-hover:scale-[1.04]" />
                 </a>
               </div>
             </div>
@@ -146,116 +146,117 @@ export default function Footer() {
 
 
           {/* =========================================
-              COLUMN 2: EXPLORE PART (QUICK LINKS)
+              COLUMNS 2 & 3: EXPLORE & SOCIETIES (Sub-grid on mobile, standalone on desktop)
           ========================================== */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />
-              Explore Portal
-            </h4>
+          <div className="grid grid-cols-2 gap-4 sm:contents">
+            {/* COLUMN 2: EXPLORE PART (QUICK LINKS) */}
+            <div className="space-y-2.5 sm:space-y-4">
+              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white flex items-center gap-1.5 sm:gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />
+                Explore
+              </h4>
 
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link
-                  href="/"
-                  className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
-                >
-                  <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
-                  <span>Home</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
-                >
-                  <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
-                  <span>About IEEE SB</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/events"
-                  className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
-                >
-                  <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
-                  <span>Upcoming Events & Workshops</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/team"
-                  className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
-                >
-                  <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
-                  <span>Executive Committee (ExeCom)</span>
-                </Link>
-              </li>
-            </ul>
-          </div>
+              <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+                <li>
+                  <Link
+                    href="/"
+                    className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
+                  >
+                    <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
+                    <span>Home</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/about"
+                    className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
+                  >
+                    <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
+                    <span>About SB</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/events"
+                    className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
+                  >
+                    <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
+                    <span>Events</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/team"
+                    className="group inline-flex items-center gap-1.5 transition-colors hover:text-[#29A9E0]"
+                  >
+                    <span className="h-1 w-1 rounded-full bg-slate-600 transition-colors group-hover:bg-[#29A9E0]" />
+                    <span>ExeCom</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
 
-          {/* =========================================
-              COLUMN 3:               IEEE SOCIETIES
-          ========================================== */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />
-              IEEE Societies
-            </h4>
+            {/* COLUMN 3: IEEE SOCIETIES */}
+            <div className="space-y-2.5 sm:space-y-4">
+              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white flex items-center gap-1.5 sm:gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />
+                Societies
+              </h4>
 
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link
-                  href="/societies"
-                  className="group flex items-center justify-between rounded-lg p-1.5 transition hover:bg-white/[0.04] hover:text-[#29A9E0]"
-                >
-                  <span>View all IEEE Societies</span>
-                  <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              </li>
-            </ul>
+              <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+                <li>
+                  <Link
+                    href="/societies"
+                    className="group flex items-center justify-between rounded-lg py-1 transition hover:text-[#29A9E0]"
+                  >
+                    <span>All Societies</span>
+                    <ArrowRight size={12} className="opacity-0 transition-opacity group-hover:opacity-100 hidden sm:inline" />
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
 
           {/* =========================================
               COLUMN 4: CONTACT & CAMPUS LOCATION
           ========================================== */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
+          <div className="space-y-2.5 sm:space-y-4">
+            <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white flex items-center gap-1.5 sm:gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[#29A9E0]" />
               Contact & Campus
             </h4>
 
-            <div className="space-y-4 text-sm text-slate-400">
+            <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-slate-400">
               {/* Phone Numbers */}
-              <div className="flex items-start gap-2.5">
+              <div className="flex items-start gap-2">
                 <a
                   href="tel:+919606592647"
-                  className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[#29A9E0] transition-all hover:bg-[#00629B]/30 hover:border-cyan-400/50 hover:text-cyan-300"
+                  className="mt-0.5 flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-[#29A9E0] transition-all hover:bg-[#00629B]/30 hover:border-cyan-400/50 hover:text-cyan-300"
                   title="Call SB Chair"
                   aria-label="Call SB Chair"
                 >
-                  <Phone size={13} />
+                  <Phone size={12} />
                 </a>
                 <div>
-                  <p className="font-semibold text-slate-300">Contact Number</p>
-                  <p className="mt-0.5">
+                  <p className="font-semibold text-slate-300 text-[11px] sm:text-xs">SB Chair</p>
+                  <p>
                     <a href="tel:+919606592647" className="hover:text-[#29A9E0] transition-colors text-cyan-300">
-                      +91 96065 92647 (SB CHAIR)
+                      +91 96065 92647
                     </a>
                   </p>
                 </div>
               </div>
 
               {/* Email */}
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[#29A9E0]">
-                  <Mail size={13} />
+              <div className="flex items-start gap-2">
+                <div className="mt-0.5 flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-[#29A9E0]">
+                  <Mail size={12} />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-300">Official Email</p>
-                  <p className="mt-0.5">
+                  <p className="font-semibold text-slate-300 text-[11px] sm:text-xs">Email</p>
+                  <p>
                     <a
                       href="https://mail.google.com/mail/?view=cm&fs=1&to=ieeestudentbranchrnsit@gmail.com"
                       target="_blank"
@@ -269,26 +270,26 @@ export default function Footer() {
               </div>
 
               {/* Address */}
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[#29A9E0]">
-                  <MapPin size={13} />
+              <div className="flex items-start gap-2">
+                <div className="mt-0.5 flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-[#29A9E0]">
+                  <MapPin size={12} />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-300">Campus Location</p>
-                  <p className="mt-0.5 leading-relaxed text-slate-400">
-                    RNS Institute of Technology, Channasandra, Dr. Vishnuvardhan Road, RR Nagar Post, Bengaluru - 560098, Karnataka, India
+                  <p className="font-semibold text-slate-300 text-[11px] sm:text-xs">Campus Location</p>
+                  <p className="mt-0.5 leading-snug sm:leading-relaxed text-slate-400">
+                    RNSIT Campus, RR Nagar, Bengaluru - 560098<span className="hidden sm:inline">, Karnataka, India</span>
                   </p>
                 </div>
               </div>
 
               {/* Timings */}
-              <div className="flex items-start gap-2.5">
-                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[#29A9E0]">
-                  <Clock size={13} />
+              <div className="flex items-start gap-2">
+                <div className="mt-0.5 flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] text-[#29A9E0]">
+                  <Clock size={12} />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-300">SB Lab Hours</p>
-                  <p className="mt-0.5 text-slate-400">Monday – Saturday: 9:00 AM – 5:00 PM</p>
+                  <p className="font-semibold text-slate-300 text-[11px] sm:text-xs">SB Lab Hours</p>
+                  <p className="mt-0.5 text-slate-400">Mon – Sat: 9:00 AM – 5:00 PM</p>
                 </div>
               </div>
             </div>
@@ -299,8 +300,8 @@ export default function Footer() {
         {/* =========================================
             BOTTOM COPYRIGHT BAR
         ========================================== */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-7 text-xs text-slate-500 sm:mt-14 sm:flex-row sm:pt-8">
-          <p className="flex items-center gap-1.5 text-center sm:text-left">
+        <div className="mt-6 pt-4 sm:mt-10 sm:pt-6 flex flex-col items-center justify-between gap-2 sm:gap-4 border-t border-white/10 text-[11px] sm:text-xs text-slate-500 sm:flex-row text-center sm:text-left">
+          <p className="flex items-center gap-1.5">
             <span>© 2026 IEEE Student Branch, RNSIT. Advancing Technology for Humanity.</span>
           </p>
 

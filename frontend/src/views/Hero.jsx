@@ -21,11 +21,24 @@ function Hero() {
         <div className="hero-grid" />
       </div>
 
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-96px)] w-full max-w-7xl items-center gap-12 px-6 py-16 sm:px-8 lg:grid-cols-2 lg:px-12">
+      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-96px)] w-full max-w-7xl items-center gap-10 px-6 py-12 sm:px-8 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:px-12">
         {/* Left Column: Heading, intro & actions */}
         <div className="relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00629B]/20 bg-gradient-to-r from-[#E6F4FB] via-white to-[#FFF4EC] px-3.5 py-1.5 text-xs font-semibold text-[#00629B] shadow-2xs backdrop-blur-sm"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#29A9E0] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00629B]" />
+            </span>
+            <span>IEEE Student Branch • RNSIT</span>
+          </motion.div>
+
           <Pop delay={0}>
-            <h1 className="max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-[#10243A] sm:text-6xl lg:text-7xl">
+            <h1 className="max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-[#10243A] sm:text-6xl lg:text-7xl">
               Innovate.<br />
               <span className="bg-gradient-to-r from-[#00629B] via-[#0284C7] to-[#29A9E0] bg-clip-text text-transparent">Connect.</span><br />
               Create.
@@ -33,7 +46,7 @@ function Hero() {
           </Pop>
 
           <Pop delay={0.08}>
-            <p className="mt-6 max-w-xl text-base leading-7 text-[#526477] sm:text-lg sm:leading-8">
+            <p className="mt-5 max-w-xl text-base leading-7 text-[#526477] sm:mt-6 sm:text-lg sm:leading-8">
               A vibrant community of students passionate about technology,
               cutting-edge research, hands-on engineering and building solutions
               for a better tomorrow.
@@ -43,20 +56,20 @@ function Hero() {
           {/* Action Buttons */}
           <Pop delay={0.16}>
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.95 }} style={{ display: "inline-flex" }}>
                 <Link
                   href="/events"
-                  className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-7 py-3.5 font-semibold text-white shadow-md shadow-[#00629B]/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/35 active:translate-y-0"
+                  className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#00629B] via-[#0074B5] to-[#0086CE] px-6 py-3 text-sm sm:px-7 sm:py-3.5 sm:text-base font-semibold text-white shadow-md shadow-[#00629B]/25 transition-all duration-300 hover:-translate-y-0.5 hover:from-[#004F7D] hover:to-[#0074B5] hover:shadow-lg hover:shadow-[#00629B]/35 active:translate-y-0"
                 >
                   <span>Explore Events</span>
                   <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </motion.div>
 
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{ display: "inline-flex" }}>
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.95 }} style={{ display: "inline-flex" }}>
                 <Link
                   href="/about"
-                  className="group inline-flex items-center gap-2 rounded-full border border-[#DCE5EC] bg-white/95 px-7 py-3.5 font-semibold text-[#10243A] shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B]"
+                  className="group inline-flex items-center gap-2 rounded-full border border-[#DCE5EC] bg-white/95 px-6 py-3 text-sm sm:px-7 sm:py-3.5 sm:text-base font-semibold text-[#10243A] shadow-xs transition-all duration-300 hover:-translate-y-0.5 hover:border-[#00629B]/35 hover:bg-gradient-to-r hover:from-white hover:to-[#E6F4FB] hover:text-[#00629B]"
                 >
                   <span>Discover IEEE</span>
                   <ChevronRight size={16} className="text-[#00629B] transition-transform duration-300 group-hover:translate-x-0.5" />
@@ -66,67 +79,79 @@ function Hero() {
           </Pop>
 
           {/* Feature Badges */}
-          <PopGroup className="mt-12 flex flex-wrap gap-3 border-t border-[#10243A]/10 pt-6">
+          <PopGroup className="mt-10 sm:mt-12 flex flex-wrap gap-2.5 sm:gap-3 border-t border-[#10243A]/10 pt-5 sm:pt-6">
             <PopItem>
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/70 bg-gradient-to-r from-blue-50/80 to-cyan-50/50 px-3.5 py-2 text-xs font-semibold text-blue-900 shadow-xs">
-                <Zap size={14} className="text-[#00629B]" />
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-blue-200/70 bg-gradient-to-r from-blue-50/80 to-cyan-50/50 px-3 py-1.5 sm:px-3.5 sm:py-2 text-[11px] sm:text-xs font-semibold text-blue-900 shadow-xs">
+                <Zap size={13} className="text-[#00629B] sm:w-3.5 sm:h-3.5" />
                 <span>Technical Workshops</span>
               </div>
             </PopItem>
             <PopItem>
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/70 bg-gradient-to-r from-amber-50/80 to-orange-50/50 px-3.5 py-2 text-xs font-semibold text-amber-950 shadow-xs">
-                <Award size={14} className="text-[#F26522]" />
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-amber-200/70 bg-gradient-to-r from-amber-50/80 to-orange-50/50 px-3 py-1.5 sm:px-3.5 sm:py-2 text-[11px] sm:text-xs font-semibold text-amber-950 shadow-xs">
+                <Award size={13} className="text-[#F26522] sm:w-3.5 sm:h-3.5" />
                 <span>Project Mentorship</span>
               </div>
             </PopItem>
             <PopItem>
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-gradient-to-r from-emerald-50/80 to-teal-50/50 px-3.5 py-2 text-xs font-semibold text-emerald-950 shadow-xs">
-                <Globe size={14} className="text-emerald-600" />
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-emerald-200/70 bg-gradient-to-r from-emerald-50/80 to-teal-50/50 px-3 py-1.5 sm:px-3.5 sm:py-2 text-[11px] sm:text-xs font-semibold text-emerald-950 shadow-xs">
+                <Globe size={13} className="text-emerald-600 sm:w-3.5 sm:h-3.5" />
                 <span>Global Community</span>
               </div>
             </PopItem>
           </PopGroup>
         </div>
 
-        {/* Right Showcase */}
-        <Pop delay={0.2} className="relative hidden lg:block">
-          <div className="pointer-events-none absolute -inset-6 rounded-full bg-gradient-to-tr from-[#00629B]/15 via-[#29A9E0]/15 to-[#F26522]/10 blur-3xl" />
+        {/* Showcase — visible on both Mobile and Desktop */}
+        <Pop delay={0.2} className="relative mt-4 sm:mt-8 lg:mt-0">
+          <motion.div
+            animate={{ scale: [1, 1.06, 1], opacity: [0.6, 0.9, 0.6] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="pointer-events-none absolute -inset-6 rounded-full bg-gradient-to-tr from-[#00629B]/20 via-[#29A9E0]/20 to-[#F26522]/15 blur-3xl"
+          />
 
-          <div className="relative flex h-[520px] items-center justify-center">
-            {/* Floating Card 1 */}
-            <div className="glass-card absolute -left-6 top-8 z-20 flex items-center gap-3 rounded-2xl border border-blue-100 px-4 py-3 shadow-[0_12px_28px_rgba(16,36,58,0.08)]">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/25">
-                <Zap size={20} />
+          <div className="relative flex h-[340px] sm:h-[440px] lg:h-[520px] items-center justify-center">
+            {/* Floating Card 1 (Levitating) */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="glass-card absolute -left-2 sm:-left-6 top-4 sm:top-8 z-20 flex items-center gap-2.5 sm:gap-3 rounded-xl sm:rounded-2xl border border-blue-100 bg-white/90 px-3 py-2 sm:px-4 sm:py-3 shadow-[0_12px_28px_rgba(16,36,58,0.08)] backdrop-blur-md"
+            >
+              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-sm shadow-blue-500/25">
+                <Zap size={16} className="sm:w-5 sm:h-5" />
               </div>
               <div>
-                <p className="text-xs font-medium text-[#526477]">Student Community</p>
-                <p className="text-sm font-bold text-[#10243A]">1000+ Members</p>
+                <p className="text-[10px] sm:text-xs font-medium text-[#526477]">Student Community</p>
+                <p className="text-xs sm:text-sm font-bold text-[#10243A]">1000+ Members</p>
               </div>
-            </div>
+            </motion.div>
 
             {/* Central Showcase Card */}
-            <div className="glass-card-interactive relative z-10 w-full max-w-lg rounded-3xl p-8 shadow-[0_20px_50px_rgba(16,36,58,0.1)]">
+            <div className="glass-card-interactive relative z-10 w-full max-w-xs sm:max-w-md lg:max-w-lg rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-[0_20px_50px_rgba(16,36,58,0.1)]">
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00629B] via-[#29A9E0] to-[#F26522]" />
 
-              <div className="img-zoom-wrap flex min-h-[290px] items-center justify-center rounded-2xl border border-[#DCE5EC] bg-gradient-to-b from-[#F8FAFC] to-[#F1F5F9] p-6 shadow-inner">
+              <div className="img-zoom-wrap flex min-h-[190px] sm:min-h-[250px] lg:min-h-[290px] items-center justify-center rounded-xl sm:rounded-2xl border border-[#DCE5EC] bg-gradient-to-b from-[#F8FAFC] to-[#F1F5F9] p-4 sm:p-6 shadow-inner">
                 <img
                   src="/assets/ieee-rnsit-sb-logo-featured.png"
                   alt="IEEE RNSIT Student Branch"
-                  className="img-zoom h-auto max-h-64 w-full object-contain filter drop-shadow-[0_4px_12px_rgba(0,98,155,0.08)]"
+                  className="img-zoom h-auto max-h-44 sm:max-h-56 lg:max-h-64 w-full object-contain filter drop-shadow-[0_4px_12px_rgba(0,98,155,0.08)]"
                 />
               </div>
             </div>
 
-            {/* Floating Card 2 */}
-            <div className="glass-card absolute -right-4 bottom-10 z-20 flex items-center gap-3 rounded-2xl border border-orange-100 px-4 py-3 shadow-[0_12px_28px_rgba(16,36,58,0.08)]">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/25">
-                <Award size={20} />
+            {/* Floating Card 2 (Levitating) */}
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              className="glass-card absolute -right-2 sm:-right-4 bottom-4 sm:bottom-10 z-20 flex items-center gap-2.5 sm:gap-3 rounded-xl sm:rounded-2xl border border-orange-100 bg-white/90 px-3 py-2 sm:px-4 sm:py-3 shadow-[0_12px_28px_rgba(16,36,58,0.08)] backdrop-blur-md"
+            >
+              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-br from-[#F26522] to-amber-500 text-white shadow-sm shadow-orange-500/25">
+                <Award size={16} className="sm:w-5 sm:h-5" />
               </div>
               <div>
-                <p className="text-xs font-medium text-[#526477]">Annual Activities</p>
-                <p className="text-sm font-bold text-[#10243A]">30+ Events &amp; Talks</p>
+                <p className="text-[10px] sm:text-xs font-medium text-[#526477]">Annual Activities</p>
+                <p className="text-xs sm:text-sm font-bold text-[#10243A]">30+ Events &amp; Talks</p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </Pop>
       </div>
